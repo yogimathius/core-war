@@ -16,19 +16,27 @@ Must be able to run and leave the virtual machine. They are written in the assem
 ### Solution
 
 #### Virtual Machine
+The virtual machine is a multi-program machine. Each program contains the following:
+
 - REG_NUMBER registers of REG_SIZE byte search
-- A register is a memory zone that contains only one value. In a real machine, it is embedded within the processor and can be accessed very fast. REG_NUMBER and REG_SIZE are defined in op.h.
+  - A register is a memory zone that contains only one value. In a real machine, it is embedded within the processor and can be accessed very fast. REG_NUMBER and REG_SIZE are defined in op.h.
 - A C(Counter)
   - This register contains the memory address (in the virtual machine) of the next instruction to be decoded and executed. This is useful to know where you are and to write things in memory.
-- Unset Carry Flag
+- Carry Flag
   - This flag is worth one if, and only if, the last operation returned zero.
 
 The machine’s role is to execute programs passed as parameters, generating processes. It must check that each process calls the "live" instruction every CYCLE_TO_DIE cycles. If, after NBR_LIVE executions of the instruction live, several processes are still alive, CYCLE_TO_DIE is decreased by CYCLE_DELTA units. This starts over until there are no live processes left.
 
 ```bash
-~/QWASAR-MSCS>./corewar -h
-USAGE
+~/QWASAR-MSCS>./corewar -h USAGE
 ./corewar [-dump nbr_cycle] [[-n prog_number] [-a load_address] prog_name] ...
+DESCRIPTION
+-dump nbr_cycle
+  dumps the memory after the nbr_cycle execution (if the round isn’t already over) with the following format: 32 bytes/line in hexadecimal (A0BCDEFE1DD3...)
+-n prog_number
+  sets the next program’s number. By default, the first free number in the parameter order
+-a load_address
+  sets the next program’s loading address. When no address is specified, optimize the addresses so that the processes are as far away from each other as possible. The addresses are MEM_SIZE modulo
 ```
 
 #### Output
@@ -116,8 +124,11 @@ The assembler takes an instruction file in assembly code (the program) as a para
 
 ```bash
 ~/QWASAR-MSCS>./asm -h
-USAGE
+   USAGE
 ./asm file_name[.s]
+
+DESCRIPTION
+  file_name file in assembly language to be converted into file_name.cor, an executable in the Virtual Machine.
 ```
 
 #### Coding
@@ -125,7 +136,10 @@ Each instruction is composed of three elements:
 - Instruction code
 - Description of parameter types, except for the following instructions: live, zjmp, fork, fork.
 - Parameters
+  1 byte for register (in hexadecimal) DIR_SIZE bytes for direct (in hexadecimal) IND_SIZE bytes for indirect (in hexadecimal)
 
+  Parameters are grouped 4 by 4, to form a full byte.
+  
 Examples:
 ```assembly
 sti r2, 23, %34
@@ -146,10 +160,11 @@ Programs are written in GAC (General Assembly Code) assembly language, described
 ```assembly
 .name "Simple"
 .comment "Let's get started"
+
 l2: sti r1,%:live,%1
-and r1,%0,r1
+    and r1,%0,r1
 live: live %1
-zjmp %:live
+    zjmp %:live
 ```
 
 **Complex**
