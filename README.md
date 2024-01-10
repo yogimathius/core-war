@@ -39,11 +39,7 @@ The Virtual Machine emulates a parallel machine. As an implementation constraint
 
 Let’s consider 3 programs (P1, P2, and P3), each consisting of the respective instructions 1.1 1.2 .. 1.7, 2.1 .. 2.7, and 3.1 .. 3.7. The timing of each instruction would look like this:
 
-```plaintext
-Instruction cycles
-Virtual Machine Order of execution
-...
-```
+![Cycles](https://raw.githubusercontent.com/yogimathius/core-wars/main/Cycles.png)
 
 #### Machine Code
 The machine must recognize the instructions below. If not a valid command, the Virtual machine moves to the next instruction.
