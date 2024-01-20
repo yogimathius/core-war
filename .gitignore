@@ -1,1 +1,3 @@
 .vscode
+cmock
+tests/build/test
