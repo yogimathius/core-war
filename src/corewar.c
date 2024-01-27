@@ -1,14 +1,15 @@
 #include <stdio.h>
 #include <stdint.h>
-
-#define MEMORY_SIZE 256
-#define NUM_REGISTERS 16
+#include "op.h"
 
 typedef struct {
-    uint64_t memory[MEMORY_SIZE];
-    uint64_t registers[NUM_REGISTERS];
+    uint64_t memory[MEM_SIZE];
+    uint64_t registers[REG_NUMBER];
     uint64_t instruction_pointer;
 } VirtualMachine;
+
+// NEED 16??
+enum regist { R0 = 0, R1, R2, R3, R4, R5, R6, R7, RPC, RCND, RCNT };
 
 typedef enum {
     MOV,
@@ -20,7 +21,9 @@ typedef enum {
 void execute_instruction(VirtualMachine *vm, Instruction opcode, uint64_t operand) {
     switch (opcode) {
         case MOV:
-            vm->registers[0] = operand;
+            // call inst fn for each case
+            inst_mov();
+            // vm->registers[0] = operand;
             break;
         case ADD:
             vm->registers[0] += operand;
