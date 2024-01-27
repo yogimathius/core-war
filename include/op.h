@@ -81,6 +81,8 @@ enum op_types {
   OP_NB
 };
 
+typedef struct op_s op_t;
+
 // Size of indirect addressing mode in bytes
 #define IND_SIZE 2
 
