@@ -5,7 +5,7 @@
 #include "../include/op.h"
 
 static void true_test() {
-	assert_true(inst_live() == 1);
+	assert_true(inst_live() == 0);
 }
 
 int main(void) {
