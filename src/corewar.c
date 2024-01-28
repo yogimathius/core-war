@@ -1,15 +1,7 @@
 #include <stdio.h>
 #include <stdint.h>
-#include "op.h"
-
-typedef struct {
-    uint64_t memory[MEM_SIZE];
-    uint64_t registers[REG_NUMBER];
-    uint64_t instruction_pointer;
-} VirtualMachine;
-
-// NEED 16??
-enum regist { R0 = 0, R1, R2, R3, R4, R5, R6, R7, RPC, RCND, RCNT };
+#include "../include/op.h"
+#include "../include/vm.h"
 
 typedef enum {
     MOV,
@@ -18,11 +10,13 @@ typedef enum {
     HALT,
 } Instruction;
 
-void execute_instruction(VirtualMachine *vm, Instruction opcode, uint64_t operand) {
-    switch (opcode) {
+void execute_instruction(VirtualMachine *vm, uint8_t operand) {
+    const op_t *operation = &op_tab[operand]; // Retrieve the operation from op_tab
+
+    switch (operation->code) {
         case MOV:
             // call inst fn for each case
-            inst_mov();
+            // inst_mov();
             // vm->registers[0] = operand;
             break;
         case ADD:
@@ -41,13 +35,13 @@ void execute_instruction(VirtualMachine *vm, Instruction opcode, uint64_t operan
     }
 }
 
-void run_program(VirtualMachine *vm, uint64_t *program, size_t program_size) {
+void run_program(VirtualMachine *vm, uint64_t *program, int program_size) {
     while (vm->instruction_pointer < program_size) {
         uint64_t instruction = program[vm->instruction_pointer];
-        Instruction opcode = (Instruction)(instruction >> 60);
+        // Instruction opcode = (Instruction)(instruction >> 60);
         uint64_t operand = instruction & 0xFFFFFFFFFFFFFFF; // Extract lower 60 bits
 
-        execute_instruction(vm, opcode, operand);
+        execute_instruction(vm, operand);
         vm->instruction_pointer++;
     }
 }
@@ -63,7 +57,7 @@ int main() {
         0xA000000000000000   // HALT
     };
 
-    size_t program_size = sizeof(program) / sizeof(program[0]);
+    int program_size = sizeof(program) / sizeof(program[0]);
 
     run_program(&vm, program, program_size);
 
