@@ -7,6 +7,8 @@
 typedef struct {
     int cells[MEM_SIZE];
     int registers[REG_NUMBER];
+    int instruction_pointer;
+
 } VirtualMachine;
 
 void initializeVirtualMachine(VirtualMachine *virtualMachine);
