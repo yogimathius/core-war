@@ -3,14 +3,12 @@
 #include <setjmp.h>
 #include <cmocka.h>
 
-#include "../include/vm.h" // Include your virtual machine header file
+#include "../include/vm.h" 
+#include "../include/tests.h"
 
-// Define setup and teardown functions if necessary
-
-// Test cases for initialize, read, and write functions
 VirtualMachine virtualMachine;
 
-static void test_initialize_memory(void **state) {
+void test_initialize_memory() {
 
     initializeVirtualMachine(&virtualMachine);
     assert_true(&virtualMachine != NULL);
@@ -18,24 +16,12 @@ static void test_initialize_memory(void **state) {
     assert_true(&virtualMachine.registers != NULL);
 }
 
-static void test_read_memory(void **state) {
-    virtualMachine.registers[0] = 42;  // Load register 0 with 42
+void test_read_memory() {
+    virtualMachine.registers[0] = 42;
     assert_true(readVirtualMachine(&virtualMachine, 0) == 42);
 }
 
-static void test_write_memory(void **state) {
+void test_write_memory() {
     writeVirtualMachine(&virtualMachine, 1, 24);
     assert_true(readVirtualMachine(&virtualMachine, 1) == 24);
-}
-
-
-int main(void) {
-    const struct CMUnitTest tests[] = {
-        cmocka_unit_test(test_initialize_memory),
-        cmocka_unit_test(test_read_memory),
-        cmocka_unit_test(test_write_memory),
-        // Add more test cases as needed
-    };
-
-    return cmocka_run_group_tests(tests, NULL, NULL);
 }
