@@ -52,7 +52,7 @@ typedef struct op_s {
   args_type_t type[MAX_ARGS_NUMBER];  // Types of arguments
   char code;            // Operation code
   int nbr_cycles;       // Number of cycles for the operation
-  int (*inst)();  // Function pointer for the instruction
+  int (*inst)(champion_t *, core_t *, code_t, int *);
 } op_t;
 
 // Enumeration of operation types
