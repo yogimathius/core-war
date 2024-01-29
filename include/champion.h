@@ -11,4 +11,10 @@ typedef struct champion {
   int carry_flag; 
 } champion_t;
 
+champion_t *champion_new();
+
+void champion_init(champion_t *champion, int id, );
+
+void champion_execute_instruction(champion_t *champion, unsigned char *memory);
+
 #endif
