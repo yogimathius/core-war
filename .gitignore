@@ -1,4 +1,4 @@
 .vscode
 cmock
-tests/build/*
+tests/builds
 build
