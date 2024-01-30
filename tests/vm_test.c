@@ -10,7 +10,7 @@ core_t virtualMachine;
 
 void test_initialize_memory() {
 
-    initializeVirtualMachine(&virtualMachine);
+    init_vm(&virtualMachine);
     assert_true(&virtualMachine != NULL);
     assert_true(&virtualMachine.memory != NULL);
     assert_true(&virtualMachine.registers != NULL);
@@ -18,10 +18,10 @@ void test_initialize_memory() {
 
 void test_read_memory() {
     virtualMachine.registers[0] = 42;
-    assert_true(readVirtualMachine(&virtualMachine, 0) == 42);
+    assert_true(read_vm(&virtualMachine, 0) == 42);
 }
 
 void test_write_memory() {
-    writeVirtualMachine(&virtualMachine, 1, 24);
-    assert_true(readVirtualMachine(&virtualMachine, 1) == 24);
+    write_vm(&virtualMachine, 1, 24);
+    assert_true(read_vm(&virtualMachine, 1) == 24);
 }

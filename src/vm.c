@@ -1,7 +1,7 @@
 #include "stdio.h"
 #include "../include/vm.h"
 
-void initializeVirtualMachine(core_t *core_t) {
+void init_vm(core_t *core_t) {
     for (int i = 0; i < MEM_SIZE; i++) {
         core_t->memory[i] = 0;
     }
@@ -11,7 +11,7 @@ void initializeVirtualMachine(core_t *core_t) {
     }
 }
 
-int readVirtualMachine(core_t *core_t, int address) {
+int read_vm(core_t *core_t, int address) {
     if (address < REG_NUMBER) {
         return core_t->registers[address];
     } else if (address < MEM_SIZE) {
@@ -22,7 +22,7 @@ int readVirtualMachine(core_t *core_t, int address) {
     }
 }
 
-void writeVirtualMachine(core_t *core_t, int address, int value) {
+void write_vm(core_t *core_t, int address, int value) {
     if (address < REG_NUMBER) {
         core_t->registers[address] = value;
     } else if (address < MEM_SIZE) {
