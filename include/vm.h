@@ -8,10 +8,10 @@
 
 #define MAX_CHAMPIONS 4  // Maximum number of champions
 
-void initializeVirtualMachine(core_t *virtualMachine);
+void init_vm(core_t *virtualMachine);
 
-int readVirtualMachine(core_t *virtualMachine, int address);
+int read_vm(core_t *virtualMachine, int address);
 
-void writeVirtualMachine(core_t *virtualMachine, int address, int value);
+void write_vm(core_t *virtualMachine, int address, int value);
 
 #endif
