@@ -1,32 +1,32 @@
 #include "stdio.h"
 #include "../include/vm.h"
 
-void initializeVirtualMachine(VirtualMachine *VirtualMachine) {
+void initializeVirtualMachine(virtual_machine_t *virtual_machine_t) {
     for (int i = 0; i < MEM_SIZE; i++) {
-        VirtualMachine->cells[i] = 0;
+        virtual_machine_t->memory[i] = 0;
     }
 
     for (int i = 0; i < REG_NUMBER; i++) {
-        VirtualMachine->registers[i] = 0;
+        virtual_machine_t->registers[i] = 0;
     }
 }
 
-int readVirtualMachine(VirtualMachine *VirtualMachine, int address) {
+int readVirtualMachine(virtual_machine_t *virtual_machine_t, int address) {
     if (address < REG_NUMBER) {
-        return VirtualMachine->registers[address];
+        return virtual_machine_t->registers[address];
     } else if (address < MEM_SIZE) {
-        return VirtualMachine->cells[address];
+        return virtual_machine_t->memory[address];
     } else {
         printf("Error: Invalid memory address\n");
         return 1;
     }
 }
 
-void writeVirtualMachine(VirtualMachine *VirtualMachine, int address, int value) {
+void writeVirtualMachine(virtual_machine_t *virtual_machine_t, int address, int value) {
     if (address < REG_NUMBER) {
-        VirtualMachine->registers[address] = value;
+        virtual_machine_t->registers[address] = value;
     } else if (address < MEM_SIZE) {
-        VirtualMachine->cells[address] = value;
+        virtual_machine_t->memory[address] = value;
     } else {
         printf("Error: Invalid memory address\n");
         // return 1;
