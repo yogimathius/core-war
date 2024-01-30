@@ -8,15 +8,17 @@ INCDIR = ../include
 BUILDDIR = build
 TEST_BUILDDIR = $(BUILDDIR)/tests
 
-$(shell mkdir -p $(TEST_BUILDDIR))
-$(shell mkdir -p $(BUILDDIR)/operations)
+# Create necessary directories
+$(shell mkdir -p $(TEST_BUILDDIR)/operations)
 
 # Collect all source files
-SOURCES = $(filter-out $(SRCDIR)/corewar.c, $(wildcard $(SRCDIR)/*.c) $(wildcard $(SRCDIR)/operations/*.c))
-TEST_SOURCES = $(wildcard $(TESTDIR)/*_test.c)
+SOURCES = $(filter-out $(SRCDIR)/corewar.c, $(wildcard $(SRCDIR)/*.c))
+OPERATIONS_SOURCES = $(wildcard $(SRCDIR)/operations/*.c)
+TEST_SOURCES = $(wildcard $(TESTDIR)/*_test.c) $(wildcard $(TESTDIR)/operations/*_test.c)
 
 # Generate object file paths
 OBJECTS = $(SOURCES:$(SRCDIR)/%.c=$(BUILDDIR)/%.o)
+OPERATIONS_OBJECTS = $(OPERATIONS_SOURCES:$(SRCDIR)/operations/%.c=$(TEST_BUILDDIR)/%.o)
 TEST_OBJECTS = $(TEST_SOURCES:$(TESTDIR)/%.c=$(TEST_BUILDDIR)/%.o)
 
 # Include directories
@@ -27,17 +29,20 @@ TEST_TARGET = $(TEST_BUILDDIR)/cmocka_test
 
 all: $(TEST_TARGET)
 
-$(TEST_TARGET): $(TEST_OBJECTS) $(OBJECTS)
-		$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
+$(TEST_TARGET): $(TEST_OBJECTS) $(OBJECTS) $(OPERATIONS_OBJECTS)
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
 $(BUILDDIR)/%.o: $(SRCDIR)/%.c
-		$(CC) $(CFLAGS) $(INCLUDES) -c -o $@ $<
+	$(CC) $(CFLAGS) $(INCLUDES) -c -o $@ $<
+
+$(TEST_BUILDDIR)/%.o: $(SRCDIR)/operations/%.c
+	$(CC) $(CFLAGS) $(INCLUDES) -c -o $@ $<
 
 $(TEST_BUILDDIR)/%.o: $(TESTDIR)/%.c
-		$(CC) $(CFLAGS) $(INCLUDES) -c -o $@ $<
+	$(CC) $(CFLAGS) $(INCLUDES) -c -o $@ $<
 
-test:
+test: $(TEST_TARGET)
 	./build/tests/cmocka_test
 
 clean:
-		rm -f $(OBJECTS) $(TEST_OBJECTS) $(TEST_TARGET)
+	rm -f $(OBJECTS) $(OPERATIONS_OBJECTS) $(TEST_OBJECTS) $(TEST_TARGET)
