@@ -6,13 +6,13 @@
 #include "../include/vm.h" 
 #include "../include/tests.h"
 
-VirtualMachine virtualMachine;
+virtual_machine_t virtualMachine;
 
 void test_initialize_memory() {
 
     initializeVirtualMachine(&virtualMachine);
     assert_true(&virtualMachine != NULL);
-    assert_true(&virtualMachine.cells != NULL);
+    assert_true(&virtualMachine.memory != NULL);
     assert_true(&virtualMachine.registers != NULL);
 }
 

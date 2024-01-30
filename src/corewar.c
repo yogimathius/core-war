@@ -10,7 +10,7 @@ typedef enum {
     HALT,
 } Instruction;
 
-void execute_instruction(VirtualMachine *vm, uint8_t operand) {
+void execute_instruction(virtual_machine_t *vm, uint8_t operand) {
     const op_t *operation = &op_tab[operand]; // Retrieve the operation from op_tab
 
     switch (operation->code) {
@@ -35,7 +35,7 @@ void execute_instruction(VirtualMachine *vm, uint8_t operand) {
     }
 }
 
-void run_program(VirtualMachine *vm, uint64_t *program, int program_size) {
+void run_program(virtual_machine_t *vm, uint64_t *program, int program_size) {
     while (vm->instruction_pointer < program_size) {
         uint64_t instruction = program[vm->instruction_pointer];
         // Instruction opcode = (Instruction)(instruction >> 60);
@@ -47,7 +47,7 @@ void run_program(VirtualMachine *vm, uint64_t *program, int program_size) {
 }
 
 int main() {
-    VirtualMachine vm;
+    virtual_machine_t vm;
     vm.instruction_pointer = 0;
 
     // Example program: MOV 10, ADD 5, HALT
