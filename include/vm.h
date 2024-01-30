@@ -8,20 +8,10 @@
 
 #define MAX_CHAMPIONS 4  // Maximum number of champions
 
-typedef struct {
-    int memory[MEM_SIZE];
-    int registers[REG_NUMBER];
-    int instruction_pointer;
-    int cycle;
-    int champion_count;
-    champion_t champions[MAX_CHAMPIONS];
-} virtual_machine_t;
+void initializeVirtualMachine(core_t *virtualMachine);
 
+int readVirtualMachine(core_t *virtualMachine, int address);
 
-void initializeVirtualMachine(virtual_machine_t *virtualMachine);
-
-int readVirtualMachine(virtual_machine_t *virtualMachine, int address);
-
-void writeVirtualMachine(virtual_machine_t *virtualMachine, int address, int value);
+void writeVirtualMachine(core_t *virtualMachine, int address, int value);
 
 #endif

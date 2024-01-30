@@ -6,7 +6,7 @@
 #include "../include/vm.h" 
 #include "../include/tests.h"
 
-virtual_machine_t virtualMachine;
+core_t virtualMachine;
 
 void test_initialize_memory() {
 
