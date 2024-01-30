@@ -18,9 +18,10 @@ typedef unsigned char code_t;
 // Enumeration of parameter types
 enum parameter_types { T_REG = 1, T_DIR = 2, T_IND = 4, T_LAB = 8 };
 
-// Structure representing the core of the virtual machine
-typedef struct core_s core_t;
+#define MEM_SIZE (6 * 1024)
+#define REG_NUMBER 16
 
+#define MAX_CHAMPIONS 4  
 
 // Enumeration of operation types
 enum op_types {
@@ -53,7 +54,6 @@ enum op_types {
 // Size of registers in bytes
 #define REG_SIZE DIR_SIZE
 
-
 // Header structure for the program
 #define PROG_NAME_LENGTH 128
 #define COMMENT_LENGTH 2048
@@ -73,6 +73,16 @@ typedef struct champion {
   int counter;
   int carry_flag; 
 } champion_t;
+
+// Structure representing the core of the virtual machine
+typedef struct core_s {
+    int memory[MEM_SIZE];
+    int registers[REG_NUMBER];
+    int instruction_pointer;
+    int cycle;
+    int champion_count;
+    champion_t champions[MAX_CHAMPIONS];
+} core_t;
 
 // Structure representing an operation
 
