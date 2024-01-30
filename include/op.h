@@ -18,21 +18,9 @@ typedef unsigned char code_t;
 // Enumeration of parameter types
 enum parameter_types { T_REG = 1, T_DIR = 2, T_IND = 4, T_LAB = 8 };
 
-// Structure representing a champion
-typedef struct champion champion_t;
-
 // Structure representing the core of the virtual machine
 typedef struct core_s core_t;
 
-// Structure representing an operation
-typedef struct op_s {
-  char *mnemonique;     // Operation mnemonic
-  char nbr_args;        // Number of arguments
-  args_type_t type[MAX_ARGS_NUMBER];  // Types of arguments
-  char code;            // Operation code
-  int nbr_cycles;       // Number of cycles for the operation
-  int (*inst)(champion_t *, core_t *, code_t, int *);
-} op_t;
 
 // Enumeration of operation types
 enum op_types {
@@ -56,8 +44,6 @@ enum op_types {
   OP_NB
 };
 
-typedef struct op_s op_t;
-
 // Size of indirect addressing mode in bytes
 #define IND_SIZE 2
 
@@ -67,8 +53,6 @@ typedef struct op_s op_t;
 // Size of registers in bytes
 #define REG_SIZE DIR_SIZE
 
-// Array of operation structures
-extern const op_t op_tab[];
 
 // Header structure for the program
 #define PROG_NAME_LENGTH 128
@@ -82,6 +66,30 @@ typedef struct header_s {
   int prog_size;                            // Program size
   char comment[COMMENT_LENGTH + 1];         // Comment
 } header_t;
+
+typedef struct champion {
+  int id;
+  header_t header;
+  int counter;
+  int carry_flag; 
+} champion_t;
+
+// Structure representing an operation
+
+typedef struct op_s {
+  char *mnemonique;     // Operation mnemonic
+  char nbr_args;        // Number of arguments
+  args_type_t type[MAX_ARGS_NUMBER];  // Types of arguments
+  char code;            // Operation code
+  int nbr_cycles;       // Number of cycles for the operation
+  int (*inst)(champion_t *, core_t *, code_t, int *);
+} op_t;
+
+typedef struct op_s op_t;
+
+// Array of operation structures
+
+extern const op_t op_tab[];
 
 // Maximum number of champions
 #define MAX_CHAMPIONS 4
