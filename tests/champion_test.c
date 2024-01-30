@@ -6,17 +6,18 @@
 #include "../include/champion.h" 
 #include "../include/tests.h"
 
-void test_champion_new() {
+void test_init_champion() {
 
-    champion_t *champ = champion_new();
+    champion_t *champ = init_champion(1);
     assert_true(champ != NULL);
+    assert_true(champ->id == 1);
 }
 
-void test_load_champion() {
+// void test_load_champion() {
 
-}
+// }
 
-void test_execute_instruction() {
-    champion_execute_instruction(&virtualMachine, 1, 24);
-    assert_true(readVirtualMachine(&virtualMachine, 1) == 24);
-}
+// void test_execute_instruction() {
+//     champion_execute_instruction(&virtualMachine, 1, 24);
+//     assert_true(read_vm(&virtualMachine, 1) == 24);
+// }

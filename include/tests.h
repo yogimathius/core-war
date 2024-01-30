@@ -26,4 +26,5 @@ void inst_lld_test();
 void inst_lldi_test();
 void inst_lfork_test();
 void inst_aff_test();
+void test_init_champion();
 #endif
