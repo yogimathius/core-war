@@ -4,6 +4,7 @@
 #include <cmocka.h>
 
 #include "../include/champion.h" 
+#include "../include/vm.h" 
 #include "../include/tests.h"
 
 void test_init_champion() {
@@ -18,6 +19,6 @@ void test_init_champion() {
 // }
 
 // void test_execute_instruction() {
-//     champion_execute_instruction(&virtualMachine, 1, 24);
-//     assert_true(read_vm(&virtualMachine, 1) == 24);
+//     champion_execute_instruction(&core_vm, 1, 24);
+//     assert_true(read_vm(&core_vm, 1) == 24);
 // }
