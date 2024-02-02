@@ -3,63 +3,61 @@
 #include "../include/op.h"
 #include "../include/vm.h"
 
-typedef enum {
-    MOV,
-    ADD,
-    SUB,
-    HALT,
-} Instruction;
-
-void execute_instruction(core_t *vm, uint8_t operand) {
-    const op_t *operation = &op_tab[operand]; // Retrieve the operation from op_tab
-
-    switch (operation->code) {
-        case MOV:
-            // call inst fn for each case
-            // inst_mov();
-            // vm->registers[0] = operand;
-            break;
-        case ADD:
-            vm->registers[0] += operand;
-            break;
-        case SUB:
-            vm->registers[0] -= operand;
-            break;
-        case HALT:
-            printf("Halted.\n");
-            // In a real Core War environment, this might trigger removal of the program
-            break;
-        default:
-            printf("Unknown opcode\n");
-            // Handle unknown opcode error
+void execute_instruction(core_t *vm, champion_t *champ, enum op_types opcode, unsigned long operand) {
+    const op_t *operation = &op_tab[opcode]; 
+    
+    if (operation->inst != NULL) {
+        printf("calling operation: %s\n", operation->mnemonique);
+        // TODO: this might not be the correct way to pass operand??
+        operation->inst(champ, vm, opcode, (int *) &operand);
+    } else {
+        printf("Unknown or unimplemented operation\n");
     }
 }
 
-void run_program(core_t *vm, uint64_t *program, int program_size) {
-    while (vm->instruction_pointer < program_size) {
-        uint64_t instruction = program[vm->instruction_pointer];
-        // Instruction opcode = (Instruction)(instruction >> 60);
-        uint64_t operand = instruction & 0xFFFFFFFFFFFFFFF; // Extract lower 60 bits
+// TODO: are the vm and champs passed all the way down as pointers???
+void run_program(core_t *vm, champion_t champ, unsigned long *program, int program_size) {
+    for (int i = 0; i < program_size; i++) {
+        unsigned long instruction = program[i];
+        enum op_types opcode = (enum op_types)(instruction >> 60);
+        unsigned long operand = instruction & 0xFFFFFFFFFFFFFFF; 
 
-        execute_instruction(vm, operand);
+        execute_instruction(vm, &champ, opcode, operand);
         vm->instruction_pointer++;
     }
+}
+
+uint64_t generate_instruction(int opcode, int argument) {
+    return ((uint64_t)opcode << 60) | ((uint64_t)argument & 0xFFFFFFFFFFFFFFF);
 }
 
 int main() {
     core_t vm;
     vm.instruction_pointer = 0;
 
-    // Example program: MOV 10, ADD 5, HALT
-    uint64_t program[] = {
-        0xC00000000000000A,  // MOV 10
-        0x8000000000000005,  // ADD 5
-        0xA000000000000000   // HALT
+    // NOTE: just for testing purposes, we might not be using the same format but this is specifically for testing the control flow of executing instructions
+    unsigned long program[] = {
+        // arguments are random immediate values and could mean nothing XD
+        generate_instruction(OP_ADD, 0x5678ULL),   
+        generate_instruction(OP_SUB, 0x5678ULL), 
+        generate_instruction(OP_AND, 0xABCDULL), 
+        generate_instruction(OP_OR, 0xEF01ULL),  
+        generate_instruction(OP_XOR, 0x2345ULL), 
+        generate_instruction(OP_ZJMP, 0x3456ULL), 
+        generate_instruction(OP_LDI, 0x6789ULL), 
+        generate_instruction(OP_STI, 0x789AULL), 
+        generate_instruction(OP_FORK, 0x89ABULL),
+        generate_instruction(OP_LLD, 0xBCDEULL),  
+        generate_instruction(OP_LLDI, 0xCDEFULL),
+        generate_instruction(OP_LFORK, 0xDEAFULL),
+        generate_instruction(OP_AFF, 0xFADEULL),
+        generate_instruction(OP_NOTHING, 0x0000ULL),
     };
 
     int program_size = sizeof(program) / sizeof(program[0]);
-
-    run_program(&vm, program, program_size);
+    // TODO: replace program with champion when ready!!
+    champion_t *champ = init_champion(1);
+    run_program(&vm, *champ, program, program_size);
 
     return 0;
 }
