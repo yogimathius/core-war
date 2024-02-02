@@ -14,6 +14,16 @@ void test_init_champion() {
     assert_true(champ->id == 1);
 }
 
+void test_add_champion() {
+    core_t virtualMachine;
+    init_vm(&virtualMachine);
+
+    champion_t *champ = init_champion(1);
+
+    add_champion(&virtualMachine, champ);
+    assert_true(&virtualMachine.champions[0] == champ);
+}
+
 // void test_load_champion() {
 
 // }
