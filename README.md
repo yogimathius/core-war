@@ -147,8 +147,7 @@ sti r2, 23, %34
 
 - Instruction code: 00 00 10 11 = 0x0b (Hex. representation)
 - Param. Description: 01 11 10 00 = 0x78 (Hex. representation)
-
-Values: 0x02 0x00 0x17 0x00 0x00 0x00 0x22
+- Values: 0x02 0x00 0x17 0x00 0x00 0x00 0x22
 
 Full Instruction (in Hexadecimal): 0b 78 02 00 17 00 00 00 22
 
