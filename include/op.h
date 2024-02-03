@@ -71,6 +71,7 @@ typedef struct header_s {
 typedef struct champion {
   int id;
   header_t header;
+  int registers[REG_NUMBER];
   int counter;
   int carry_flag; 
 } champion_t;
@@ -78,7 +79,6 @@ typedef struct champion {
 // Structure representing the core of the virtual machine
 typedef struct core_s {
     int memory[MEM_SIZE];
-    int registers[REG_NUMBER];
     int instruction_pointer;
     int cycle;
     int champion_count;
