@@ -7,8 +7,6 @@
 
 int main(void) {
     const struct CMUnitTest tests[] = {
-        cmocka_unit_test(true_test),
-        cmocka_unit_test(passing_test),
         cmocka_unit_test(inst_live_test),
         cmocka_unit_test(inst_ld_test),
         cmocka_unit_test(inst_st_test),

@@ -2,14 +2,8 @@
 #define TESTS_H_
 
 void test_initialize_memory();
-
 void test_read_memory();
-
 void test_write_memory();
-
-void true_test();
-void passing_test();
-
 void inst_live_test();
 void inst_ld_test();
 void inst_st_test();
@@ -27,4 +21,5 @@ void inst_lldi_test();
 void inst_lfork_test();
 void inst_aff_test();
 void test_init_champion();
+void test_add_champion();
 #endif
