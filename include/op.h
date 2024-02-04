@@ -60,6 +60,25 @@ enum op_types {
 #define COMMENT_LENGTH 2048
 #define COREWAR_EXEC_MAGIC 0xea83f3
 
+enum registers {
+  r1 = 0,
+  r2,
+  r3,
+  r4,
+  r5,
+  r6,
+  r7,
+  r8,
+  r9,
+  r10,
+  r11,
+  r12,
+  r13,
+  r14,
+  r15,
+  r16
+};
+
 // Header structure for the program
 typedef struct header_s {
   int magic;                                // Magic number
@@ -71,14 +90,14 @@ typedef struct header_s {
 typedef struct champion {
   int id;
   header_t header;
-  int registers[REG_NUMBER];
+  enum registers registers[REG_NUMBER];
   int counter;
   int carry_flag; 
 } champion_t;
 
 // Structure representing the core of the virtual machine
 typedef struct core_s {
-    int registers[REG_NUMBER];
+    enum registers registers[REG_NUMBER];
     int memory[MEM_SIZE];
     int instruction_pointer;
     int cycle;
