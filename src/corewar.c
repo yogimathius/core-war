@@ -1,30 +1,54 @@
 #include <stdio.h>
 #include <stdint.h>
+#include <string.h>
+#include <stdlib.h>
+
 #include "../include/op.h"
 #include "../include/vm.h"
 
-void execute_instruction(core_t *vm, champion_t *champ, enum op_types opcode, unsigned long operand) {
+void execute_instruction(core_t *vm, champion_t *champ, enum op_types opcode, int *instruction) {
     const op_t *operation = &op_tab[opcode]; 
     
     if (operation->inst != NULL) {
         printf("calling operation: %s\n", operation->mnemonique);
         // TODO: this might not be the correct way to pass operand??
-        operation->inst(champ, vm, opcode, (int *) &operand);
+        operation->inst(champ, vm, opcode, instruction);
     } else {
         printf("Unknown or unimplemented operation\n");
     }
 }
 
-// TODO: are the vm and champs passed all the way down as pointers???
-void run_program(core_t *vm, champion_t champ, unsigned long *program, int program_size) {
-    for (int i = 0; i < program_size; i++) {
-        unsigned long instruction = program[i];
-        enum op_types opcode = (enum op_types)(instruction >> 60);
-        unsigned long operand = instruction & 0xFFFFFFFFFFFFFFF; 
-
-        execute_instruction(vm, &champ, opcode, operand);
-        vm->instruction_pointer++;
+int *parse_instruction(char instruction[64]) {
+    int *parsed_instruction = (int*)malloc(strlen(instruction) * sizeof(int));
+    char *token = strtok(instruction, " ");
+    int i = 0;
+    while (token != NULL) {
+        parsed_instruction[i] = atoi(token);
+        token = strtok(NULL, " ");
+        i++;
     }
+    return parsed_instruction;
+}
+
+// TODO: are the vm and champs passed all the way down as pointers???
+void run_program(core_t *vm, champion_t champ, char program[15][64], int program_size) {
+    for (int i = 0; i < program_size; i++) {
+        char opcode_hex[2];
+        strncpy(opcode_hex, program[i], 2);
+        printf("opcode_hex: %s\n", opcode_hex);
+
+        enum op_types opcode = (enum op_types)strtol(opcode_hex, NULL, 16);
+        char instruction[64];
+        strncpy(instruction, program[i] + 3, 64);
+        printf("instruction: %s\n", instruction);
+        int *parsed_instruction = parse_instruction(instruction);
+        execute_instruction(vm, &champ, opcode, parsed_instruction);
+        // vm->instruction_pointer++;
+    }
+    UNUSED(program);
+    UNUSED(champ);
+    UNUSED(vm);
+    UNUSED(program_size);
 }
 
 uint64_t generate_instruction(int opcode, int argument) {
@@ -35,29 +59,30 @@ int main() {
     core_t vm;
     vm.instruction_pointer = 0;
 
-    // NOTE: just for testing purposes, we might not be using the same format but this is specifically for testing the control flow of executing instructions
-    unsigned long program[] = {
-        // arguments are random immediate values and could mean nothing XD
-        generate_instruction(OP_ADD, 0x5678ULL),   
-        generate_instruction(OP_SUB, 0x5678ULL), 
-        generate_instruction(OP_AND, 0xABCDULL), 
-        generate_instruction(OP_OR, 0xEF01ULL),  
-        generate_instruction(OP_XOR, 0x2345ULL), 
-        generate_instruction(OP_ZJMP, 0x3456ULL), 
-        generate_instruction(OP_LDI, 0x6789ULL), 
-        generate_instruction(OP_STI, 0x789AULL), 
-        generate_instruction(OP_FORK, 0x89ABULL),
-        generate_instruction(OP_LLD, 0xBCDEULL),  
-        generate_instruction(OP_LLDI, 0xCDEFULL),
-        generate_instruction(OP_LFORK, 0xDEAFULL),
-        generate_instruction(OP_AFF, 0xFADEULL),
-        generate_instruction(OP_NOTHING, 0x0000ULL),
+    char program_two[15][64] = {
+        "02 90 00 00 00 22 03",
+        "03 70 04 00 00 00 22",
+        "04 54 01 01 03",
+		"05 54 04 05 06",
+		"06 54 04 05 06",
+		"07 54 06 07 12",
+		"08 54 12 14 15",
+		"09 80 00 00 00 13",
+		"0a 64 3 00 00 00 00 04 01",
+		"0b 90 00 00 00 22 03",
+		"0c 80 00 00 00 1",
+		"0d D0 01 1C 03",
+		"0e A4 00 00 00 00 03 00 00 00 04 01",
+		"0f 80 00 00 00 02",
+		"010 40	01"
     };
 
-    int program_size = sizeof(program) / sizeof(program[0]);
-    // TODO: replace program with champion when ready!!
-    champion_t *champ = init_champion(1);
-    run_program(&vm, *champ, program, program_size);
+    // // TODO: replace program with champion when ready!!
+    const champion_t *champ = init_champion(1);
+
+    int program_two_size = sizeof(program_two) / sizeof(program_two[0]);
+    // TODO: replace program_two with champion when ready!!
+    run_program(&vm, *champ, program_two, program_two_size);
 
     return 0;
 }
