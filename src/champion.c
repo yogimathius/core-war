@@ -18,8 +18,3 @@ void add_champion(core_t *core_t, champion_t *champion) {
   champion->counter = 0;
   champion->carry_flag = 0;
 }
-
-
-// void champion_execute_instruction(champion_t *champion, unsigned char *memory) {
-
-// }

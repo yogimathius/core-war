@@ -26,12 +26,3 @@ void test_add_champion() {
     assert_true(champ->counter == 0);
     assert_true(champ->carry_flag == 0);
 }
-
-// void test_load_champion() {
-
-// }
-
-// void test_execute_instruction() {
-//     champion_execute_instruction(&core_vm, 1, 24);
-//     assert_true(read_vm(&core_vm, 1) == 24);
-// }
