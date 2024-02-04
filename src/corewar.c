@@ -45,10 +45,6 @@ void run_program(core_t *vm, champion_t champ, char program[15][64], int program
         execute_instruction(vm, &champ, opcode, parsed_instruction);
         // vm->instruction_pointer++;
     }
-    UNUSED(program);
-    UNUSED(champ);
-    UNUSED(vm);
-    UNUSED(program_size);
 }
 
 uint64_t generate_instruction(int opcode, int argument) {
