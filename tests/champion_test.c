@@ -11,7 +11,6 @@ void test_init_champion() {
 
     champion_t *champ = init_champion(1);
     assert_true(champ != NULL);
-    assert_true(champ->id == 1);
 }
 
 void test_add_champion() {
@@ -21,7 +20,11 @@ void test_add_champion() {
     champion_t *champ = init_champion(1);
 
     add_champion(&virtualMachine, champ);
-    assert_true(&virtualMachine.champions[0] == champ);
+    assert_true(champ->id == 1);
+    assert_true(virtualMachine.champions[0].id == champ->id);
+    assert_true(virtualMachine.champion_count == 1);
+    assert_true(champ->counter == 0);
+    assert_true(champ->carry_flag == 0);
 }
 
 // void test_load_champion() {
