@@ -3,9 +3,9 @@
 
 #include "op.h"
 
-champion_t *init_champion(int id);
+champion_t *init_champion();
 
-int add_champion(core_t *core_t, champion_t *champion);
+void add_champion(core_t *core_t, champion_t *champion);
 // void champion_execute_instruction(champion_t *champion, unsigned char *memory);
 
 #endif
