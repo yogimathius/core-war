@@ -9,6 +9,7 @@ void init_vm(core_t *core_t) {
     for (int i = 0; i < REG_NUMBER; i++) {
         core_t->registers[i] = 0;
     }
+    core_t->champion_count = 0;
 }
 
 int read_vm(core_t *core_t, int address) {
