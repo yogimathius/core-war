@@ -25,7 +25,7 @@ TEST_OBJECTS = $(TEST_SOURCES:$(TESTDIR)/%.c=$(TEST_BUILDDIR)/%.o)
 INCLUDES = -I$(INCDIR)
 
 # Target for the test executable
-TEST_TARGET = $(TEST_BUILDDIR)/cmocka_test
+TEST_TARGET = $(TEST_BUILDDIR)/run
 
 all: $(TEST_TARGET)
 
@@ -42,7 +42,7 @@ $(TEST_BUILDDIR)/%.o: $(TESTDIR)/%.c
 	$(CC) $(CFLAGS) $(INCLUDES) -c -o $@ $<
 
 test: $(TEST_TARGET)
-	./build/tests/cmocka_test
+	./build/tests/run
 
 clean:
 	rm -f $(OBJECTS) $(OPERATIONS_OBJECTS) $(TEST_OBJECTS) $(TEST_TARGET)

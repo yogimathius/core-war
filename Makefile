@@ -1,13 +1,15 @@
 .PHONY: all clean test
 
-all:
+all: src test run_tests
+
+src:
 		$(MAKE) -C src
 
 test:
 		$(MAKE) -C tests
 
 run_tests:
-		./tests/build/tests/cmocka_test
+		./tests/build/tests/run
 
 clean:
 		$(MAKE) -C src clean
