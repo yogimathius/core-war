@@ -2,7 +2,7 @@
 #include <stdio.h>
 
 int inst_zjmp(champion_t *champion, core_t *core, code_t code, int *inst) {
-  printf("calling zjmp\n");
+  printf("called zjmp\n");
   UNUSED(champion);
   UNUSED(core);
   UNUSED(code);

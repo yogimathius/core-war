@@ -2,7 +2,7 @@
 #include <stdio.h>
 
 int inst_and(champion_t *champion, core_t *core, code_t code, int *inst) {
-  printf("calling and\n");
+  printf("called and\n");
 
   UNUSED(champion);
   UNUSED(core);

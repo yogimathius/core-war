@@ -2,7 +2,7 @@
 #include <stdio.h>
 
 int inst_fork(champion_t *champion, core_t *core, code_t code, int *inst) {
-  printf("calling FORK\n");
+  printf("called FORK\n");
   UNUSED(champion);
   UNUSED(core);
   UNUSED(code);
