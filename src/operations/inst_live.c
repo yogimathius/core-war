@@ -2,7 +2,7 @@
 #include <stdio.h>
 
 int inst_live(champion_t *champion, core_t *core, code_t code, int *inst) {
-  printf("calling live\n");
+  printf("called live\n");
   UNUSED(champion);
   UNUSED(core);
   UNUSED(code);
