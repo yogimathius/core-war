@@ -24,6 +24,7 @@ void test_create_champion() {
     assert_true(champ->header.prog_size == 23);
     assert_true(strcmp(champ->header.prog_name, "Simple") == 0);
     assert_true(strcmp(champ->header.comment, "Let's get started") == 0);
+    // Add test checking instructions get loaded properly
 }
 
 void test_add_champion() {
