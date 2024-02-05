@@ -74,12 +74,14 @@ champion_t *create_champion(champion_t *champion, char *filename) {
     }
 
     int i = 140 + COMMENT_LENGTH;
-    
+  	char *inst;
+    inst = champion->inst;
+
+    // How to test this?
     while (i < bytes_read) {
       if (hex_buffer[i] != 0) {
-        // converting to hex
-        printf("hex item at %d: %0x\n", i, hex_buffer[i]);
-
+        *inst = hex_buffer[i];
+        inst++;
       }
       i++;
     }
