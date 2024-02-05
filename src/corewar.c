@@ -52,7 +52,7 @@ int main() {
     vm.instruction_pointer = 0;
 
     //  TODO: replace program with champion when ready!!
-    char program_two[15][64] = {
+    char program[15][64] = {
         "02 90 00 00 00 22 03",
         "03 70 04 00 00 00 22",
         "04 54 01 01 03",
@@ -70,10 +70,10 @@ int main() {
 		"010 40	01"
     };
 
-    const champion_t *champ = init_champion(1);
+    const champion_t *champ = init_champion();
 
-    int program_two_size = sizeof(program_two) / sizeof(program_two[0]);
-    run_program(&vm, *champ, program_two, program_two_size);
+    int program_size = sizeof(program) / sizeof(program[0]);
+    run_program(&vm, *champ, program, program_size);
 
     return 0;
 }
