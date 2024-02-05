@@ -88,9 +88,6 @@ champion_t *create_champion(champion_t *champion, char *filename) {
       perror("Error getting file size");
   }
   
-  printf("\n");
-  UNUSED(champion);
-  UNUSED(fd);
   return champion;
 }
 
