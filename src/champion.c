@@ -37,7 +37,8 @@ champion_t *create_champion(champion_t *champion, char *filename) {
 
     unsigned int magic_value = 0;
 
-    for (int i = 0; i < bytes_read && i < 4; i++) {
+    int i;
+    for (i = 0; i < bytes_read && i < 4; i++) {
         magic_value = (magic_value << 8) | (unsigned char)hex_buffer[i];
     }
 
@@ -48,6 +49,23 @@ champion_t *create_champion(champion_t *champion, char *filename) {
         printf("Magic value does not equal 0xea.\n");
         return NULL;
     }
+
+    for (i = 4; i < bytes_read && i < 132; i++) {
+        champion->header.prog_name[i - 4] = hex_buffer[i];
+    }
+
+    for (i = 136; i < bytes_read && i < 140; i++) {
+        champion->header.prog_size = (champion->header.prog_size << 8) | (unsigned char)hex_buffer[i];
+    }
+
+    for (i = 140; i < bytes_read && i < 2140; i++) {
+        champion->header.comment[i - 140] = hex_buffer[i];
+    }
+
+    printf("Program name: %s\n", champion->header.prog_name);
+    printf("Program size: %d\n", champion->header.prog_size);
+    printf("Comment: %s\n", champion->header.comment);
+
 
   } else {
       perror("Error getting file size");
