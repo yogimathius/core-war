@@ -47,10 +47,6 @@ void run_program(core_t *vm, champion_t champ, char program[15][64], int program
     }
 }
 
-uint64_t generate_instruction(int opcode, int argument) {
-    return ((uint64_t)opcode << 60) | ((uint64_t)argument & 0xFFFFFFFFFFFFFFF);
-}
-
 int main() {
     core_t vm;
     vm.instruction_pointer = 0;
@@ -74,11 +70,9 @@ int main() {
 		"010 40	01"
     };
 
-    // // TODO: replace program with champion when ready!!
     const champion_t *champ = init_champion(1);
 
     int program_two_size = sizeof(program_two) / sizeof(program_two[0]);
-    // TODO: replace program_two with champion when ready!!
     run_program(&vm, *champ, program_two, program_two_size);
 
     return 0;
