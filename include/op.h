@@ -92,7 +92,8 @@ typedef struct champion {
   header_t header;
   enum registers registers[REG_NUMBER];
   int counter;
-  int carry_flag; 
+  int carry_flag;
+  char inst[MEM_SIZE + 1];
 } champion_t;
 
 // Structure representing the core of the virtual machine
