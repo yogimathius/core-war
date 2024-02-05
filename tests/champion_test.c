@@ -19,7 +19,7 @@ void test_create_champion() {
     init_vm(&virtualMachine);
 
     champion_t *champ = init_champion();
-    create_champion(champ, "simple_2.cor");
+    create_champion(champ, "players/simple_2.cor");
     assert_true(champ->header.magic == 0xea83f3);
     assert_true(champ->header.prog_size == 23);
     assert_true(strcmp(champ->header.prog_name, "Simple") == 0);
