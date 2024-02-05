@@ -74,9 +74,10 @@ champion_t *create_champion(champion_t *champion, char *filename) {
     }
 
     int j = 0; // Index for inst array
-    for (int i = 140 + COMMENT_LENGTH; i < bytes_read && j < MEM_SIZE; i++, j++) {
+    for (int i = 140 + COMMENT_LENGTH; i < bytes_read && j < MEM_SIZE; i++) {
         if (hex_buffer[i] != 0) {
             champion->inst[j] = hex_buffer[i];
+            j++;
         }
     }
 
