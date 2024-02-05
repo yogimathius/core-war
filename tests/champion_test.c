@@ -1,6 +1,7 @@
 #include <stdarg.h>
 #include <stddef.h>
 #include <setjmp.h>
+#include <string.h>
 #include <cmocka.h>
 
 #include "../include/champion.h" 
@@ -20,6 +21,9 @@ void test_create_champion() {
     champion_t *champ = init_champion();
     create_champion(champ, "simple_2.cor");
     assert_true(champ->header.magic == 0xea83f3);
+    assert_true(champ->header.prog_size == 23);
+    assert_true(strcmp(champ->header.prog_name, "Simple") == 0);
+    assert_true(strcmp(champ->header.comment, "Let's get started") == 0);
 }
 
 void test_add_champion() {
