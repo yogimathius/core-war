@@ -5,7 +5,8 @@
 
 champion_t *init_champion();
 
+champion_t *create_champion(champion_t *champion, char *filename);
+
 void add_champion(core_t *core_t, champion_t *champion);
-// void champion_execute_instruction(champion_t *champion, unsigned char *memory);
 
 #endif

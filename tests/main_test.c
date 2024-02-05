@@ -27,6 +27,7 @@ int main(void) {
         cmocka_unit_test(test_read_memory),
         cmocka_unit_test(test_write_memory),
         cmocka_unit_test(test_init_champion),
+        cmocka_unit_test(test_create_champion),
         cmocka_unit_test(test_add_champion),
     };
 
