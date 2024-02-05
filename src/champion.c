@@ -73,17 +73,18 @@ champion_t *create_champion(champion_t *champion, char *filename) {
       exit(1);
     }
 
-    int i = 140 + COMMENT_LENGTH;
-  	char *inst;
-    inst = champion->inst;
+    int j = 0; // Index for inst array
+    for (int i = 140 + COMMENT_LENGTH; i < bytes_read && j < MEM_SIZE; i++, j++) {
+        if (hex_buffer[i] != 0) {
+            champion->inst[j] = hex_buffer[i];
+        }
+    }
 
-    // How to test this?
-    while (i < bytes_read) {
-      if (hex_buffer[i] != 0) {
-        *inst = hex_buffer[i];
-        inst++;
-      }
-      i++;
+    if (j < MEM_SIZE) {
+      champion->inst[j] = '\0';
+    } else {
+        // Handle the case where the instructions exceed the size of inst array
+        // You may want to log an error or take appropriate action here
     }
     
   } else {
