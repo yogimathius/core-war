@@ -8,13 +8,15 @@
 #include "../include/vm.h" 
 #include "../include/tests.h"
 
-void test_init_champion() {
+void test_init_champion(void **state) {
+    UNUSED(state);
 
     champion_t *champ = init_champion();
     assert_true(champ != NULL);
 }
 
-void test_create_champion() {
+void test_create_champion(void **state) {
+    UNUSED(state);
     core_t virtualMachine;
     init_vm(&virtualMachine);
 
@@ -27,7 +29,8 @@ void test_create_champion() {
     // Add test checking instructions get loaded properly
 }
 
-void test_add_champion() {
+void test_add_champion(void **state) {
+    UNUSED(state);
     core_t virtualMachine;
     init_vm(&virtualMachine);
 
