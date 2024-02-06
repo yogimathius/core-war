@@ -6,7 +6,7 @@
 
 #include "../include/op.h"
 #include "../include/vm.h"
-#include "../include/parse_instructions.h"
+#include "../include/instructions.h"
 
 void execute_instruction(core_t *vm, champion_t *champ, enum op_types opcode, int *instruction) {
     const op_t *operation = &op_tab[opcode]; 

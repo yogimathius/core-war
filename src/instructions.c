@@ -3,7 +3,7 @@
 #include <string.h>
 
 #include "../include/op.h"
-#include "../include/parse_instructions.h"
+#include "../include/instructions.h"
 
 char **parse_instruction(char *instruction) {
     char **operands = malloc((MEM_SIZE + 1) * sizeof(char *)); 
