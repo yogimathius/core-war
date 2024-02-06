@@ -9,7 +9,7 @@
 #include "../include/instructions.h"
 
 void execute_instruction(core_t *vm, champion_t *champ, enum op_types opcode, int *instruction) {
-    const op_t *operation = &op_tab[opcode]; 
+    const op_t *operation = &op_tab[opcode];
     
     if (operation->inst != NULL) {
         printf("calling operation: %s\n", operation->mnemonique);
@@ -31,7 +31,15 @@ void run_program(core_t *vm, champion_t champ) {
     char **parsed_instructions = parse_instruction(instructions);
 
     build_instructions(&champ, parsed_instructions, inst);
-
+    while (inst->opcode != -1) {
+        printf("Executing instruction: %s\n", op_tab[inst->opcode].mnemonique);
+        int operands[op_tab[inst->opcode].nbr_args];
+        for (int i = 0; i < op_tab[inst->opcode].nbr_args; i++) {
+            operands[i] = atoi(&inst->operands[i]);
+        }
+        execute_instruction(vm, &champ, inst->opcode, operands);
+        inst++;
+    }
     free(parsed_instructions);
 }
 
