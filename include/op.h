@@ -94,6 +94,8 @@ typedef struct champion {
   int counter;
   int carry_flag;
   int inst[MEM_SIZE + 1];
+  char *instructions;
+  int instruction_size;
 } champion_t;
 
 // Structure representing the core of the virtual machine

@@ -48,6 +48,10 @@ int parse_header(champion_t *champion, int bytes_read, char *hex_buffer) {
   return 0;
 }
 
+char bin_to_hex(uint8_t byte) {
+    return byte < 10 ? byte + '0' : byte - 10 + 'a';
+}
+
 champion_t *create_champion(champion_t *champion, char *filename) {
   int fd = open(filename, O_RDONLY);
 
@@ -81,12 +85,24 @@ champion_t *create_champion(champion_t *champion, char *filename) {
         }
     }
 
-    if (j < MEM_SIZE) {
-      champion->inst[j] = '\0';
-    } else {
-        // Handle the case where the instructions exceed the size of inst array
-        // You may want to log an error or take appropriate action here
+    champion->inst[j] = '\0';
+
+    char *hex_string = (char *)malloc(st.st_size * 2 + 1);
+
+    j = 0;
+    for (int i = 140 + COMMENT_LENGTH; i < bytes_read && j < MEM_SIZE; i++) {
+      if (hex_buffer[i] != 0) {
+        hex_string[j * 3]     = bin_to_hex(hex_buffer[i] >> 4);
+        hex_string[j * 3 + 1] = bin_to_hex(hex_buffer[i] & 0x0F);
+        hex_string[j * 3 + 2] = ' '; 
+        j++;
+      }
     }
+    hex_string[st.st_size * 3] = '\0';
+    champion->instruction_size = j;
+    printf("Hexadecimal representation: %s\n", hex_string);
+  
+    champion->instructions = hex_string;
     
   } else {
       perror("Error getting file size");
@@ -101,4 +117,5 @@ void add_champion(core_t *core_t, champion_t *champion) {
   core_t->champions[core_t->champion_count - 1] = *champion;
   champion->counter = 0;
   champion->carry_flag = 0;
+  champion->instructions = NULL;
 }
