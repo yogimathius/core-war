@@ -2,9 +2,11 @@
 #include <stdint.h>
 #include <string.h>
 #include <stdlib.h>
+#include <ctype.h>
 
 #include "../include/op.h"
 #include "../include/vm.h"
+#include "../include/parse_instructions.h"
 
 void execute_instruction(core_t *vm, champion_t *champ, enum op_types opcode, int *instruction) {
     const op_t *operation = &op_tab[opcode]; 
@@ -18,62 +20,44 @@ void execute_instruction(core_t *vm, champion_t *champ, enum op_types opcode, in
     }
 }
 
-int *parse_instruction(char instruction[64]) {
-    int *parsed_instruction = (int*)malloc(strlen(instruction) * sizeof(int));
-    char *token = strtok(instruction, " ");
-    int i = 0;
-    while (token != NULL) {
-        parsed_instruction[i] = atoi(token);
-        token = strtok(NULL, " ");
-        i++;
-    }
-    return parsed_instruction;
-}
-
 // TODO: are the vm and champs passed all the way down as pointers???
-void run_program(core_t *vm, champion_t champ, char program[15][64], int program_size) {
-    for (int i = 0; i < program_size; i++) {
-        char opcode_hex[2];
-        strncpy(opcode_hex, program[i], 2);
-        printf("opcode_hex: %s\n", opcode_hex);
+void run_program(core_t *vm, champion_t champ) {
+    UNUSED(vm);
+    printf("Running program: %s\n", champ.header.prog_name);
 
-        enum op_types opcode = (enum op_types)strtol(opcode_hex, NULL, 16);
-        char instruction[64];
-        strncpy(instruction, program[i] + 3, 64);
-        printf("instruction: %s\n", instruction);
-        int *parsed_instruction = parse_instruction(instruction);
-        execute_instruction(vm, &champ, opcode, parsed_instruction);
-        // vm->instruction_pointer++;
-    }
+    char *instructions = champ.instructions;
+    instruction_t *inst = (instruction_t*)malloc(sizeof(instruction_t));
+
+    char **parsed_instructions = parse_instruction(instructions);
+
+    build_instructions(&champ, parsed_instructions, inst);
+
+    free(parsed_instructions);
 }
 
-int main() {
+int main(int ac, char **av) {
+    printf("Starting corewar\n");
     core_t vm;
     vm.instruction_pointer = 0;
+    if (ac < 2) {
+        printf("Usage: ./corewar [champion1.cor] [champion2.cor] [champion3.cor] [champion4.cor]\n");
+        exit(1);
+    }
+    while (ac > 1) {
+        printf("Loading champion: %s\n", av[ac - 1]);
+        champion_t *champ = init_champion();
+        create_champion(champ, av[ac - 1]);
+        add_champion(&vm, champ);
+        ac--;
+    }
 
-    //  TODO: replace program with champion when ready!!
-    char program[15][64] = {
-        "02 90 00 00 00 22 03",
-        "03 70 04 00 00 00 22",
-        "04 54 01 01 03",
-		"05 54 04 05 06",
-		"06 54 04 05 06",
-		"07 54 06 07 12",
-		"08 54 12 14 15",
-		"09 80 00 00 00 13",
-		"0a 64 3 00 00 00 00 04 01",
-		"0b 90 00 00 00 22 03",
-		"0c 80 00 00 00 1",
-		"0d D0 01 1C 03",
-		"0e A4 00 00 00 00 03 00 00 00 04 01",
-		"0f 80 00 00 00 02",
-		"010 40	01"
-    };
-
-    const champion_t *champ = init_champion();
-
-    int program_size = sizeof(program) / sizeof(program[0]);
-    run_program(&vm, *champ, program, program_size);
+    int i = 0;
+    while (i < vm.champion_count) {
+        printf("Champion P%d: %s\n", vm.champions[i].id, vm.champions[i].header.prog_name);
+        run_program(&vm, vm.champions[i]);
+        i++;
+    }
+    // run_program(&vm, *champ, program, program_size);
 
     return 0;
 }
