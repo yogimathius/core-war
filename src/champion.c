@@ -48,7 +48,7 @@ int parse_header(champion_t *champion, int bytes_read, char *hex_buffer) {
   return 0;
 }
 
-char bin_to_hex(uint8_t byte) {
+char bin_to_hex(unsigned int byte) {
     return byte < 10 ? byte + '0' : byte - 10 + 'a';
 }
 
