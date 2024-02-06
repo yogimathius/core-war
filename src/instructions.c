@@ -41,7 +41,7 @@ void build_instructions(champion_t *champ, char **instructions, instruction_t *i
         printf("opcode: %d, mnemonic: %s, args: %d\n", opcode, operation.mnemonique, operation.nbr_args);
 
         int operation_args = operation.nbr_args;
-        inst->opcode = opcode;
+        inst->opcode = opcode - 1;
         inst->operands = (char*)malloc((operation_args + 1) * sizeof(char));
 
         if (inst->operands == NULL) {
