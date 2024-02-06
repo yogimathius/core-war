@@ -12,4 +12,6 @@ char **parse_instruction(char *instruction);
 
 void build_instructions(champion_t *champ, char **instructions, instruction_t *inst);
 
+void execute_instruction(core_t *vm, champion_t *champ, enum op_types opcode, int *instruction);
+
 #endif

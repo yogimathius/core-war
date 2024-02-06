@@ -8,17 +8,6 @@
 #include "../include/vm.h"
 #include "../include/instructions.h"
 
-void execute_instruction(core_t *vm, champion_t *champ, enum op_types opcode, int *instruction) {
-    const op_t *operation = &op_tab[opcode];
-    
-    if (operation->inst != NULL) {
-        printf("calling operation: %s\n", operation->mnemonique);
-        // TODO: this might not be the correct way to pass operand??
-        operation->inst(champ, vm, opcode, instruction);
-    } else {
-        printf("Unknown or unimplemented operation\n");
-    }
-}
 
 // TODO: are the vm and champs passed all the way down as pointers???
 void run_program(core_t *vm, champion_t champ) {

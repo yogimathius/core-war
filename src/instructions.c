@@ -73,5 +73,16 @@ void build_instructions(champion_t *champ, char **instructions, instruction_t *i
             inst->next = NULL;
         }
     }
+}
 
+void execute_instruction(core_t *vm, champion_t *champ, enum op_types opcode, int *instruction) {
+    const op_t *operation = &op_tab[opcode];
+    
+    if (operation->inst != NULL) {
+        printf("calling operation: %s\n", operation->mnemonique);
+        // TODO: this might not be the correct way to pass operand??
+        operation->inst(champ, vm, opcode, instruction);
+    } else {
+        printf("Unknown or unimplemented operation\n");
+    }
 }
