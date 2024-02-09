@@ -1,15 +1,19 @@
 #include "stdio.h"
+#include "stdlib.h"
 #include "../include/vm.h"
 
-void init_vm(core_t *core_t) {
+core_t *init_vm() {
+    core_t *core = malloc(sizeof(core_t));
     for (int i = 0; i < MEM_SIZE; i++) {
-        core_t->memory[i] = 0;
+        core->memory[i] = 0;
     }
 
     for (int i = 0; i < REG_NUMBER; i++) {
-        core_t->registers[i] = 0;
+        core->registers[i] = 0;
     }
-    core_t->champion_count = 0;
+    core->champion_count = 0;
+
+    return core;
 }
 
 int read_vm(core_t *core_t, int address) {

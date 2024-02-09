@@ -8,7 +8,7 @@
 
 #define MAX_CHAMPIONS 4  // Maximum number of champions
 
-void init_vm(core_t *core_vm);
+core_t *init_vm();
 
 int read_vm(core_t *core_vm, int address);
 
