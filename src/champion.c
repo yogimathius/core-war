@@ -122,3 +122,18 @@ void add_champion(core_t *core_t, champion_t *champion) {
   champion->counter = 0;
   champion->carry_flag = 0;
 }
+
+void run_champion(core_t *vm, champion_t champion) {
+    UNUSED(vm);
+    instruction_t *inst = champion.instruction_list;
+    while (inst != NULL && inst->opcode != -1) {
+        printf("Executing instruction: %s\n", op_tab[inst->opcode].mnemonique);
+        if (inst->opcode < 0 || inst->opcode >= 16) {
+            printf("Invalid opcode: %d\n", inst->opcode);
+            break;
+        }
+
+        execute_instruction(vm, &champion, inst->opcode, inst->operands);
+        inst = inst->next;
+    }
+}
