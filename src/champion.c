@@ -64,9 +64,8 @@ champion_t *create_champion(champion_t *champion, char *filename) {
   struct stat st;
 
   if (stat(filename, &st) == 0) {
-    printf("File size of %s: %lld bytes\n", filename, (long long)st.st_size);
     char hex_buffer[st.st_size];
-    int bytes_read = read(fd, hex_buffer, sizeof(hex_buffer));
+    int bytes_read = read(fd, hex_buffer, sizeof(hex_buffer) - 1);
   
     if (bytes_read == -1) {
       printf("Error: could not read file\n");

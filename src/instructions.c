@@ -57,6 +57,8 @@ void build_instructions(champion_t *champ, char **instructions, instruction_t **
 
         int i = 0;
         printf("opcode: %d, mnemonic: %s, args: %d\n", opcode, operation.mnemonique, operation_args);
+
+        printf("operands: ");
         while (i < operation_args + 2) {
             if (*instructions != NULL) { 
                 if (i == 0 || i == 1) {
@@ -64,7 +66,7 @@ void build_instructions(champion_t *champ, char **instructions, instruction_t **
                     i++;
                     continue;
                 }
-                printf("operand: %s\n", *instructions);
+                printf("%s ", *instructions);
                 long int operandValue = strtol(*instructions, NULL, 10);
                 if (operandValue == 0 && **instructions != '0') {
                     printf("Invalid operand: %s\n", *instructions);
@@ -83,6 +85,7 @@ void build_instructions(champion_t *champ, char **instructions, instruction_t **
                 break;
             }
         }
+        printf("\n");
 
         if (*instructions != NULL) {
             instruction_t *next_inst = (instruction_t*)malloc(sizeof(instruction_t));            
