@@ -13,15 +13,14 @@
 void run_program(core_t *vm, champion_t champ) {
     UNUSED(vm);
     instruction_t *inst = champ.instruction_list;
-
-    while (inst->opcode != -1) {
+    while (inst != NULL && inst->opcode != -1) {
         printf("Executing instruction: %s\n", op_tab[inst->opcode].mnemonique);
-        int operands[op_tab[inst->opcode].nbr_args];
-
-        for (int i = 0; i < op_tab[inst->opcode].nbr_args; i++) {
-            operands[i] = atoi(&inst->operands[i]);
+        if (inst->opcode < 0 || inst->opcode >= 16) {
+            printf("Invalid opcode: %d\n", inst->opcode);
+            break;
         }
-        execute_instruction(vm, &champ, inst->opcode, operands);
+
+        execute_instruction(vm, &champ, inst->opcode, inst->operands);
         inst++;
     }
 }

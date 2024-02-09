@@ -104,9 +104,8 @@ champion_t *create_champion(champion_t *champion, char *filename) {
     printf("Hexadecimal representation: %s\n", hex_string);
   
     char **parsed_instructions = parse_instructions(hex_string);
-    champion->instructions = parsed_instructions;
     champion->instruction_list = NULL;
-    build_instructions(champion, champion->instructions, &champion->instruction_list);
+    build_instructions(champion, parsed_instructions, &champion->instruction_list);
     free(parsed_instructions);
 
   } else {
@@ -122,5 +121,4 @@ void add_champion(core_t *core_t, champion_t *champion) {
   core_t->champions[core_t->champion_count - 1] = *champion;
   champion->counter = 0;
   champion->carry_flag = 0;
-  champion->instructions = NULL;
 }
