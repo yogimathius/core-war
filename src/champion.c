@@ -5,6 +5,7 @@
 #include <sys/fcntl.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include "../include/instructions.h"
 
 champion_t *init_champion() {
   champion_t *champ;
@@ -102,8 +103,12 @@ champion_t *create_champion(champion_t *champion, char *filename) {
     champion->instruction_size = j;
     printf("Hexadecimal representation: %s\n", hex_string);
   
-    champion->instructions = hex_string;
-    
+    char **parsed_instructions = parse_instructions(hex_string);
+    champion->instructions = parsed_instructions;
+    champion->instruction_list = NULL;
+    build_instructions(champion, champion->instructions, &champion->instruction_list);
+    free(parsed_instructions);
+
   } else {
       perror("Error getting file size");
   }

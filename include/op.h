@@ -87,6 +87,12 @@ typedef struct header_s {
   char comment[COMMENT_LENGTH + 1];         // Comment
 } header_t;
 
+typedef struct instruction {
+    int opcode;
+    char *operands;
+    struct instruction *next;
+} instruction_t;
+
 typedef struct champion {
   int id;
   header_t header;
@@ -94,8 +100,9 @@ typedef struct champion {
   int counter;
   int carry_flag;
   int inst[MEM_SIZE + 1];
-  char *instructions;
+  char **instructions;
   int instruction_size;
+  instruction_t *instruction_list;
 } champion_t;
 
 // Structure representing the core of the virtual machine
