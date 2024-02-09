@@ -8,23 +8,6 @@
 #include "../include/vm.h"
 #include "../include/instructions.h"
 
-
-// TODO: are the vm and champs passed all the way down as pointers???
-void run_program(core_t *vm, champion_t champ) {
-    UNUSED(vm);
-    instruction_t *inst = champ.instruction_list;
-    while (inst != NULL && inst->opcode != -1) {
-        printf("Executing instruction: %s\n", op_tab[inst->opcode].mnemonique);
-        if (inst->opcode < 0 || inst->opcode >= 16) {
-            printf("Invalid opcode: %d\n", inst->opcode);
-            break;
-        }
-
-        execute_instruction(vm, &champ, inst->opcode, inst->operands);
-        inst = inst->next;
-    }
-}
-
 int main(int ac, char **av) {
     printf("Starting corewar\n");
     core_t vm;
@@ -44,7 +27,7 @@ int main(int ac, char **av) {
     int i = 0;
     while (i < vm.champion_count) {
         printf("Champion P%d: %s\n", vm.champions[i].id, vm.champions[i].header.prog_name);
-        run_program(&vm, vm.champions[i]);
+        run_champion(&vm, vm.champions[i]);
         i++;
     }
 
