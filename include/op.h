@@ -26,24 +26,24 @@ enum parameter_types { T_REG = 1, T_DIR = 2, T_IND = 4, T_LAB = 8 };
 
 // Enumeration of operation types
 enum op_types {
-  OP_LIVE,
-  OP_LD,
-  OP_ST,
-  OP_ADD,
-  OP_SUB,
-  OP_AND,
-  OP_OR,
-  OP_XOR,
-  OP_ZJMP,
-  OP_LDI,
-  OP_STI,
-  OP_FORK,
-  OP_LLD,
-  OP_LLDI,
-  OP_LFORK,
-  OP_AFF,
-  OP_NOTHING,
-  OP_NB
+  OP_LIVE, // 0X01
+  OP_LD, // 0X02
+  OP_ST, // 0X03
+  OP_ADD, // 0X04
+  OP_SUB, // 0X05
+  OP_AND, // 0X06
+  OP_OR, // 0X07
+  OP_XOR, // 0X08
+  OP_ZJMP, // 0X09
+  OP_LDI, // 0X0A
+  OP_STI, // 0X0B
+  OP_FORK, // 0X0C
+  OP_LLD, // 0X0D
+  OP_LLDI, // 0X0E
+  OP_LFORK, // 0X0F
+  OP_AFF, // 0X10
+  OP_NOTHING, // 0X11
+  OP_NB // 0X12
 };
 
 // Size of indirect addressing mode in bytes
