@@ -1,17 +1,15 @@
 #include "stdio.h"
 #include "stdlib.h"
+#include <string.h>
+
 #include "../include/vm.h"
 
 core_t *init_vm() {
     core_t *core = malloc(sizeof(core_t));
-    for (int i = 0; i < MEM_SIZE; i++) {
-        core->memory[i] = 0;
-    }
-
-    for (int i = 0; i < REG_NUMBER; i++) {
-        core->registers[i] = 0;
-    }
+    memset(core->memory, 0, MEM_SIZE);
+    memset(core->registers, 0, REG_NUMBER);
     core->champion_count = 0;
+    core->instruction_pointer = 0;
 
     return core;
 }
