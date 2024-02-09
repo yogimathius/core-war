@@ -21,7 +21,7 @@ void run_program(core_t *vm, champion_t champ) {
         }
 
         execute_instruction(vm, &champ, inst->opcode, inst->operands);
-        inst++;
+        inst = inst->next;
     }
 }
 
