@@ -77,19 +77,9 @@ champion_t *create_champion(champion_t *champion, char *filename) {
       exit(1);
     }
 
-    int j = 0; // Index for inst array
-    for (int i = 140 + COMMENT_LENGTH; i < bytes_read && j < MEM_SIZE; i++) {
-        if (hex_buffer[i] != 0) {
-            champion->inst[j] = hex_buffer[i];
-            j++;
-        }
-    }
-
-    champion->inst[j] = '\0';
-
     char *hex_string = (char *)malloc(st.st_size * 2 + 1);
 
-    j = 0;
+    int j = 0;
     for (int i = 140 + COMMENT_LENGTH; i < bytes_read && j < MEM_SIZE; i++) {
       if (hex_buffer[i] != 0) {
         hex_string[j * 3]     = bin_to_hex(hex_buffer[i] >> 4);
