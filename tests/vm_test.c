@@ -11,11 +11,12 @@ core_t core_vm;
 void test_initialize_memory(void **state) {
     UNUSED(state);
 
-    init_vm(&core_vm);
-    assert_true(&core_vm != NULL);
-    assert_true(&core_vm.memory != NULL);
-    assert_true(&core_vm.registers != NULL);
-    assert_true(core_vm.champion_count == 0);
+    core_t *core_vm = init_vm();
+
+    assert_true(core_vm != NULL);
+    assert_true(core_vm->memory != NULL);
+    assert_true(core_vm->registers != NULL);
+    assert_true(core_vm->champion_count == 0);
 }
 
 void test_read_memory(void **state) {

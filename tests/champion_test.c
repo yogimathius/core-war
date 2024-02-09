@@ -11,14 +11,12 @@
 void test_init_champion(void **state) {
     UNUSED(state);
 
-    champion_t *champ = init_champion();
+    const champion_t *champ = init_champion();
     assert_true(champ != NULL);
 }
 
 void test_create_champion(void **state) {
     UNUSED(state);
-    core_t virtualMachine;
-    init_vm(&virtualMachine);
 
     champion_t *champ = init_champion();
     create_champion(champ, "players/simple_2.cor");
@@ -31,15 +29,15 @@ void test_create_champion(void **state) {
 
 void test_add_champion(void **state) {
     UNUSED(state);
-    core_t virtualMachine;
-    init_vm(&virtualMachine);
+    core_t *core_vm = init_vm();
+
 
     champion_t *champ = init_champion();
 
-    add_champion(&virtualMachine, champ);
+    add_champion(core_vm, champ);
     assert_true(champ->id == 1);
-    assert_true(virtualMachine.champions[0].id == champ->id);
-    assert_true(virtualMachine.champion_count == 1);
+    assert_true(core_vm->champions[0].id == champ->id);
+    assert_true(core_vm->champion_count == 1);
     assert_true(champ->counter == 0);
     assert_true(champ->carry_flag == 0);
 }
