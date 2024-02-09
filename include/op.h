@@ -89,7 +89,7 @@ typedef struct header_s {
 
 typedef struct instruction {
     int opcode;
-    char *operands;
+    int *operands;
     struct instruction *next;
 } instruction_t;
 
@@ -100,7 +100,6 @@ typedef struct champion {
   int counter;
   int carry_flag;
   int inst[MEM_SIZE + 1];
-  char **instructions;
   int instruction_size;
   instruction_t *instruction_list;
 } champion_t;

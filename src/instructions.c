@@ -48,7 +48,7 @@ void build_instructions(champion_t *champ, char **instructions, instruction_t **
     } else {
         op_t operation = op_tab[opcode - 1];
         int operation_args = operation.nbr_args;
-        inst->operands = (char*)malloc((operation_args + 1) * sizeof(char));
+        inst->operands = (int*)malloc((operation_args + 1) * sizeof(int));
         if (inst->operands == NULL) {
             perror("Memory allocation failed");
             exit(EXIT_FAILURE);
@@ -59,7 +59,17 @@ void build_instructions(champion_t *champ, char **instructions, instruction_t **
         printf("opcode: %d, mnemonic: %s, args: %d\n", opcode, operation.mnemonique, operation_args);
         while (i < operation_args) {
             if (*instructions != NULL) { 
-                inst->operands[i] = **instructions;
+                long int operandValue = strtol(*instructions, NULL, 10);
+                if (operandValue == 0 && **instructions != '0') {
+                    printf("Invalid operand: %s\n", *instructions);
+                    break;
+                } else if (operandValue < 0 || operandValue > 100) {
+                    printf("Invalid register: %ld\n", operandValue);
+                    break;
+                } else {
+                    inst->operands[i] = (char)operandValue;
+                }
+
 
                 instructions++;
                 i++;
