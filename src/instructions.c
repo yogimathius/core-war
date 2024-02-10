@@ -30,7 +30,7 @@ char **parse_instructions(char *instruction) {
     return operands;
 }
 
-void build_instructions(champion_t *champ, char **instructions, instruction_t **inst_ptr) {
+void build_instructions(champion_t *champ, char **parsed_instructions, instruction_t **inst_ptr) {
     instruction_t *inst = *inst_ptr;
     if (inst == NULL) {
         inst = (instruction_t*)malloc(sizeof(instruction_t));
@@ -40,19 +40,20 @@ void build_instructions(champion_t *champ, char **instructions, instruction_t **
         }
         *inst_ptr = inst;
     }
-    printf("Building instruction: %s\n", *instructions);
-    enum op_types opcode = (enum op_types)strtoul(*instructions, NULL, 16);
+    printf("Building instruction: %s\n", *parsed_instructions);
+    enum op_types opcode = (enum op_types)strtoul(*parsed_instructions, NULL, 16);
     if (opcode < 1 || opcode > 16) {
         printf("No more valid instructions to parse\n");
         inst->next = NULL;
     } else {
         op_t operation = op_tab[opcode - 1];
         int operation_args = operation.nbr_args;
-        inst->operands = (int*)malloc((operation_args) * sizeof(int));
+        inst->operands = (int*)malloc(operation_args * sizeof(int));
         if (inst->operands == NULL) {
             perror("Memory allocation failed");
             exit(EXIT_FAILURE);
         }
+        // printf("opcode: %d\n", opcode);
         inst->opcode = opcode - 1;
 
         int i = 0;
@@ -60,34 +61,31 @@ void build_instructions(champion_t *champ, char **instructions, instruction_t **
 
         printf("operands: ");
         while (i < operation_args + 2) {
-            if (*instructions != NULL) { 
-                if (i == 0 || i == 1) {
-                    instructions++;
-                    i++;
-                    continue;
-                }
-                printf("%s ", *instructions);
-                long int operandValue = strtol(*instructions, NULL, 10);
-                if (operandValue == 0 && **instructions != '0') {
-                    printf("Invalid operand: %s\n", *instructions);
-                    break;
-                } else if (operandValue < 0 || operandValue > 100) {
-                    printf("Invalid register: %ld\n", operandValue);
-                    break;
-                } else {
-                    inst->operands[i] = (char)operandValue;
-                }
-
-
-                instructions++;
+            if (i == 0 || i == 1) {
+                parsed_instructions++;
                 i++;
-            } else {
-                break;
+                continue;
             }
+            long int operandValue = strtol(*parsed_instructions, NULL, 10);
+
+            if (operandValue == 0 && **parsed_instructions != '0') {
+                printf("Invalid operand: %s\n", *parsed_instructions);
+                break;
+            } else if (operandValue < 0 || operandValue > 100) {
+                printf("Invalid register: %ld\n", operandValue);
+                break;
+            } else {
+                inst->operands[i-2] = operandValue;
+                printf("%d ", inst->operands[i-2]);
+            }
+
+
+            parsed_instructions++;
+            i++;
         }
         printf("\n");
 
-        if (*instructions != NULL) {
+        if (*parsed_instructions != NULL) {
             instruction_t *next_inst = (instruction_t*)malloc(sizeof(instruction_t));            
             if (next_inst == NULL) {
                 perror("Memory allocation failed");
@@ -95,19 +93,24 @@ void build_instructions(champion_t *champ, char **instructions, instruction_t **
             }
             inst->next = next_inst;
 
-            build_instructions(champ, instructions, &next_inst);
+            build_instructions(champ, parsed_instructions, &next_inst);
         } else {
             inst->next = NULL;
         }
     }
 }
 
-void execute_instruction(core_t *vm, champion_t *champ, enum op_types opcode, int *instruction) {
+void execute_instruction(core_t *vm, champion_t *champ, enum op_types opcode, int *args) {
+    // printf("first operand: %d\n", args[0]);
+    // while (args != NULL && *args != 0) {
+    //     printf("args: %d\n", *args);
+    //     args++;
+    // }
     const op_t *operation = &op_tab[opcode];
     
     if (operation->inst != NULL) {
-        printf("calling operation: %s\n", operation->mnemonique);
-        operation->inst(champ, vm, opcode, instruction);
+        printf("executing operation: %s\n", operation->mnemonique);
+        operation->inst(champ, vm, opcode, args);
     } else {
         printf("Unknown or unimplemented operation\n");
     }
