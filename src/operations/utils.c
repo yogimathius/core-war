@@ -4,8 +4,7 @@
 void log_instruction_args(const champion_t *champion, const core_t *core, code_t code, int *inst) {
   const op_t *operation = &op_tab[code];
 
-  printf("=========================================\n");
-  printf("called %s with:\n", op_tab[inst[0]].mnemonique);
+  printf("====================called %s with:=====================\n", operation->mnemonique);
   printf("champion: %p\n", &champion);
   printf("core: %p\n", &core);
   printf("code: %p\n", &code);

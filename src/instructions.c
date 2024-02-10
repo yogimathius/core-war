@@ -31,7 +31,6 @@ char **parse_instructions(char *instruction) {
 }
 
 void build_instructions(champion_t *champ, char **parsed_instructions, instruction_t **inst_ptr) {
-    printf("=========================================\n");
     instruction_t *inst = *inst_ptr;
     if (inst == NULL) {
         inst = (instruction_t*)malloc(sizeof(instruction_t));
@@ -41,7 +40,7 @@ void build_instructions(champion_t *champ, char **parsed_instructions, instructi
         }
         *inst_ptr = inst;
     }
-    printf("Building instruction: %s\n", *parsed_instructions);
+    printf("====================Building instruction: %s=====================\n", *parsed_instructions);
     enum op_types opcode = (enum op_types)strtoul(*parsed_instructions, NULL, 16);
     if (opcode < 1 || opcode > 16) {
         printf("No more valid instructions to parse\n");
