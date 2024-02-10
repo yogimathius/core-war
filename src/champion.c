@@ -115,6 +115,7 @@ void add_champion(core_t *core_t, champion_t *champion) {
   core_t->champions[core_t->champion_count - 1] = *champion;
   champion->counter = 0;
   champion->carry_flag = 0;
+  champion->registers[0] = champion->id;
 }
 
 void run_champion(core_t *vm, champion_t champion) {
