@@ -24,7 +24,7 @@ int get_magic_value(champion_t *champion, char *hex_buffer) {
   }
   champion->header.magic = magic_value;
 
-  if (magic_value == 0xea83f3) {
+  if (magic_value == COREWAR_EXEC_MAGIC) {
       champion->header.magic = magic_value;
       printf("Magic value equals 0xea83f3!\n");
       return 0;
@@ -72,7 +72,7 @@ champion_t *create_champion(champion_t *champion, char *filename) {
   if (stat(filename, &st) == 0) {
     char hex_buffer[st.st_size];
     int bytes_read = read(fd, hex_buffer, sizeof(hex_buffer) - 1);
-  
+
     if (bytes_read == -1) {
       printf("Error: could not read file\n");
       exit(1);
@@ -94,10 +94,9 @@ champion_t *create_champion(champion_t *champion, char *filename) {
         j++;
       }
     }
-    hex_string[st.st_size * 3] = '\0';
+    hex_string[j * 3] = '\0';
     champion->instruction_size = j;
     printf("Hexadecimal representation: %s\n", hex_string);
-  
     char **parsed_instructions = parse_instructions(hex_string);
     champion->instruction_list = NULL;
     build_instructions(champion, parsed_instructions, &champion->instruction_list);
@@ -122,13 +121,21 @@ void run_champion(core_t *vm, champion_t champion) {
     UNUSED(vm);
     instruction_t *inst = champion.instruction_list;
     while (inst != NULL && inst->opcode != -1) {
-        printf("Executing instruction: %s\n", op_tab[inst->opcode].mnemonique);
         if (inst->opcode < 0 || inst->opcode >= 16) {
             printf("Invalid opcode: %d\n", inst->opcode);
             break;
         }
+            printf("instruction from run_program: %s\n", op_tab[inst->opcode].mnemonique);
 
-        execute_instruction(vm, &champion, inst->opcode, inst->operands);
-        inst = inst->next;
+            // if (inst->operands != NULL) {
+            // int i = 0;
+            //   while (inst->operands[i] != 0) {
+            //       printf("Operand: %d\n", inst->operands[i]);
+            //       i++;
+            //   }
+            // }
+            execute_instruction(vm, &champion, inst->opcode, inst->operands);
+            inst = inst->next;
+        // }
     }
 }
