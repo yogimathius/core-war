@@ -101,12 +101,14 @@ void build_instructions(champion_t *champ, char **parsed_instructions, instructi
 }
 
 void execute_instruction(core_t *vm, champion_t *champ, enum op_types opcode, int *args) {
-    // printf("first operand: %d\n", args[0]);
-    // while (args != NULL && *args != 0) {
-    //     printf("args: %d\n", *args);
-    //     args++;
-    // }
+    int i = 0;
     const op_t *operation = &op_tab[opcode];
+    printf("args in execute instructions: ");
+    while (i < operation->nbr_args) {
+        printf("%d ", args[i]);
+        i++;
+    }
+    printf("\n");
     
     if (operation->inst != NULL) {
         printf("executing operation: %s\n", operation->mnemonique);
