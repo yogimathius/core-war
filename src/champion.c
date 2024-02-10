@@ -130,7 +130,11 @@ void run_champion(core_t *vm, champion_t champion) {
           int i = 0;
           printf("operands in run champion: ");
           while (i < op_tab[inst->opcode].nbr_args) {
-              printf("%d", inst->operands[i]);
+              if (inst->operands[i] < 0 || inst->operands[i] >= MEM_SIZE) {
+                printf("Invalid operand: %d\n", inst->operands[i]);
+                return;
+              }
+              printf("%d ", inst->operands[i]);
               i++;
           }
         }

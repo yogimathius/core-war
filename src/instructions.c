@@ -31,6 +31,7 @@ char **parse_instructions(char *instruction) {
 }
 
 void build_instructions(champion_t *champ, char **parsed_instructions, instruction_t **inst_ptr) {
+    printf("=========================================\n");
     instruction_t *inst = *inst_ptr;
     if (inst == NULL) {
         inst = (instruction_t*)malloc(sizeof(instruction_t));
@@ -105,6 +106,10 @@ void execute_instruction(core_t *vm, champion_t *champ, enum op_types opcode, in
     const op_t *operation = &op_tab[opcode];
     printf("args in execute instructions: ");
     while (i < operation->nbr_args) {
+        if (args[i] < 0 || args[i] > 100) {
+            printf("Invalid instruction: %d\n", args[i]);
+            return;
+        }
         printf("%d ", args[i]);
         i++;
     }

@@ -1,12 +1,10 @@
 #include "../../include/op.h"
+#include "../../include/instructions.h"
+
 #include <stdio.h>
 
 int inst_and(champion_t *champion, core_t *core, code_t code, int *inst) {
-  printf("called and\n");
+  log_instruction_args(champion, core, code, inst);
 
-  UNUSED(champion);
-  UNUSED(core);
-  UNUSED(code);
-  UNUSED(inst);
   return 0;
 };
