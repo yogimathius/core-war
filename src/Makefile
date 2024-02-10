@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror  -fsanitize=address -g3
 LDFLAGS =
 
 # Using CURDIR to set the SRCDIR
