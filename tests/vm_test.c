@@ -15,13 +15,12 @@ void test_initialize_memory(void **state) {
 
     assert_true(core_vm != NULL);
     assert_true(core_vm->memory != NULL);
-    assert_true(core_vm->registers != NULL);
     assert_true(core_vm->champion_count == 0);
 }
 
 void test_read_memory(void **state) {
     UNUSED(state);
-    core_vm.registers[0] = 42;
+    core_vm.memory[0] = 42;
     assert_true(read_vm(&core_vm, 0) == 42);
 }
 
