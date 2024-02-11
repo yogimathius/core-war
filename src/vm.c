@@ -13,9 +13,6 @@ core_t *init_vm() {
         core->memory[i] = 0;
     }
 
-    for (int i = 0; i < REG_NUMBER; i++) {
-        core->registers[i] = 0;
-    }
     core->champion_count = 0;
     core->instruction_pointer = 0;
 
@@ -23,9 +20,7 @@ core_t *init_vm() {
 }
 
 int read_vm(core_t *core_t, int address) {
-    if (address < REG_NUMBER) {
-        return core_t->registers[address];
-    } else if (address < MEM_SIZE) {
+    if (address < MEM_SIZE) {
         return core_t->memory[address];
     } else {
         printf("Error: Invalid memory address\n");
@@ -34,9 +29,7 @@ int read_vm(core_t *core_t, int address) {
 }
 
 void write_vm(core_t *core_t, int address, int value) {
-    if (address < REG_NUMBER) {
-        core_t->registers[address] = value;
-    } else if (address < MEM_SIZE) {
+    if (address < MEM_SIZE) {
         core_t->memory[address] = value;
     } else {
         printf("Error: Invalid memory address\n");

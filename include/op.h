@@ -108,7 +108,6 @@ typedef struct champion {
 
 // Structure representing the core of the virtual machine
 typedef struct core_s {
-    enum registers registers[REG_NUMBER];
     int memory[MEM_SIZE];
     int instruction_pointer;
     int cycle;
