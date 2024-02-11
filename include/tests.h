@@ -11,6 +11,7 @@ void inst_live_test(void **state);
 void inst_ld_test(void **state);
 void inst_st_test(void **state);
 void inst_add_test(void **state);
+void inst_add_test_zero(void **state);
 void inst_sub_test(void **state);
 void inst_and_test(void **state);
 void inst_or_test(void **state);
