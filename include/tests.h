@@ -34,6 +34,7 @@ void inst_ldi_test(void **state);
 void inst_sti_test(void **state);
 void inst_fork_test(void **state);
 void inst_lld_test(void **state);
+void inst_lld_test_zero(void **state);
 void inst_lldi_test(void **state);
 void inst_lfork_test(void **state);
 void inst_aff_test(void **state);
