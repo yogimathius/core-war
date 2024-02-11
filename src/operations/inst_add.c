@@ -1,7 +1,5 @@
-#include "../../include/op.h"
-#include "../../include/instructions.h"
-
-#include <stdio.h>
+#include <op.h>
+#include <instructions.h>
 
 /* 
 Takes 3 parameters: 3 registers. Add the first to the second, and store

@@ -1,12 +1,5 @@
-#include <stdarg.h>
-#include <stddef.h>
-#include <setjmp.h>
-#include <cmocka.h>
-#include "../../include/op.h"
-#include "../../include/tests.h"
-#include "../../include/champion.h" 
-#include "../../include/vm.h" 
-\
+#include <tests.h>
+
 void inst_add_test(void **state) {
 	UNUSED(state);
 	champion_t *champ = init_champion();
