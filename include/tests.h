@@ -1,5 +1,14 @@
+#include <stdarg.h>
+#include <stddef.h>
+#include <setjmp.h>
+#include <cmocka.h>
+#include "./op.h"
+#include "./vm.h"
+#include "./champion.h"
+
 #ifndef TESTS_H_
 #define TESTS_H_
+
 
 // Core tests
 void test_initialize_memory(void **state);
@@ -13,7 +22,9 @@ void inst_st_test(void **state);
 void inst_add_test(void **state);
 void inst_add_test_zero(void **state);
 void inst_sub_test(void **state);
+void inst_sub_test_zero(void **state);
 void inst_and_test(void **state);
+void inst_and_test_zero(void **state);
 void inst_or_test(void **state);
 void inst_xor_test(void **state);
 void inst_zjmp_test(void **state);
