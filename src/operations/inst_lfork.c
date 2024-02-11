@@ -1,7 +1,5 @@
-#include "../../include/op.h"
-#include "../../include/instructions.h"
-
-#include <stdio.h>
+#include <op.h>
+#include <instructions.h>
 
 /* 
 Same as fork without the %IDX_MOD.

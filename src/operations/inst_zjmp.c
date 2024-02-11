@@ -1,7 +1,5 @@
-#include "../../include/op.h"
-#include "../../include/instructions.h"
-
-#include <stdio.h>
+#include <op.h>
+#include <instructions.h>
 
 /* 
 Takes 1 parameter, that must be an index. Jumps to this index if carry is

@@ -1,7 +1,5 @@
-#include "../../include/op.h"
-#include "../../include/instructions.h"
-
-#include <stdio.h>
+#include <op.h>
+#include <instructions.h>
 
 /* 
 Takes 1 parameter: 4 bytes that represent the player's number.
