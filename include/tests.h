@@ -33,6 +33,7 @@ void inst_xor_test_zero(void **state);
 void inst_zjmp_test(void **state);
 void inst_ldi_test(void **state);
 void inst_sti_test(void **state);
+void inst_sti_test_zero(void **state);
 void inst_fork_test(void **state);
 void inst_lld_test(void **state);
 void inst_lld_test_zero(void **state);
