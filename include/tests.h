@@ -26,6 +26,7 @@ void inst_sub_test_zero(void **state);
 void inst_and_test(void **state);
 void inst_and_test_zero(void **state);
 void inst_or_test(void **state);
+void inst_or_test_zero(void **state);
 void inst_xor_test(void **state);
 void inst_zjmp_test(void **state);
 void inst_ldi_test(void **state);
