@@ -18,6 +18,7 @@ void test_write_memory(void **state);
 // Instruction tests
 void inst_live_test(void **state);
 void inst_ld_test(void **state);
+void inst_ld_test_zero(void **state);
 void inst_st_test(void **state);
 void inst_add_test(void **state);
 void inst_add_test_zero(void **state);
