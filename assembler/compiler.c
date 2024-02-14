@@ -1,5 +1,29 @@
 #include "./op.h"
 
+typedef struct {
+    char name[MAX_LABEL_LENGTH];
+    char comment[MAX_LINE_LENGTH];
+} FileHeader;
+
+FileHeader parse_header(FILE *input) {
+    FileHeader header = {"", ""};
+    char line[MAX_LINE_LENGTH];
+
+    while (fgets(line, sizeof(line), input)) {
+        if (strncmp(line, ".name", 5) == 0) {
+            sscanf(line, ".name \"%[^\"]\"", header.name);
+        } else if (strncmp(line, ".comment", 8) == 0) {
+            sscanf(line, ".comment \"%[^\"]\"", header.comment);
+        } else {
+            break;
+        }
+    }
+
+    rewind(input);
+
+    return header;
+}
+
 // Main assembler loop with two passes
 void assemble(FILE *input, FILE *output) {
     char line[MAX_LINE_LENGTH];
@@ -52,12 +76,16 @@ int main(int argc, const char *argv[]) {
         return EXIT_FAILURE;
     }
 
+    FileHeader header = parse_header(input_file);
+
+    // Open output file and write header
     FILE *output_file = fopen(argv[2], "wb");
     if (!output_file) {
         perror("Error opening output file");
-        fclose(input_file); // Make sure to close the input file before exiting
+        fclose(input_file);
         return EXIT_FAILURE;
     }
+    fwrite(&header, sizeof(FileHeader), 1, output_file);
     // printf("input file: %s\n", argv[1]);
     // fflush(stdout);
 
