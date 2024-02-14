@@ -1,29 +1,5 @@
 #include "./op.h"
 
-typedef struct {
-    char name[MAX_LABEL_LENGTH];
-    char comment[MAX_LINE_LENGTH];
-} FileHeader;
-
-FileHeader parse_header(FILE *input) {
-    FileHeader header = {"", ""};
-    char line[MAX_LINE_LENGTH];
-
-    while (fgets(line, sizeof(line), input)) {
-        if (strncmp(line, ".name", 5) == 0) {
-            sscanf(line, ".name \"%[^\"]\"", header.name);
-        } else if (strncmp(line, ".comment", 8) == 0) {
-            sscanf(line, ".comment \"%[^\"]\"", header.comment);
-        } else {
-            break;
-        }
-    }
-
-    rewind(input);
-
-    return header;
-}
-
 // Main assembler loop with two passes
 void assemble(FILE *input, FILE *output) {
     char line[MAX_LINE_LENGTH];
