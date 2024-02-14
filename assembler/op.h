@@ -113,6 +113,11 @@ typedef struct Symbol {
     struct Symbol *next;
 } Symbol;
 
+typedef struct {
+    char name[MAX_LABEL_LENGTH];
+    char comment[MAX_LINE_LENGTH];
+} FileHeader;
+
 // Function prototypes
 Token lex_token(const char **input);
 ParsedLine parse_line(const char *line);
@@ -120,5 +125,6 @@ void add_symbol(const char *label, int address);
 int lookup_symbol(const char *label);
 void encode_instruction(FILE *output, ParsedLine *parsedLine);
 void assemble(FILE *input, FILE *output);
+FileHeader parse_header(FILE *input);
 
 #endif
