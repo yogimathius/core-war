@@ -1,8 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
-#include <stddef.h>
+#include "./op.h"
 
 // Constants based on your assignment details
 #define MAX_LINE_LENGTH 256
@@ -70,7 +66,7 @@ Token lex_token(const char **input);
 ParsedLine parse_line(const char *line);
 void add_symbol(const char *label, int address);
 int lookup_symbol(const char *label);
-void encode_instruction(FILE *output, ParsedLine *parsedLine, int current_address);
+void encode_instruction(FILE *output, ParsedLine *parsedLine);
 void assemble(FILE *input, FILE *output);
 
 
@@ -322,41 +318,15 @@ void write_little_endian(FILE *output, int value) {
 
 
 // Now update the encode_instruction function to use these
-void encode_instruction(FILE *output, ParsedLine *parsedLine, int current_address) {
-    unsigned char opcode;
-    if (strcmp(parsedLine->opcode, "live") == 0) {
-        opcode = OPCODE_LIVE;
-    } else if (strcmp(parsedLine->opcode, "ld") == 0) {
-        opcode = OPCODE_LD;
-    } else if (strcmp(parsedLine->opcode, "st") == 0) {
-        opcode = OPCODE_ST;
-    } else if (strcmp(parsedLine->opcode, "add") == 0) {
-        opcode = OPCODE_ADD;
-    } else if (strcmp(parsedLine->opcode, "sub") == 0) {
-        opcode = OPCODE_SUB;
-    } else if (strcmp(parsedLine->opcode, "and") == 0) {
-        opcode = OPCODE_AND;
-    } else if (strcmp(parsedLine->opcode, "or") == 0) {
-        opcode = OPCODE_OR;
-    } else if (strcmp(parsedLine->opcode, "xor") == 0) {
-        opcode = OPCODE_XOR;
-    } else if (strcmp(parsedLine->opcode, "zjmp") == 0) {
-        opcode = OPCODE_ZJMP;
-    } else if (strcmp(parsedLine->opcode, "ldi") == 0) {
-        opcode = OPCODE_LDI;
-    } else if (strcmp(parsedLine->opcode, "sti") == 0) {
-        opcode = OPCODE_STI;
-    } else if (strcmp(parsedLine->opcode, "fork") == 0) {
-        opcode = OPCODE_FORK;
-    } else if (strcmp(parsedLine->opcode, "lld") == 0) {
-        opcode = OPCODE_LLD;
-    } else if (strcmp(parsedLine->opcode, "lldi") == 0) {
-        opcode = OPCODE_LLDI;
-    } else if (strcmp(parsedLine->opcode, "lfork") == 0) {
-        opcode = OPCODE_LFORK;
-    } else if (strcmp(parsedLine->opcode, "aff") == 0) {
-        opcode = OPCODE_AFF;
-    } 
+void encode_instruction(FILE *output, ParsedLine *parsedLine) {
+    // unsigned char opcode;
+
+    enum op_types optype = (enum op_types)strtoul(parsedLine->opcode, NULL, 16);
+
+    op_t operation = op_tab[optype];
+    printf("opcode: %d, mnemonic: %s, args: %d\n", operation.code, operation.mnemonique, operation.nbr_args);
+
+    char opcode = operation.code;
 
     // Write the opcode to the output file.
     fwrite(&opcode, sizeof(opcode), 1, output);
@@ -408,7 +378,7 @@ void assemble(FILE *input, FILE *output) {
     while (fgets(line, sizeof(line), input)) {
         printf("Processing line: %s\n", line); 
         ParsedLine parsedLine = parse_line(line);
-        printf("data: %s %s %i", parsedLine.opcode, parsedLine.label, parsedLine.lineType);
+        printf("data: %s %s %i\n", parsedLine.opcode, parsedLine.label, parsedLine.lineType);
         // printf("%s %s", parsedLine.opcode, parsedLine.label);
         // fflush(stdout);
         if (parsedLine.lineType == TOKEN_LABEL) {
@@ -428,7 +398,7 @@ void assemble(FILE *input, FILE *output) {
     while (fgets(line, sizeof(line), input)) {
         ParsedLine parsedLine = parse_line(line);
         if (parsedLine.lineType == TOKEN_INSTRUCTION) {
-            encode_instruction(output, &parsedLine, current_address);
+            encode_instruction(output, &parsedLine);
             // Increment current_address by the size of the instruction
             current_address += 4; // Placeholder, replace with actual instruction size
         }
@@ -436,7 +406,7 @@ void assemble(FILE *input, FILE *output) {
     }
 }
 
-int main(int argc, char *argv[]) {
+int main(int argc, const char *argv[]) {
     if (argc != 3) {
         fprintf(stderr, "Usage: %s <source_file.asm> <output_file.cor>\n", argv[0]);
         return EXIT_FAILURE;
