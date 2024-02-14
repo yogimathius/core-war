@@ -110,7 +110,7 @@ champion_t *create_champion(champion_t *champion, char *filename) {
 }
 
 void add_champion(core_t *core_t, champion_t *champion) {
-  core_t->champion_count++;
+  core_t->champion_count+=1;
   champion->id = core_t->champion_count;
   core_t->champions[core_t->champion_count - 1] = *champion;
   champion->counter = 0;
