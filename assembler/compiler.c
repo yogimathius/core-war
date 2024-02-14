@@ -1,208 +1,15 @@
 #include "./op.h"
 
-Symbol *symbol_table = NULL;
-
-// Function to add a symbol to the table
-void add_symbol(const char *label, int address) {
-    Symbol *symbol = malloc(sizeof(Symbol));
-    strcpy(symbol->label, label);
-    symbol->address = address;
-    symbol->next = symbol_table;
-    symbol_table = symbol;
-    printf("Added symbol: %s with address: %d\n", label, address); // Debug print
-}
-
-// Function to look up a symbol in the table
-int lookup_symbol(const char *label) {
-    Symbol *current = symbol_table;
-    while (current != NULL) {
-        if (strcmp(current->label, label) == 0) {
-            printf("Found symbol: %s at address: %d\n", label, current->address); // Debug print
-            return current->address;
-        }
-        current = current->next;
-    }
-    return -1; // Not found
-}
-
-Token lex_token(const char **input) {
-    Token token = {TOKEN_UNKNOWN, ""};
-    const char *start = *input;
-
-    // Skip whitespace
-    while (isspace((unsigned char)**input)) {
-        (*input)++;
-    }
-
-    if (**input == '\0') {
-        token.type = TOKEN_ENDLINE;
-    } else if (**input == ';') { // Assuming ';' starts a comment
-        token.type = TOKEN_COMMENT;
-        while (**input && **input != '\n') {
-            (*input)++;
-        }
-    } else if (**input == '.') { // Directive
-        token.type = TOKEN_DIRECTIVE;
-        (*input)++;
-        start = *input; // Start after the '.'
-        while (!isspace((unsigned char)**input) && **input != '\0') {
-            (*input)++;
-        }
-        size_t length = *input - start;
-        strncpy(token.string, start, length);
-        token.string[length] = '\0';
-
-        // Skip whitespace after directive keyword
-        while (isspace((unsigned char)**input)) {
-            (*input)++;
-        }
-
-        // Store the rest of the line as an argument (if present)
-        start = *input;
-        while (**input != '\n' && **input != '\0') {
-            (*input)++;
-        }
-        if (start != *input) { // There's additional text after the directive keyword
-            length = *input - start;
-            if (length > MAX_ARGUMENT_LENGTH - 1) {
-                length = MAX_ARGUMENT_LENGTH - 1; // Limit the length to avoid buffer overflow
-            }
-            strncpy(token.string, start, length);
-            token.string[length] = '\0';
-        }
-    } else if (isalpha((unsigned char)**input)) { // Label or Instruction
-        start = *input;
-        while (isalnum((unsigned char)**input) || **input == '_') {
-            (*input)++;
-        }
-        if (**input == ':') { // It's a label
-            token.type = TOKEN_LABEL;
-            (*input)++;
-        } else { // It's an instruction
-            token.type = TOKEN_INSTRUCTION;
-        }
-        size_t length = *input - start;
-        strncpy(token.string, start, length);
-        token.string[length] = '\0';
-    } else if (isdigit((unsigned char)**input) || **input == '-') { // Number
-        token.type = TOKEN_NUMBER;
-        if (**input == '-') {
-            (*input)++;
-        }
-        while (isdigit((unsigned char)**input)) {
-            (*input)++;
-        }
-        size_t length = *input - start;
-        strncpy(token.string, start, length);
-        token.string[length] = '\0';
-    } else if (**input == 'r' && isdigit((unsigned char)*(*input + 1))) { // Register
-        token.type = TOKEN_REGISTER;
-        (*input)++; // Skip 'r'
-        start = *input; // Start at the digit
-        while (isdigit((unsigned char)**input)) {
-            (*input)++;
-        }
-        size_t length = *input - start;
-        strncpy(token.string, start, length);
-        token.string[length] = '\0';
-    } else if (**input == '%' && *(*input + 1) == ':') { // Direct label
-        token.type = TOKEN_DIRECTIVE;
-        (*input) += 2; // Skip '%:'
-        start = *input; // Start after '%:'
-        while (isalnum((unsigned char)**input) || **input == '_') {
-            (*input)++;
-        }
-        size_t length = *input - start;
-        strncpy(token.string, start, length);
-        token.string[length] = '\0';
-    }
-    else if (**input == '%' && isdigit((unsigned char)*(*input + 1))) { // Direct value
-        token.type = TOKEN_NUMBER; // or a new type, e.g., TOKEN_DIRECT_VALUE
-        (*input)++; // Skip '%'
-        start = *input; // Start at the digit
-        while (isdigit((unsigned char)**input)) {
-            (*input)++;
-        }
-        size_t length = *input - start;
-        strncpy(token.string, start, length);
-        token.string[length] = '\0';
-    }   
-    else if (**input == ',') {  // Comma separator
-        token.type = TOKEN_SEPARATOR;
-        (*input)++;  // Skip the comma
-    }
-    else if (**input == 'r' && isdigit((unsigned char)*(*input + 1))) { // Register
-        token.type = TOKEN_REGISTER;
-        (*input)++; // Skip 'r'
-        start = *input; // Start at the digit
-        while (isdigit((unsigned char)**input)) {
-            (*input)++;
-        }
-        size_t length = *input - start;
-        strncpy(token.string, start, length);
-        token.string[length] = '\0';
-    }
-
-    printf("input: %s\n", *input);
-
-    return token;
-}
-
-ParsedLine parse_line(const char *line) {
-    ParsedLine parsedLine = {TOKEN_UNKNOWN, "", "", {""}, 0};
-    const char *inputPtr = line;
-
-    Token token;
-
-    // Check for empty line or comment
-    token = lex_token(&inputPtr);
-    printf("token type: %i\n", token.type);
-    printf("token string: %s\n", token.string);
-    if (token.type == TOKEN_ENDLINE || token.type == TOKEN_COMMENT) {
-        parsedLine.lineType = token.type;
-        return parsedLine;
-    }
-
-    // Process the first token which could be a label or an instruction
-    if (token.type == TOKEN_LABEL) {
-        strcpy(parsedLine.label, token.string);
-        token = lex_token(&inputPtr); // Get next token after label
-    }
-
-    if (token.type == TOKEN_INSTRUCTION) {
-        parsedLine.lineType = TOKEN_INSTRUCTION;
-        strcpy(parsedLine.opcode, token.string);
-    } else if (token.type == TOKEN_DIRECTIVE) {
-        parsedLine.lineType = TOKEN_DIRECTIVE;
-        strcpy(parsedLine.opcode, token.string);
-    }
-    printf("parsedLine.opcode: %s\n", parsedLine.opcode);
-
-    // Process arguments if any
-    while ((token = lex_token(&inputPtr)).type != TOKEN_ENDLINE && token.type != TOKEN_COMMENT) {
-        printf("token type: %i\n", token.type);
-        if (parsedLine.argumentCount < MAX_ARGS_NUMBER) {
-            strcpy(parsedLine.arguments[parsedLine.argumentCount++], token.string);
-        } else {
-            // Handle error: too many arguments
-        }
-    }
-    printf("parsedLine.argumentCount: %i\n", parsedLine.argumentCount);
-    fflush(stdout);
-
-    return parsedLine;
-}
-
 // Ensure that registers are encoded as a single byte
 void encode_register(FILE *output, const char *arg) {
     unsigned char reg_num = (unsigned char)atoi(arg + 1); // Skip 'r' and convert to int
-    fwrite(&reg_num, 1, 1, output); // Write a single byte
+    fwrite(&reg_num, T_REG, 1, output); // Write a single byte
 }
 
 
 void encode_direct(FILE *output, const char *arg) {
     int direct_value = atoi(arg);
-    fwrite(&direct_value, DIRECT_SIZE, 1, output); // This will write in little-endian format
+    fwrite(&direct_value, T_DIR, 1, output); // This will write in little-endian format
 }
 
 void encode_indirect(FILE *output, const char *arg, int current_address) {
@@ -248,8 +55,6 @@ void write_little_endian(FILE *output, int value) {
 
 // Now update the encode_instruction function to use these
 void encode_instruction(FILE *output, ParsedLine *parsedLine) {
-    // unsigned char opcode;
-
     enum op_types optype = (enum op_types)strtoul(parsedLine->opcode, NULL, 16);
 
     op_t operation = op_tab[optype];
@@ -273,8 +78,13 @@ void encode_instruction(FILE *output, ParsedLine *parsedLine) {
 
         if (*arg == 'r') {
             // Write register (1 byte)
-            unsigned char reg = (unsigned char)atoi(arg + 1);
-            fwrite(&reg, sizeof(reg), 1, output);
+            encode_register(output, arg);
+        } else if (*arg == '%') {
+            // Write indirect (2 bytes)
+            encode_indirect(output, arg, 0); // Replace 0 with the current address
+        } else if (isdigit(*arg) || (*arg == '-' && isdigit(*(arg + 1)))) {
+            // Write direct (4 bytes)
+            encode_direct(output, arg);
         } else {
             // Write direct/indirect (4 bytes)
             int value = 0;
