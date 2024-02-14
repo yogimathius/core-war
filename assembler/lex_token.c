@@ -59,6 +59,7 @@ Token lex_token(const char **input) {
         size_t length = *input - start;
         strncpy(token.string, start, length);
         token.string[length] = '\0';
+        printf("token.string: %s\n", token.string);
     } else if (isdigit((unsigned char)**input) || **input == '-') { // Number
         token.type = TOKEN_NUMBER;
         if (**input == '-') {
