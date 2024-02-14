@@ -1,75 +1,5 @@
 #include "./op.h"
 
-// Constants based on your assignment details
-#define MAX_LINE_LENGTH 256
-#define MAX_LABEL_LENGTH 50
-#define MAX_ARGUMENTS 3
-#define MAX_ARGUMENT_LENGTH 50
-#define REGISTER_SIZE 1
-#define DIRECT_SIZE 4 // Assuming 'direct' arguments are 4 bytes
-#define INDIRECT_SIZE 4 // Assuming 'indirect' arguments are 4 bytes
-#define OPCODE_LIVE 0x01
-#define OPCODE_LD 0x02
-#define OPCODE_ST 0x03
-#define OPCODE_ADD 0x04
-#define OPCODE_SUB 0x05
-#define OPCODE_AND 0x06
-#define OPCODE_OR 0x07
-#define OPCODE_XOR 0x08
-#define OPCODE_ZJMP 0x09
-#define OPCODE_LDI 0x0a
-#define OPCODE_STI 0x0b
-#define OPCODE_FORK 0x0c
-#define OPCODE_LLD 0x0d
-#define OPCODE_LLDI 0x0e
-#define OPCODE_LFORK 0x0f
-#define OPCODE_AFF 0x10
-
-// Enumeration for different types of tokens
-typedef enum {
-    TOKEN_UNKNOWN,
-    TOKEN_INSTRUCTION,
-    TOKEN_SEPARATOR,
-    TOKEN_LABEL,
-    TOKEN_DIRECTIVE,
-    TOKEN_COMMENT,
-    TOKEN_REGISTER,
-    TOKEN_NUMBER,
-    TOKEN_OPERATOR,
-    TOKEN_ENDLINE
-} TokenType;
-
-// Structure to hold a token
-typedef struct {
-    TokenType type;
-    char string[MAX_LABEL_LENGTH];
-} Token;
-
-// Structure to hold a parsed line
-typedef struct {
-    TokenType lineType;
-    char label[MAX_LABEL_LENGTH];
-    char opcode[MAX_LABEL_LENGTH];
-    char arguments[MAX_ARGUMENTS][MAX_ARGUMENT_LENGTH];
-    int argumentCount;
-} ParsedLine;
-
-
-typedef struct Symbol {
-    char label[MAX_LABEL_LENGTH];
-    int address;
-    struct Symbol *next;
-} Symbol;
-
-// Function prototypes
-Token lex_token(const char **input);
-ParsedLine parse_line(const char *line);
-void add_symbol(const char *label, int address);
-int lookup_symbol(const char *label);
-void encode_instruction(FILE *output, ParsedLine *parsedLine);
-void assemble(FILE *input, FILE *output);
-
-
 Symbol *symbol_table = NULL;
 
 // Function to add a symbol to the table
@@ -80,7 +10,6 @@ void add_symbol(const char *label, int address) {
     symbol->next = symbol_table;
     symbol_table = symbol;
     printf("Added symbol: %s with address: %d\n", label, address); // Debug print
-
 }
 
 // Function to look up a symbol in the table
@@ -252,7 +181,7 @@ ParsedLine parse_line(const char *line) {
     // Process arguments if any
     while ((token = lex_token(&inputPtr)).type != TOKEN_ENDLINE && token.type != TOKEN_COMMENT) {
         printf("token type: %i\n", token.type);
-        if (parsedLine.argumentCount < MAX_ARGUMENTS) {
+        if (parsedLine.argumentCount < MAX_ARGS_NUMBER) {
             strcpy(parsedLine.arguments[parsedLine.argumentCount++], token.string);
         } else {
             // Handle error: too many arguments
@@ -286,7 +215,7 @@ void encode_indirect(FILE *output, const char *arg, int current_address) {
         // Handle as numeric offset
         indirect_value = atoi(arg);
     }
-    fwrite(&indirect_value, INDIRECT_SIZE, 1, output); // This will write in little-endian format
+    fwrite(&indirect_value, T_IND, 1, output); // This will write in little-endian format
 }
 
 
