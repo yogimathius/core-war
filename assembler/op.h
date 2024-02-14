@@ -53,7 +53,8 @@ enum op_types {
   OP_LFORK, // 0X0F
   OP_AFF, // 0X10
   OP_NOTHING, // 0X11
-  OP_NB // 0X12
+  OP_NB, // 0X12
+  OP_TYPES_COUNT
 };
 
 typedef struct op_s {

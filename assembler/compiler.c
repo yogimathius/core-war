@@ -52,16 +52,24 @@ void write_little_endian(FILE *output, int value) {
     fwrite(bytes, sizeof(bytes), 1, output);
 }
 
-
+enum op_types mnemonic_to_op_type(const char *mnemonic) {
+    for (int i = 0; i < OP_TYPES_COUNT; i++) {
+        if (strcmp(mnemonic, op_tab[i].mnemonique) == 0) {
+            return (enum op_types)i;
+        }
+    }
+    return OP_NOTHING;
+}
 // Now update the encode_instruction function to use these
 void encode_instruction(FILE *output, ParsedLine *parsedLine) {
-    enum op_types optype = (enum op_types)strtoul(parsedLine->opcode, NULL, 16);
+    printf("Encoding instruction: %s\n", parsedLine->opcode);
+    enum op_types op_type = mnemonic_to_op_type(parsedLine->opcode);
 
-    op_t operation = op_tab[optype];
+    printf("optype: %d\n", op_type);
+    op_t operation = op_tab[op_type];
     printf("opcode: %d, mnemonic: %s, args: %d\n", operation.code, operation.mnemonique, operation.nbr_args);
 
-    char opcode = operation.code;
-
+    unsigned char opcode = operation.code;
     // Write the opcode to the output file.
     fwrite(&opcode, sizeof(opcode), 1, output);
 
@@ -137,6 +145,7 @@ void assemble(FILE *input, FILE *output) {
     while (fgets(line, sizeof(line), input)) {
         ParsedLine parsedLine = parse_line(line);
         if (parsedLine.lineType == TOKEN_INSTRUCTION) {
+            // printf("Encoding instruction: %s\n", parsedLine.opcode);
             encode_instruction(output, &parsedLine);
             // Increment current_address by the size of the instruction
             current_address += 4; // Placeholder, replace with actual instruction size
