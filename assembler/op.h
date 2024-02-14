@@ -68,4 +68,57 @@ typedef struct op_s op_t;
 
 extern const op_t op_tab[];
 
+
+// Enumeration for different types of tokens
+typedef enum {
+    TOKEN_UNKNOWN,
+    TOKEN_INSTRUCTION,
+    TOKEN_SEPARATOR,
+    TOKEN_LABEL,
+    TOKEN_DIRECTIVE,
+    TOKEN_COMMENT,
+    TOKEN_REGISTER,
+    TOKEN_NUMBER,
+    TOKEN_OPERATOR,
+    TOKEN_ENDLINE
+} TokenType;
+
+
+// Constants based on your assignment details
+#define MAX_LINE_LENGTH 256
+#define MAX_LABEL_LENGTH 50
+#define MAX_ARGUMENT_LENGTH 50
+
+
+// Structure to hold a token
+typedef struct {
+    TokenType type;
+    char string[MAX_LABEL_LENGTH];
+} Token;
+
+// Structure to hold a parsed line
+typedef struct {
+    TokenType lineType;
+    char label[MAX_LABEL_LENGTH];
+    char opcode[MAX_LABEL_LENGTH];
+    char arguments[MAX_ARGS_NUMBER][MAX_ARGUMENT_LENGTH];
+    int argumentCount;
+} ParsedLine;
+
+typedef struct Symbol {
+    char label[MAX_LABEL_LENGTH];
+    int address;
+    struct Symbol *next;
+} Symbol;
+
+// Function prototypes
+Token lex_token(const char **input);
+ParsedLine parse_line(const char *line);
+void add_symbol(const char *label, int address);
+int lookup_symbol(const char *label);
+void encode_instruction(FILE *output, ParsedLine *parsedLine);
+void assemble(FILE *input, FILE *output);
+
+Symbol *symbol_table = NULL;
+
 #endif
