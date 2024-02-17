@@ -32,7 +32,6 @@
 #define MAX_ARGS_NUMBER 3
 
 enum parameter_types { T_REG = 1, T_DIR = 2, T_IND = 4, T_LAB = 8 };
-#define DIRECT_SIZE 4 // Assuming 'direct' arguments are 4 bytes
 
 typedef char args_type_t;
 

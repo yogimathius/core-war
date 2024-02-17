@@ -4,20 +4,15 @@
 void assemble(FILE *input, FILE *output) {
     char line[MAX_LINE_LENGTH];
     int current_address = 0; // Start address for the code
-    // printf("%i\n", current_address);
-    // fflush(stdout);
 
     // First pass: Build the symbol table
     while (fgets(line, sizeof(line), input)) {
-        printf("Processing line: %s\n", line); 
         ParsedLine parsedLine = parse_line(line);
-        printf("data: %s %s %i\n", parsedLine.opcode, parsedLine.label, parsedLine.lineType);
-        // printf("%s %s", parsedLine.opcode, parsedLine.label);
-        // fflush(stdout);
         if (parsedLine.lineType == TOKEN_LABEL) {
             add_symbol(parsedLine.label, current_address);
         } else if (parsedLine.lineType == TOKEN_INSTRUCTION) {
             // Here you'd calculate the size of the instruction and increment current_address
+
             // For now, we'll just increment it by a placeholder value
             current_address += 4; // Placeholder, replace with actual instruction size
         }
@@ -25,18 +20,13 @@ void assemble(FILE *input, FILE *output) {
 
     // Prepare for second pass
     fseek(input, 0, SEEK_SET); // Reset file pointer to beginning of input file
-    current_address = 0; // Reset address for encoding
 
     // Second pass: Encode instructions
     while (fgets(line, sizeof(line), input)) {
         ParsedLine parsedLine = parse_line(line);
         if (parsedLine.lineType == TOKEN_INSTRUCTION) {
-            // printf("Encoding instruction: %s\n", parsedLine.opcode);
             encode_instruction(output, &parsedLine);
-            // Increment current_address by the size of the instruction
-            current_address += 4; // Placeholder, replace with actual instruction size
         }
-        // Handle other line types as needed
     }
 }
 
@@ -71,9 +61,9 @@ int main(int argc, const char *argv[]) {
     bytes[3] = corewar_exec_magic & 0xFF;
 
     fwrite(bytes, sizeof(int), 1, output_file);
-    fwrite(header.name, sizeof(char), PROG_NAME_LENGTH, output_file);
+    fwrite(header.name, sizeof(char), sizeof(char) * PROG_NAME_LENGTH, output_file);
 
-    fwrite(header.comment, sizeof(char), COMMENT_LENGTH, output_file);
+    fwrite(header.comment, sizeof(char), sizeof(char) * COMMENT_LENGTH, output_file);
 
     assemble(input_file, output_file);
 
