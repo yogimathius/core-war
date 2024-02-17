@@ -61,9 +61,19 @@ int main(int argc, const char *argv[]) {
         fclose(input_file);
         return EXIT_FAILURE;
     }
-    fwrite(&header, sizeof(FileHeader), 1, output_file);
-    // printf("input file: %s\n", argv[1]);
-    // fflush(stdout);
+    int corewar_exec_magic = COREWAR_EXEC_MAGIC;
+
+    // Hacky way to write the magic number to the output file in big-endian format
+    unsigned char bytes[4];
+    bytes[0] = (corewar_exec_magic >> 24) & 0xFF;
+    bytes[1] = (corewar_exec_magic >> 16) & 0xFF;
+    bytes[2] = (corewar_exec_magic >> 8) & 0xFF;
+    bytes[3] = corewar_exec_magic & 0xFF;
+
+    fwrite(bytes, sizeof(int), 1, output_file);
+    fwrite(header.name, sizeof(char), PROG_NAME_LENGTH, output_file);
+
+    fwrite(header.comment, sizeof(char), COMMENT_LENGTH, output_file);
 
     assemble(input_file, output_file);
 
