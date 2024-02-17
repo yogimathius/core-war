@@ -119,7 +119,5 @@ Token lex_token(const char **input) {
         token.string[length] = '\0';
     }
 
-    printf("input: %s\n", *input);
-
     return token;
 }
