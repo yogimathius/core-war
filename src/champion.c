@@ -42,7 +42,7 @@ int parse_header(champion_t *champion, int bytes_read, char *hex_buffer) {
   for (int i = 4; i < bytes_read && i < 140 + COMMENT_LENGTH; i++) {
       if (i < 132) {
           champion->header.prog_name[i - 4] = hex_buffer[i];
-      } else if (i > 136  && i < 140) {
+      } else if (i > 136 && i < 140) {
           champion->header.prog_size = (champion->header.prog_size << 8) | (unsigned char)hex_buffer[i];
       } else if (i >= 140 && i < 140 + COMMENT_LENGTH) {
           champion->header.comment[i - 140] = hex_buffer[i];
