@@ -8,8 +8,6 @@ ParsedLine parse_line(const char *line) {
 
     // Check for empty line or comment
     token = lex_token(&inputPtr);
-    printf("token type: %i\n", token.type);
-    printf("token string: %s\n", token.string);
     if (token.type == TOKEN_ENDLINE || token.type == TOKEN_COMMENT) {
         parsedLine.lineType = token.type;
         return parsedLine;
@@ -28,18 +26,15 @@ ParsedLine parse_line(const char *line) {
         parsedLine.lineType = TOKEN_DIRECTIVE;
         strcpy(parsedLine.opcode, token.string);
     }
-    printf("parsedLine.opcode: %s\n", parsedLine.opcode);
 
     // Process arguments if any
     while ((token = lex_token(&inputPtr)).type != TOKEN_ENDLINE && token.type != TOKEN_COMMENT) {
-        printf("token type: %i\n", token.type);
         if (parsedLine.argumentCount < MAX_ARGS_NUMBER) {
             strcpy(parsedLine.arguments[parsedLine.argumentCount++], token.string);
         } else {
             // Handle error: too many arguments
         }
     }
-    printf("parsedLine.argumentCount: %i\n", parsedLine.argumentCount);
     fflush(stdout);
 
     return parsedLine;
