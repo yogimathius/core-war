@@ -6,6 +6,7 @@
 
 #ifndef _CHAMPION_H_
 #define _CHAMPION_H_
+#define COREWAR_EXEC_MAGIC 0xea83f3
 
 // Character denoting comments in the code
 #define COMMENT_CHAR '#'
@@ -90,7 +91,8 @@ typedef enum {
 #define MAX_LINE_LENGTH 256
 #define MAX_LABEL_LENGTH 50
 #define MAX_ARGUMENT_LENGTH 50
-
+#define PROG_NAME_LENGTH 128
+#define COMMENT_LENGTH 2048
 
 // Structure to hold a token
 typedef struct {
@@ -114,8 +116,8 @@ typedef struct Symbol {
 } Symbol;
 
 typedef struct {
-    char name[MAX_LABEL_LENGTH];
-    char comment[MAX_LINE_LENGTH];
+    char name[PROG_NAME_LENGTH];
+    char comment[COMMENT_LENGTH];
 } FileHeader;
 
 // Function prototypes
@@ -126,5 +128,6 @@ int lookup_symbol(const char *label);
 void encode_instruction(FILE *output, ParsedLine *parsedLine);
 void assemble(FILE *input, FILE *output);
 FileHeader parse_header(FILE *input);
+void write_little_endian(FILE *output, int value);
 
 #endif
