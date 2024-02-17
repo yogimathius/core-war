@@ -65,16 +65,16 @@ void encode_instruction(FILE *output, ParsedLine *parsedLine) {
     printf("Encoding instruction: %s\n", parsedLine->opcode);
     enum op_types op_type = mnemonic_to_op_type(parsedLine->opcode);
 
-    printf("optype: %d\n", op_type);
     op_t operation = op_tab[op_type];
-    printf("opcode: %d, mnemonic: %s, args: %d\n", operation.code, operation.mnemonique, operation.nbr_args);
 
     unsigned char opcode = operation.code;
     // Write the opcode to the output file.
+    printf("opcode: %d\n", opcode);
     fwrite(&opcode, sizeof(opcode), 1, output);
 
     // Then write the parameter description byte
     unsigned char param_description = encode_parameter_description(parsedLine->arguments, parsedLine->argumentCount);
+    printf("param_description: %d\n", param_description);
     fwrite(&param_description, sizeof(param_description), 1, output);
 
     // Then write the arguments
@@ -86,12 +86,15 @@ void encode_instruction(FILE *output, ParsedLine *parsedLine) {
 
         if (*arg == 'r') {
             // Write register (1 byte)
+            printf("register: %s\n", arg);
             encode_register(output, arg);
         } else if (*arg == '%') {
             // Write indirect (2 bytes)
+            printf("indirect: %s\n", arg);
             encode_indirect(output, arg, 0); // Replace 0 with the current address
         } else if (isdigit(*arg) || (*arg == '-' && isdigit(*(arg + 1)))) {
             // Write direct (4 bytes)
+            printf("direct: %s\n", arg);
             encode_direct(output, arg);
         } else {
             // Write direct/indirect (4 bytes)
@@ -99,6 +102,7 @@ void encode_instruction(FILE *output, ParsedLine *parsedLine) {
             if (isdigit(*arg) || (*arg == '-' && isdigit(*(arg + 1)))) {
                 // Direct value, just convert to integer
                 value = atoi(arg);
+                printf("little endian: %d\n", value);
                 write_little_endian(output, value);
             } else {
                 // Indirect value, must be a label, so look it up
@@ -108,6 +112,7 @@ void encode_instruction(FILE *output, ParsedLine *parsedLine) {
                     // Handle error accordingly, but do not exit.
                     value = 0; // Placeholder for error handling.
                 }
+                printf("little endian else: %d\n", value);
                 write_little_endian(output, value);
             }
         }
