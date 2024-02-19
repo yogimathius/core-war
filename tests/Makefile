@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -Werror  -fsanitize=address -g3
+CFLAGS = -Wall -Wextra -Werror
 LDFLAGS := -lcmocka -L/usr/local/lib
 
 SRCDIR = ../src
