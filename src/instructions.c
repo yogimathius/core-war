@@ -89,11 +89,11 @@ void build_instructions(char **parsed_instructions, instruction_t **inst_ptr) {
             }
             is_opcode = 1;
             if (parsed_instructions[i] != NULL) {
-            instruction_t *next_inst = (instruction_t*)malloc(sizeof(instruction_t));            
-            if (next_inst == NULL) {
-                perror("Memory allocation failed");
-                exit(EXIT_FAILURE);
-            }
+                instruction_t *next_inst = (instruction_t*)malloc(sizeof(instruction_t));            
+                if (next_inst == NULL) {
+                    perror("Memory allocation failed");
+                    exit(EXIT_FAILURE);
+                }
                 inst->next = next_inst;
                 inst = next_inst;
             } else {
