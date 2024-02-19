@@ -5,7 +5,7 @@ champion_t *init_champion() {
 
 	if ((champ = (champion_t *)(malloc(sizeof(champion_t)))) == NULL)
 		return (NULL);
-  // iitialize all registers to 0
+  // initialize all registers to 0
   for (int i = 0; i < REG_NUMBER; i++) {
     champ->registers[i] = 0;
   }
