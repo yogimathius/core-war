@@ -1,12 +1,6 @@
-#include <stdio.h>
-#include <stdint.h>
-#include <string.h>
-#include <stdlib.h>
-#include <ctype.h>
-
-#include "../include/op.h"
-#include "../include/vm.h"
-#include "../include/instructions.h"
+#include <op.h>
+#include <vm.h>
+#include <instructions.h>
 
 int main(int ac, char **av) {
     printf("Starting corewar\n");
