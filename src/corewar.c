@@ -9,15 +9,8 @@ int main(int ac, char **av) {
         printf("Usage: ./corewar [champion1.cor] [champion2.cor] [champion3.cor] [champion4.cor]\n");
         exit(1);
     }
-    printf("====================LOADING CHAMPIONS=====================\n");
-
-    while (ac > 1) {
-        printf("Loading champion: %s\n", av[ac - 1]);
-        champion_t *champ = init_champion();
-        create_champion(champ, av[ac - 1]);
-        add_champion(core_vm, champ);
-        ac--;
-    }
+    
+    load_champions(core_vm, ac, av);
 
     int i = 0;
     printf("\n\n");
