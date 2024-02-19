@@ -1,11 +1,4 @@
-#include "stdio.h"
-#include "string.h"
-#include "stdlib.h"
-#include "../include/champion.h"
-#include <sys/fcntl.h>
-#include <sys/stat.h>
-#include <unistd.h>
-#include "../include/instructions.h"
+#include <champion.h>
 
 champion_t *init_champion() {
   champion_t *champ;
@@ -43,6 +36,8 @@ int parse_header(champion_t *champion, int bytes_read, char *hex_buffer) {
       if (i < 132) {
           champion->header.prog_name[i - 4] = hex_buffer[i];
       } else if (i > 136 && i < 140) {
+          // printf("hex_buffer[i]: %d\n", hex_buffer[i]);
+
           champion->header.prog_size = (champion->header.prog_size << 8) | (unsigned char)hex_buffer[i];
       } else if (i >= 140 && i < 140 + COMMENT_LENGTH) {
           champion->header.comment[i - 140] = hex_buffer[i];
@@ -83,21 +78,7 @@ champion_t *create_champion(champion_t *champion, char *filename) {
       exit(1);
     }
 
-    char *hex_string = (char *)malloc(st.st_size * 2 + 1);
-
-    int j = 0;
-    for (int i = 140 + COMMENT_LENGTH; i < bytes_read && j < MEM_SIZE; i++) {
-      if (hex_buffer[i] != 0) {
-        hex_string[j * 3]     = bin_to_hex(hex_buffer[i] >> 4);
-        hex_string[j * 3 + 1] = bin_to_hex(hex_buffer[i] & 0x0F);
-        hex_string[j * 3 + 2] = ' '; 
-        j++;
-      }
-    }
-    hex_string[j * 3] = '\0';
-    champion->instruction_size = j;
-    printf("Hexadecimal representation: %s\n", hex_string);
-    char **parsed_instructions = parse_instructions(hex_string);
+    char **parsed_instructions = parse_instructions(hex_buffer, bytes_read, champion);
     champion->instruction_list = NULL;
     build_instructions(champion, parsed_instructions, &champion->instruction_list);
     free(parsed_instructions);

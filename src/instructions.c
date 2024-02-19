@@ -5,32 +5,43 @@
 #include "../include/op.h"
 #include "../include/instructions.h"
 
-char **parse_instructions(char *instruction) {
+char **parse_instructions(char *hex_buffer, int bytes_read, champion_t *champion) {
     char **operands = malloc((MEM_SIZE + 1) * sizeof(char *)); 
     if (operands == NULL) {
         perror("Memory allocation failed");
         exit(EXIT_FAILURE);
     }
 
-    char *token = strtok(instruction, " ");
-    int i = 0;
+    for (int i = 0; i < MEM_SIZE + 1; i++) {
+      operands[i] = malloc(3 * sizeof(char));
 
-    while (token != NULL && i < MEM_SIZE) {
-        operands[i] = strdup(token);
-        if (operands[i] == NULL) {
-            perror("Memory allocation failed");
-            exit(EXIT_FAILURE);
-        }
-        token = strtok(NULL, " ");
-        i++;
+      if (operands[i] == NULL) {
+          printf("Memory allocation failed.\n");
+        exit(EXIT_FAILURE);
+      }
     }
 
-    operands[i] = NULL;
-
+    int j = 0;
+    for (int i = 140 + COMMENT_LENGTH + 4; i < bytes_read && j < MEM_SIZE; i++) {
+      snprintf(operands[j], 3, "%.2x", (unsigned int)hex_buffer[i]);
+      j++;
+    }
+    operands[j] = NULL;
+    champion->instruction_size = j;
+    printf("Hexadecimal operands\n");
+    j = 0;
+    while (operands[j] != NULL) {
+      printf("%s ", operands[j]);
+      j++;
+    }
+    printf("\n");
     return operands;
 }
 
 void build_instructions(champion_t *champ, char **parsed_instructions, instruction_t **inst_ptr) {
+    UNUSED(champ);
+    UNUSED(inst_ptr);
+    int is_opcode = 1;
     instruction_t *inst = *inst_ptr;
     if (inst == NULL) {
         inst = (instruction_t*)malloc(sizeof(instruction_t));
@@ -40,63 +51,62 @@ void build_instructions(champion_t *champ, char **parsed_instructions, instructi
         }
         *inst_ptr = inst;
     }
-    printf("====================Building instruction: %s=====================\n", *parsed_instructions);
-    enum op_types opcode = (enum op_types)strtoul(*parsed_instructions, NULL, 16);
-    if (opcode < 1 || opcode > 16) {
-        printf("No more valid instructions to parse\n");
-        inst->next = NULL;
-    } else {
-        op_t operation = op_tab[opcode - 1];
-        int operation_args = operation.nbr_args;
-        inst->operands = (int*)malloc(operation_args * sizeof(int));
-        if (inst->operands == NULL) {
-            perror("Memory allocation failed");
-            exit(EXIT_FAILURE);
-        }
-        // printf("opcode: %d\n", opcode);
-        inst->opcode = opcode - 1;
+    int i = 0;
 
-        int i = 0;
-        printf("opcode: %d, mnemonic: %s, args: %d\n", opcode, operation.mnemonique, operation_args);
-
-        printf("operands: ");
-        while (i < operation_args + 2) {
-            if (i == 0 || i == 1) {
-                parsed_instructions++;
-                i++;
-                continue;
-            }
-            long int operandValue = strtol(*parsed_instructions, NULL, 10);
-
-            if (operandValue == 0 && **parsed_instructions != '0') {
-                printf("Invalid operand: %s\n", *parsed_instructions);
+    while (parsed_instructions[i] != NULL) {
+        if (is_opcode == 1) {
+            is_opcode = 0;
+            enum op_types opcode = (enum op_types)strtol(parsed_instructions[i], NULL, 16);
+            inst->opcode = opcode - 1;
+        } else {
+            if (inst->opcode < 0 || inst->opcode > 16) {
+                printf("Invalid opcode: %d\n", inst->opcode);
                 break;
-            } else if (operandValue < 0 || operandValue > 100) {
-                printf("Invalid register: %ld\n", operandValue);
-                break;
-            } else {
-                inst->operands[i-2] = operandValue;
-                printf("%d ", inst->operands[i-2]);
             }
-
-
-            parsed_instructions++;
+            op_t operation = op_tab[inst->opcode];
+            
+            printf("checking operation for operands: %s\n", operation.mnemonique);
+            // skipping parameter description
             i++;
-        }
-        printf("\n");
-
-        if (*parsed_instructions != NULL) {
+            inst->operands = (int*)malloc(operation.nbr_args * sizeof(int));
+            if (inst->operands == NULL) {
+                perror("Memory allocation failed");
+                exit(EXIT_FAILURE);
+            }
+            int j = 0;
+            int added_operand = 0;
+            while(j < operation.nbr_args) {
+                // chceking if the operand is a register
+                if (strcmp(parsed_instructions[i], "00") == 0 && added_operand == 1){
+                    i++;
+                    if (strcmp(parsed_instructions[i+1], "00") == 0) {
+                        i++;
+                    } else {
+                        added_operand = 0;
+                    }
+                }
+                inst->operands[j] = strtol(parsed_instructions[i], NULL, 10);
+                added_operand = 1;
+                printf("added operand: %d\n", inst->operands[j]);
+                if (j < operation.nbr_args - 1) {
+                    i++;
+                }
+                j++;
+            }
+            is_opcode = 1;
+            if (parsed_instructions[i] != NULL) {
             instruction_t *next_inst = (instruction_t*)malloc(sizeof(instruction_t));            
             if (next_inst == NULL) {
                 perror("Memory allocation failed");
                 exit(EXIT_FAILURE);
             }
-            inst->next = next_inst;
-
-            build_instructions(champ, parsed_instructions, &next_inst);
-        } else {
-            inst->next = NULL;
+                inst->next = next_inst;
+                inst = next_inst;
+            } else {
+                inst->next = NULL;
+            }
         }
+        i++;
     }
 }
 
