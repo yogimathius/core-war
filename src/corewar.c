@@ -1,6 +1,7 @@
 #include <op.h>
 #include <vm.h>
 #include <instructions.h>
+#include <game.h>
 
 int main(int ac, char **av) {
     printf("Starting corewar\n");
@@ -12,14 +13,7 @@ int main(int ac, char **av) {
     
     load_champions(core_vm, ac, av);
 
-    int i = 0;
-    printf("\n\n");
-    printf("====================START GAME=====================\n");
-    while (i < core_vm->champion_count) {
-        printf("====================Champion P%d: %s=====================\n", core_vm->champions[i].id, core_vm->champions[i].header.prog_name);
-        run_champion(core_vm, core_vm->champions[i]);
-        i++;
-    }
+    run_game(core_vm);
 
     return 0;
 }
