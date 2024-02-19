@@ -29,7 +29,7 @@ int main(int ac, char **av) {
     printf("\n\n");
     printf("====================START GAME=====================\n");
     while (i < core_vm->champion_count) {
-        printf("Champion P%d: %s\n", core_vm->champions[i].id, core_vm->champions[i].header.prog_name);
+        printf("====================Champion P%d: %s=====================\n", core_vm->champions[i].id, core_vm->champions[i].header.prog_name);
         run_champion(core_vm, core_vm->champions[i]);
         i++;
     }
