@@ -1,7 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
 #include "../include/op.h"
 #include "../include/instructions.h"
 

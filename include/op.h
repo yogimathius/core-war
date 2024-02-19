@@ -1,6 +1,8 @@
 #include <stdio.h>
-#include <stdlib.h>
+#include <stdint.h>
 #include <string.h>
+#include <stdlib.h>
+#include <ctype.h>
 
 #ifndef _OP_H_
 #define _OP_H_
