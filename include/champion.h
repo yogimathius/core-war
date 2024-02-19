@@ -1,7 +1,12 @@
+#include <sys/fcntl.h>
+#include <sys/stat.h>
+#include <unistd.h>
+
 #ifndef _CHAMPION_H_
 #define _CHAMPION_H_
 
 #include "op.h"
+#include "instructions.h"
 
 champion_t *init_champion();
 
