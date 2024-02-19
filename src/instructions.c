@@ -38,9 +38,7 @@ char **parse_instructions(char *hex_buffer, int bytes_read, champion_t *champion
     return operands;
 }
 
-void build_instructions(champion_t *champ, char **parsed_instructions, instruction_t **inst_ptr) {
-    UNUSED(champ);
-    UNUSED(inst_ptr);
+void build_instructions(char **parsed_instructions, instruction_t **inst_ptr) {
     int is_opcode = 1;
     instruction_t *inst = *inst_ptr;
     if (inst == NULL) {
