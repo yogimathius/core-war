@@ -4,7 +4,7 @@
 
 char **parse_instructions(char *hex_buffer, int bytes_read, champion_t *champion);
 
-void build_instructions(champion_t *champ, char **instructions, instruction_t **inst_ptr);
+void build_instructions(char **instructions, instruction_t **inst_ptr);
 
 void execute_instruction(core_t *vm, champion_t *champ, enum op_types opcode, int *instruction);
 

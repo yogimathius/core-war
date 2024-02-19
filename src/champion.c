@@ -83,7 +83,7 @@ champion_t *create_champion(champion_t *champion, char *filename) {
 
     char **parsed_instructions = parse_instructions(hex_buffer, bytes_read, champion);
     champion->instruction_list = NULL;
-    build_instructions(champion, parsed_instructions, &champion->instruction_list);
+    build_instructions(parsed_instructions, &champion->instruction_list);
     free(parsed_instructions);
 
   } else {
