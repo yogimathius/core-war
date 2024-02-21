@@ -93,8 +93,8 @@ Token lex_token(const char **input) {
     }
     else if (**input == '%' && isdigit((unsigned char)*(*input + 1))) { // Direct value
         token.type = TOKEN_NUMBER; // or a new type, e.g., TOKEN_DIRECT_VALUE
-        (*input)++; // Skip '%'
         start = *input; // Start at the digit
+        (*input)++; // Skip '%'
         while (isdigit((unsigned char)**input)) {
             (*input)++;
         }
