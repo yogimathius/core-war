@@ -30,6 +30,20 @@ void assemble(FILE *input, FILE *output) {
     }
 }
 
+int get_program_size(FILE *input) {
+    char line[MAX_LINE_LENGTH];
+    int program_size = 0;
+
+    while (fgets(line, sizeof(line), input)) {
+        ParsedLine parsedLine = parse_line(line);
+        if (parsedLine.lineType == TOKEN_INSTRUCTION) {
+            program_size += 4; // Placeholder, replace with actual instruction size
+        }
+    }
+
+    return program_size;
+}
+
 int main(int argc, const char *argv[]) {
     if (argc != 3) {
         fprintf(stderr, "Usage: %s <source_file.asm> <output_file.cor>\n", argv[0]);
@@ -54,16 +68,21 @@ int main(int argc, const char *argv[]) {
     int corewar_exec_magic = COREWAR_EXEC_MAGIC;
 
     // Hacky way to write the magic number to the output file in big-endian format
-    unsigned char bytes[4];
-    bytes[0] = (corewar_exec_magic >> 24) & 0xFF;
-    bytes[1] = (corewar_exec_magic >> 16) & 0xFF;
-    bytes[2] = (corewar_exec_magic >> 8) & 0xFF;
-    bytes[3] = corewar_exec_magic & 0xFF;
+    unsigned char magic_number[4];
+    magic_number[0] = (corewar_exec_magic >> 24) & 0xFF;
+    magic_number[1] = (corewar_exec_magic >> 16) & 0xFF;
+    magic_number[2] = (corewar_exec_magic >> 8) & 0xFF;
+    magic_number[3] = corewar_exec_magic & 0xFF;
 
-    fwrite(bytes, sizeof(int), 1, output_file);
+    fwrite(magic_number, sizeof(int), 1, output_file);
+
+
     fwrite(header.name, sizeof(char), sizeof(char) * PROG_NAME_LENGTH, output_file);
-
+    int program_size = get_program_size(input_file);
+    // write_little_endian(output_file, program_size);
+    fwrite(&program_size, sizeof(int), 1, output_file);
     fwrite(header.comment, sizeof(char), sizeof(char) * COMMENT_LENGTH, output_file);
+    fwrite("\0\0\0\0\0\0\0\0", sizeof(char), 8, output_file); // Placeholder for program instructions size (4 bytes)
 
     assemble(input_file, output_file);
 
