@@ -56,14 +56,17 @@ void build_instructions(char **parsed_instructions, instruction_t **inst_ptr) {
     int i = 0;
 
     while (parsed_instructions[i] != NULL) {
-        if (is_opcode == 1) {
-            is_opcode = 0;
+        printf("parsed instruction: %s\n", parsed_instructions[i]);
+        if (is_opcode == 1 && strcmp(parsed_instructions[i], "00") != 0) {
             enum op_types opcode = (enum op_types)strtol(parsed_instructions[i], NULL, 16);
-            inst->opcode = opcode - 1;
+            printf("opcode: %d\n", opcode);
+            inst->opcode = opcode -1;
+            is_opcode = 0;
         } else {
             if (inst->opcode < 0 || inst->opcode > 16) {
                 printf("Invalid opcode: %d\n", inst->opcode);
-                break;
+                i++;
+                continue;
             }
             op_t operation = op_tab[inst->opcode];
             
