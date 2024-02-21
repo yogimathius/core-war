@@ -11,8 +11,7 @@ void print_operands(char **operands) {
     printf("\n");
 }
 
-char **parse_instructions(char *hex_buffer, int bytes_read, champion_t *champion) {
-    char **operands = malloc((MEM_SIZE + 1) * sizeof(char *)); 
+void allocate_operands(char **operands) {
     if (operands == NULL) {
         perror("Memory allocation failed");
         exit(EXIT_FAILURE);
@@ -26,6 +25,11 @@ char **parse_instructions(char *hex_buffer, int bytes_read, champion_t *champion
         exit(EXIT_FAILURE);
       }
     }
+}
+
+char **parse_instructions(const char *hex_buffer, int bytes_read, champion_t *champion) {
+    char **operands = (char**)malloc((MEM_SIZE + 1) * sizeof(char*));
+    allocate_operands(operands);
 
     int j = 0;
     for (int i = 140 + COMMENT_LENGTH + 4; i < bytes_read && j < MEM_SIZE; i++) {
