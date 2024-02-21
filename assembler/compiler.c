@@ -44,6 +44,20 @@ int get_program_size(FILE *input) {
     return program_size;
 }
 
+void write_magic_number(FILE *output) {
+    int corewar_exec_magic = COREWAR_EXEC_MAGIC;
+    unsigned char magic_number[4];
+
+    // Hacky way to write the magic number to the output file in big-endian format
+
+    magic_number[0] = (corewar_exec_magic >> 24) & 0xFF;
+    magic_number[1] = (corewar_exec_magic >> 16) & 0xFF;
+    magic_number[2] = (corewar_exec_magic >> 8) & 0xFF;
+    magic_number[3] = corewar_exec_magic & 0xFF;
+
+    fwrite(magic_number, sizeof(int), 1, output);
+}
+
 int main(int argc, const char *argv[]) {
     if (argc != 3) {
         fprintf(stderr, "Usage: %s <source_file.asm> <output_file.cor>\n", argv[0]);
@@ -65,17 +79,8 @@ int main(int argc, const char *argv[]) {
         fclose(input_file);
         return EXIT_FAILURE;
     }
-    int corewar_exec_magic = COREWAR_EXEC_MAGIC;
 
-    // Hacky way to write the magic number to the output file in big-endian format
-    unsigned char magic_number[4];
-    magic_number[0] = (corewar_exec_magic >> 24) & 0xFF;
-    magic_number[1] = (corewar_exec_magic >> 16) & 0xFF;
-    magic_number[2] = (corewar_exec_magic >> 8) & 0xFF;
-    magic_number[3] = corewar_exec_magic & 0xFF;
-
-    fwrite(magic_number, sizeof(int), 1, output_file);
-
+    write_magic_number(output_file);
 
     fwrite(header.name, sizeof(char), sizeof(char) * PROG_NAME_LENGTH, output_file);
     int program_size = get_program_size(input_file);
