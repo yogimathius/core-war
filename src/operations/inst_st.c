@@ -12,5 +12,18 @@ r8.
 int inst_st(champion_t *champion, core_t *core, code_t code, int *inst) {
   log_instruction_args(champion, core, code, inst);
 
-  return 0;
+  int source_register = inst[0]; // The source register index
+  int target = inst[1]; // The target register index or address offset
+
+  // If the target is a register
+  if (code & T_REG) {
+      champion->registers[target] = champion->registers[source_register];
+  } else { 
+      // If the target is an address (indirect addressing)
+      int address = (champion->counter + (target % IDX_MOD)) % MEM_SIZE;
+      // Assuming core->memory is an array of bytes
+      core->memory[address] = champion->registers[source_register];
+  }
+
+  return 0; 
 };

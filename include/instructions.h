@@ -10,4 +10,6 @@ void execute_instruction(core_t *vm, champion_t *champ, enum op_types opcode, in
 
 void log_instruction_args(const champion_t *champion, const core_t *core, code_t code, int *inst);
 
+int load_value_from_address(core_t *core, int address);
+
 #endif
