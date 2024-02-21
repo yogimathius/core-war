@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -Werror
-LDFLAGS := -lcmocka -L/usr/local/lib
+LDFLAGS := -lcmocka -L/usr/local/lib -lcmocka -L/opt/homebrew/lib
 
 SRCDIR = ../src
 TESTDIR = .
@@ -22,7 +22,7 @@ OPERATIONS_OBJECTS = $(OPERATIONS_SOURCES:$(SRCDIR)/operations/%.c=$(TEST_BUILDD
 TEST_OBJECTS = $(TEST_SOURCES:$(TESTDIR)/%.c=$(TEST_BUILDDIR)/%.o)
 
 # Include directories
-INCLUDES = -I$(INCDIR)
+INCLUDES = -I$(INCDIR) -I/opt/homebrew/include
 
 # Target for the test executable
 TEST_TARGET = $(TEST_BUILDDIR)/run

@@ -16,3 +16,7 @@ void log_instruction_args(const champion_t *champion, const core_t *core, code_t
   }
   printf("\n");
 }
+
+int load_value_from_address(core_t *core, int address) {
+    return core->memory[address % MEM_SIZE]; 
+}
