@@ -2,6 +2,7 @@
 
 // Ensure that registers are encoded as a single byte
 void encode_register(FILE *output, const char *arg) {
+    printf("Encoding register: %s\n", arg);
     unsigned char reg_num = (unsigned char)atoi(arg + 1); // Skip 'r' and convert to int
     fwrite(&reg_num, T_REG, 1, output); // Write a single byte
 }
@@ -9,20 +10,39 @@ void encode_register(FILE *output, const char *arg) {
 
 void encode_direct(FILE *output, const char *arg) {
     int direct_value = atoi(arg);
-    fwrite(&direct_value, T_DIR, 1, output); // This will write in little-endian format
+
+    unsigned int big_endian_value = htonl(direct_value);
+
+    fwrite(&big_endian_value, T_DIR, 1, output);
+}
+
+int containsDigits(const char *str) {
+    while (*str != '\0') {
+        if (isdigit(*str)) {
+            return 1; // Return true if a digit is found
+        }
+        str++; // Move to the next character
+    }
+    return 0; // Return false if no digits are found
 }
 
 void encode_indirect(FILE *output, const char *arg, int current_address) {
     int indirect_value;
-    if (arg[0] == '%') {
+    if (arg[0] == '%' && containsDigits(arg + 1) == 0) {
         // Handle as label
         int label_address = lookup_symbol(arg + 1); // Skip '%' and lookup label
         indirect_value = label_address - current_address;
+    } else if (arg[0] == '%' && containsDigits(arg + 1) == 1) {
+        indirect_value = atoi(arg + 1); // Skip '%' and convert to int
     } else {
+        printf("arg: %s\n", arg);
         // Handle as numeric offset
         indirect_value = atoi(arg);
     }
-    fwrite(&indirect_value, T_IND, 1, output); // This will write in little-endian format
+    
+    unsigned int big_endian_value = htonl(indirect_value);
+
+    fwrite(&big_endian_value, T_IND, 1, output);
 }
 
 
@@ -83,7 +103,7 @@ void encode_instruction(FILE *output, ParsedLine *parsedLine) {
 
         // Trim leading whitespace
         while (isspace((unsigned char)*arg)) { arg++; }
-
+        printf("arg: %s\n", arg);
         if (*arg == 'r') {
             // Write register (1 byte)
             printf("register: %s\n", arg);
@@ -91,30 +111,15 @@ void encode_instruction(FILE *output, ParsedLine *parsedLine) {
         } else if (*arg == '%') {
             // Write indirect (2 bytes)
             printf("indirect: %s\n", arg);
+            // (*arg)++;
             encode_indirect(output, arg, 0); // Replace 0 with the current address
         } else if (isdigit(*arg) || (*arg == '-' && isdigit(*(arg + 1)))) {
             // Write direct (4 bytes)
             printf("direct: %s\n", arg);
             encode_direct(output, arg);
         } else {
-            // Write direct/indirect (4 bytes)
-            int value = 0;
-            if (isdigit(*arg) || (*arg == '-' && isdigit(*(arg + 1)))) {
-                // Direct value, just convert to integer
-                value = atoi(arg);
-                printf("little endian: %d\n", value);
-                write_little_endian(output, value);
-            } else {
-                // Indirect value, must be a label, so look it up
-                value = lookup_symbol(arg);
-                if (value == -1) {
-                    fprintf(stderr, "Error: Symbol '%s' not found.\n", arg);
-                    // Handle error accordingly, but do not exit.
-                    value = 0; // Placeholder for error handling.
-                }
-                printf("little endian else: %d\n", value);
-                write_little_endian(output, value);
-            }
+            // Handle error accordingly, but do not exit.
+            fprintf(stderr, "Error: Invalid argument '%s'.\n", arg);
         }
     }
 }
