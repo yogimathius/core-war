@@ -1,6 +1,16 @@
 #include "../include/op.h"
 #include "../include/instructions.h"
 
+void print_operands(char **operands) {
+    printf("Hexadecimal operands\n");
+    int j = 0;
+    while (operands[j] != NULL) {
+      printf("%s ", operands[j]);
+      j++;
+    }
+    printf("\n");
+}
+
 char **parse_instructions(char *hex_buffer, int bytes_read, champion_t *champion) {
     char **operands = malloc((MEM_SIZE + 1) * sizeof(char *)); 
     if (operands == NULL) {
@@ -24,13 +34,7 @@ char **parse_instructions(char *hex_buffer, int bytes_read, champion_t *champion
     }
     operands[j] = NULL;
     champion->instruction_size = j;
-    printf("Hexadecimal operands\n");
-    j = 0;
-    while (operands[j] != NULL) {
-      printf("%s ", operands[j]);
-      j++;
-    }
-    printf("\n");
+    print_operands(operands);
     return operands;
 }
 
