@@ -142,19 +142,17 @@ void build_instructions(char **parsed_instructions, instruction_t **inst_ptr) {
     }
 }
 
-void execute_instruction(core_t *vm, champion_t *champ, enum op_types opcode, int *args) {
-    int i = 0;
-    const op_t *operation = &op_tab[opcode];
-    printf("args in execute instructions: ");
-    while (i < operation->nbr_args) {
-        if (args[i] < 0 || args[i] > 100) {
-            printf("Invalid instruction: %d\n", args[i]);
-            return;
-        }
+void print_args(const int *args, int count) {
+    printf("args in execute: ");
+    for (int i = 0; i < count; i++) {
         printf("%d ", args[i]);
-        i++;
     }
     printf("\n");
+}
+
+void execute_instruction(core_t *vm, champion_t *champ, enum op_types opcode, int *args) {
+    const op_t *operation = &op_tab[opcode];
+    print_args(args, operation->nbr_args);
     
     if (operation->inst != NULL) {
         printf("executing operation: %s\n", operation->mnemonique);
