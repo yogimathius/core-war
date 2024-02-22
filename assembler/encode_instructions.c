@@ -19,11 +19,11 @@ void encode_direct(FILE *output, const char *arg) {
 int containsDigits(const char *str) {
     while (*str != '\0') {
         if (isdigit(*str)) {
-            return 1; // Return true if a digit is found
+            return 1; 
         }
-        str++; // Move to the next character
+        str++; 
     }
-    return 0; // Return false if no digits are found
+    return 0;
 }
 
 void encode_indirect(FILE *output, const char *arg, int current_address) {

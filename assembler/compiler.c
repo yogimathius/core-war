@@ -1,20 +1,15 @@
 #include "./op.h"
 
-// Main assembler loop with two passes
 void assemble(FILE *input, FILE *output) {
     char line[MAX_LINE_LENGTH];
-    int current_address = 0; // Start address for the code
+    int current_address = 0; 
 
-    // First pass: Build the symbol table
     while (fgets(line, sizeof(line), input)) {
         ParsedLine parsedLine = parse_line(line);
         if (parsedLine.lineType == TOKEN_LABEL) {
             add_symbol(parsedLine.label, current_address);
         } else if (parsedLine.lineType == TOKEN_INSTRUCTION) {
-            // Here you'd calculate the size of the instruction and increment current_address
-
-            // For now, we'll just increment it by a placeholder value
-            current_address += 4; // Placeholder, replace with actual instruction size
+            current_address += 4;
         }
     }
 
@@ -55,7 +50,10 @@ void write_program_size(FILE *input, FILE *output_file) {
         }
     }
 
-    fwrite(&program_size, sizeof(int), 1, output_file);
+    unsigned int big_endian_value = htonl(program_size);
+
+
+    fwrite(&big_endian_value, sizeof(int), 1, output_file);
 
 }
 
