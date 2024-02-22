@@ -119,10 +119,6 @@ void add_champion(core_t *core_t, champion_t *champion) {
 void run_champion(core_t *vm, champion_t champion) {
     instruction_t *inst = champion.instruction_list;
     while (inst != NULL && inst->opcode != -1) {
-        if (inst->opcode < 0 || inst->opcode >= 16) {
-            printf("Invalid opcode: %d\n", inst->opcode);
-            break;
-        }
         printf("instruction from run_program: %s\n", op_tab[inst->opcode].mnemonique);
 
         if (inst->operands != NULL) {
