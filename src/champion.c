@@ -9,7 +9,6 @@ void load_champions(core_t *core_vm, int ac, char **av) {
     add_champion(core_vm, champ);
     ac--;
   }
-
 }
 
 champion_t *init_champion() {
@@ -48,12 +47,15 @@ int parse_header(champion_t *champion, int bytes_read, char *hex_buffer) {
   }
 
   for (int i = 4; i < bytes_read && i < 140 + COMMENT_LENGTH; i++) {
-      if (i < 132) {
+      if (i < PROG_NAME_LENGTH + 4) {
           champion->header.prog_name[i - 4] = hex_buffer[i];
-      } else if (i > 136 && i < 140) {
-          // printf("hex_buffer[i]: %d\n", hex_buffer[i]);
-
-          champion->header.prog_size = (champion->header.prog_size << 8) | (unsigned char)hex_buffer[i];
+      } else if (i > PROG_NAME_LENGTH && i < PROG_NAME_LENGTH + 8) {
+          while (hex_buffer[i] == 00) { 
+              i++;
+          }
+          char *hex_value = (char*)malloc(3 * sizeof(char));
+          snprintf(hex_value, 3, "%.2x", (unsigned int)hex_buffer[i]);
+          champion->header.prog_size = strtol(hex_value, NULL, 16);
       } else if (i >= 140 && i < 140 + COMMENT_LENGTH) {
           champion->header.comment[i - 140] = hex_buffer[i];
       }
