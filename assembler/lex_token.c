@@ -45,7 +45,9 @@ Token lex_token(const char **input) {
             strncpy(token.string, start, length);
             token.string[length] = '\0';
         }
-    } else if (isalpha((unsigned char)**input)) { // Label or Instruction
+    } else if (isalpha((unsigned char)**input) && *input[0] != 'r') { // Label or Instruction
+        printf("input in alpha: %s\n", *input);
+
         start = *input;
         while (isalnum((unsigned char)**input) || **input == '_') {
             (*input)++;
@@ -60,6 +62,7 @@ Token lex_token(const char **input) {
         strncpy(token.string, start, length);
         token.string[length] = '\0';
     } else if (isdigit((unsigned char)**input) || **input == '-') { // Number
+        printf("input from digit: %s\n", *input);
         token.type = TOKEN_NUMBER;
         if (**input == '-') {
             (*input)++;
@@ -70,10 +73,11 @@ Token lex_token(const char **input) {
         size_t length = *input - start;
         strncpy(token.string, start, length);
         token.string[length] = '\0';
-    } else if (**input == 'r' && isdigit((unsigned char)*(*input + 1))) { // Register
+    } else if (*input[0] == 'r' && isdigit((unsigned char)*(*input + 1))) { // Register
         token.type = TOKEN_REGISTER;
-        (*input)++; // Skip 'r'
+        printf("input from r: %s\n", *input);
         start = *input; // Start at the digit
+        (*input)++; // Skip 'r'
         while (isdigit((unsigned char)**input)) {
             (*input)++;
         }
@@ -106,7 +110,8 @@ Token lex_token(const char **input) {
         token.type = TOKEN_SEPARATOR;
         (*input)++;  // Skip the comma
     }
-    else if (**input == 'r' && isdigit((unsigned char)*(*input + 1))) { // Register
+    else if (*input[0] == 'r' && isdigit((unsigned char)*(*input + 1))) { // Register
+        printf("input: %s\n", *input);
         token.type = TOKEN_REGISTER;
         (*input)++; // Skip 'r'
         start = *input; // Start at the digit
