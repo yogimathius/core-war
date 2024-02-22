@@ -35,7 +35,7 @@ void encode_indirect(FILE *output, const char *arg, int current_address) {
     } else if (arg[0] == '%' && containsDigits(arg + 1) == 1) {
         indirect_value = atoi(arg + 1); // Skip '%' and convert to int
     } else {
-        printf("arg: %s\n", arg);
+        printf("arg in indirect: %s\n", arg);
         // Handle as numeric offset
         indirect_value = atoi(arg);
     }
@@ -103,7 +103,7 @@ void encode_instruction(FILE *output, ParsedLine *parsedLine) {
 
         // Trim leading whitespace
         while (isspace((unsigned char)*arg)) { arg++; }
-        printf("arg: %s\n", arg);
+        printf("arg in encode: %s\n", arg);
         if (*arg == 'r') {
             // Write register (1 byte)
             printf("register: %s\n", arg);
