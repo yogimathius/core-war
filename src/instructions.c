@@ -2,7 +2,6 @@
 #include "../include/instructions.h"
 
 void print_operands(char **operands) {
-    printf("Hexadecimal operands\n");
     int j = 0;
     while (operands[j] != NULL) {
       printf("%s ", operands[j]);
@@ -38,6 +37,8 @@ char **parse_instructions(const char *hex_buffer, int bytes_read, champion_t *ch
     }
     operands[j] = NULL;
     champion->instruction_size = j;
+    printf("Hexadecimal operands\n");
+
     print_operands(operands);
     return operands;
 }
@@ -142,20 +143,10 @@ void build_instructions(char **parsed_instructions, instruction_t **inst_ptr) {
     }
 }
 
-void print_args(const int *args, int count) {
-    printf("args in execute: ");
-    for (int i = 0; i < count; i++) {
-        printf("%d ", args[i]);
-    }
-    printf("\n");
-}
-
 void execute_instruction(core_t *vm, champion_t *champ, enum op_types opcode, int *args) {
     const op_t *operation = &op_tab[opcode];
-    print_args(args, operation->nbr_args);
     
     if (operation->inst != NULL) {
-        printf("executing operation: %s\n", operation->mnemonique);
         operation->inst(champ, vm, opcode, args);
     } else {
         printf("Unknown or unimplemented operation\n");

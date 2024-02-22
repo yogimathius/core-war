@@ -119,21 +119,6 @@ void add_champion(core_t *core_t, champion_t *champion) {
 void run_champion(core_t *vm, champion_t champion) {
     instruction_t *inst = champion.instruction_list;
     while (inst != NULL && inst->opcode != -1) {
-        printf("instruction from run_program: %s\n", op_tab[inst->opcode].mnemonique);
-
-        if (inst->operands != NULL) {
-          int i = 0;
-          printf("operands in run champion: ");
-          while (i < op_tab[inst->opcode].nbr_args) {
-              if (inst->operands[i] < 0 || inst->operands[i] >= MEM_SIZE) {
-                printf("Invalid operand: %d\n", inst->operands[i]);
-                return;
-              }
-              printf("%d ", inst->operands[i]);
-              i++;
-          }
-        }
-        printf("\n");
         execute_instruction(vm, &champion, inst->opcode, inst->operands);
         inst = inst->next;
     }
