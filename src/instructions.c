@@ -60,7 +60,7 @@ instruction_t *check_next_instruction(const char *parsed_instruction, instructio
 int build_opcode(const char *parsed_instruction, instruction_t *inst) {
     enum op_types opcode = (enum op_types)strtol(parsed_instruction, NULL, 16);
     printf("opcode: %d\n", opcode);
-    if (opcode - 1 < 0 || opcode - 1 > 16) {
+    if ((int)opcode - 1 < 0 || (int)opcode - 1 > 16) {
         printf("Invalid opcode: %d\n", opcode);
         return 1;
     }
