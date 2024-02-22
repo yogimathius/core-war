@@ -29,8 +29,10 @@ ParsedLine parse_line(const char *line) {
 
     // Process arguments if any
     while ((token = lex_token(&inputPtr)).type != TOKEN_ENDLINE && token.type != TOKEN_COMMENT) {
-        if (parsedLine.argumentCount < MAX_ARGS_NUMBER) {
-            strcpy(parsedLine.arguments[parsedLine.argumentCount++], token.string);
+        if (parsedLine.argumentCount < MAX_ARGS_NUMBER && token.string[0] != '\0') {
+            printf("arg in while: %s\n", token.string);
+            strcpy(parsedLine.arguments[parsedLine.argumentCount], token.string);
+            parsedLine.argumentCount++;
         } else {
             // Handle error: too many arguments
         }
