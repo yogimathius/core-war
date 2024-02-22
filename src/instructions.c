@@ -68,6 +68,40 @@ int build_opcode(const char *parsed_instruction, instruction_t *inst) {
     return 0;
 }
 
+void add_operand(char **parsed_instructions, int *i, op_t operation, int *operands, int j) {
+    if (parsed_instructions[*i] == NULL) {
+        printf("Not enough operands for operation: %s\n", operation.mnemonique);
+        operands[j] = 0;
+        return;
+    }
+    while (strcmp(parsed_instructions[*i], "00") == 0) {
+        (*i)++;
+    }
+    operands[j] = strtol(parsed_instructions[*i], NULL, 10);
+    printf("added operand: %d\n", operands[j]);
+    if (j < operation.nbr_args - 1) {
+        (*i)++;
+    }
+}
+
+int *parse_operands(char **parsed_instructions, int *i, int opcode) {
+    op_t operation = op_tab[opcode];
+    printf("checking operation %s for operands\n", operation.mnemonique);
+    // skipping parameter description
+    (*i)++;
+    int *operands = (int*)malloc(operation.nbr_args * sizeof(int));
+    if (operands == NULL) {
+        perror("Memory allocation failed");
+        exit(EXIT_FAILURE);
+    }
+    int j = 0;
+    while(j < operation.nbr_args) {
+        add_operand(parsed_instructions, i, operation, operands, j);
+        j++;
+    }
+    return operands;
+}
+
 void build_instructions(char **parsed_instructions, instruction_t **inst_ptr) {
     int is_opcode = 1;
     instruction_t *inst = *inst_ptr;
@@ -94,34 +128,8 @@ void build_instructions(char **parsed_instructions, instruction_t **inst_ptr) {
                 printf("Invalid opcode for operands: %d\n", inst->opcode);
                 break;
             }
-            op_t operation = op_tab[inst->opcode];
-            
-            printf("checking operation %s for operands\n", operation.mnemonique);
-            // skipping parameter description
-            i++;
 
-            inst->operands = (int*)malloc(operation.nbr_args * sizeof(int));
-            if (inst->operands == NULL) {
-                perror("Memory allocation failed");
-                exit(EXIT_FAILURE);
-            }
-            int j = 0;
-            while(j < operation.nbr_args) {
-                if (parsed_instructions[i] == NULL) {
-                    printf("Not enough operands for operation: %s\n", operation.mnemonique);
-                    inst->operands[j] = 0;
-                    break;
-                }
-                while (strcmp(parsed_instructions[i], "00") == 0) {
-                    i++;
-                }
-                inst->operands[j] = strtol(parsed_instructions[i], NULL, 10);
-                printf("added operand: %d\n", inst->operands[j]);
-                if (j < operation.nbr_args - 1) {
-                    i++;
-                }
-                j++;
-            }
+            inst->operands = parse_operands(parsed_instructions, &i, inst->opcode);
             is_opcode = 1;
             inst = check_next_instruction(parsed_instructions[i], inst);
         }
