@@ -102,8 +102,7 @@ int *parse_operands(char **parsed_instructions, int *i, int opcode) {
     return operands;
 }
 
-void build_instructions(char **parsed_instructions, instruction_t **inst_ptr) {
-    int is_opcode = 1;
+instruction_t *allocate_instruction(instruction_t **inst_ptr) {
     instruction_t *inst = *inst_ptr;
     if (inst == NULL) {
         inst = (instruction_t*)malloc(sizeof(instruction_t));
@@ -113,6 +112,12 @@ void build_instructions(char **parsed_instructions, instruction_t **inst_ptr) {
         }
         *inst_ptr = inst;
     }
+    return inst;
+}
+
+void build_instructions(char **parsed_instructions, instruction_t **inst_ptr) {
+    int is_opcode = 1;
+    instruction_t *inst = allocate_instruction(inst_ptr);
     int i = 0;
 
     while (parsed_instructions[i] != NULL) {
