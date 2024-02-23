@@ -18,4 +18,6 @@ void run_champion(core_t *vm, champion_t champion);
 
 void load_champions(core_t *core_vm, int ac, char **av);
 
+void run_champions(core_t *vm);
+
 #endif
