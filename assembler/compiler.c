@@ -5,7 +5,7 @@ void assemble(FILE *input, FILE *output) {
     int current_address = 0; 
 
     while (fgets(line, sizeof(line), input)) {
-        ParsedLine parsedLine = parse_line(line);
+        parsed_line_t parsedLine = parse_line(line);
         if (parsedLine.lineType == TOKEN_LABEL) {
             add_symbol(parsedLine.label, current_address);
         } else if (parsedLine.lineType == TOKEN_INSTRUCTION) {
@@ -18,7 +18,7 @@ void assemble(FILE *input, FILE *output) {
 
     // Second pass: Encode instructions
     while (fgets(line, sizeof(line), input)) {
-        ParsedLine parsedLine = parse_line(line);
+        parsed_line_t parsedLine = parse_line(line);
         if (parsedLine.lineType == TOKEN_INSTRUCTION) {
             encode_instruction(output, &parsedLine);
         }
@@ -44,7 +44,7 @@ void write_program_size(FILE *input, FILE *output_file) {
     int program_size = 0;
 
     while (fgets(line, sizeof(line), input)) {
-        ParsedLine parsedLine = parse_line(line);
+        parsed_line_t parsedLine = parse_line(line);
         if (parsedLine.lineType == TOKEN_INSTRUCTION) {
             program_size += 4;
         }

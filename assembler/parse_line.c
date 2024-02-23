@@ -1,7 +1,7 @@
 #include "./op.h"
 
-ParsedLine parse_line(const char *line) {
-    ParsedLine parsedLine = {TOKEN_UNKNOWN, "", "", {""}, 0};
+parsed_line_t parse_line(const char *line) {
+    parsed_line_t parsedLine = {TOKEN_UNKNOWN, "", "", {""}, 0};
     const char *inputPtr = line;
 
     Token token;
