@@ -63,15 +63,6 @@ unsigned char encode_parameter_description(char arguments[][MAX_ARGUMENT_LENGTH]
     return description;
 }
 
-void write_little_endian(FILE *output, int value) {
-    unsigned char bytes[4];
-    bytes[0] = (value >> 0) & 0xFF;
-    bytes[1] = (value >> 8) & 0xFF;
-    bytes[2] = (value >> 16) & 0xFF;
-    bytes[3] = (value >> 24) & 0xFF;
-    fwrite(bytes, sizeof(bytes), 1, output);
-}
-
 enum op_types mnemonic_to_op_type(const char *mnemonic) {
     for (int i = 0; i < OP_TYPES_COUNT; i++) {
         if (strcmp(mnemonic, op_tab[i].mnemonique) == 0) {
