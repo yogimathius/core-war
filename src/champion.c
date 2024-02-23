@@ -83,7 +83,7 @@ champion_t *create_champion(champion_t *champion, char *filename) {
 
   if (stat(filename, &st) == 0) {
     char hex_buffer[st.st_size];
-    int bytes_read = read(fd, hex_buffer, sizeof(hex_buffer) - 1);
+    int bytes_read = read(fd, hex_buffer, sizeof(hex_buffer));
 
     if (bytes_read == -1) {
       printf("Error: could not read file\n");
@@ -118,7 +118,7 @@ void add_champion(core_t *core_t, champion_t *champion) {
 
 void run_champion(core_t *vm, champion_t champion) {
     instruction_t *inst = champion.instruction_list;
-    while (inst != NULL && inst->opcode != -1) {
+    while (inst != NULL && inst->opcode >= 0 && inst->opcode <= 15) {
         execute_instruction(vm, &champion, inst->opcode, inst->operands);
         inst = inst->next;
     }
