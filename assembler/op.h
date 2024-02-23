@@ -106,7 +106,7 @@ typedef struct {
     char opcode[MAX_LABEL_LENGTH];
     char arguments[MAX_ARGS_NUMBER][MAX_ARGUMENT_LENGTH];
     int argumentCount;
-} ParsedLine;
+} parsed_line_t;
 
 typedef struct Symbol {
     char label[MAX_LABEL_LENGTH];
@@ -121,10 +121,10 @@ typedef struct {
 
 // Function prototypes
 Token lex_token(const char **input);
-ParsedLine parse_line(const char *line);
+parsed_line_t parse_line(const char *line);
 void add_symbol(const char *label, int address);
 int lookup_symbol(const char *label);
-void encode_instruction(FILE *output, ParsedLine *parsedLine);
+void encode_instruction(FILE *output, parsed_line_t *parsedLine);
 void assemble(FILE *input, FILE *output);
 FileHeader parse_header(FILE *input);
 void write_little_endian(FILE *output, int value);

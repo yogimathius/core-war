@@ -72,7 +72,7 @@ enum op_types mnemonic_to_op_type(const char *mnemonic) {
     return OP_NOTHING;
 }
 // Now update the encode_instruction function to use these
-void encode_instruction(FILE *output, ParsedLine *parsedLine) {
+void encode_instruction(FILE *output, parsed_line_t *parsedLine) {
     printf("Encoding instruction: %s\n", parsedLine->opcode);
     enum op_types op_type = mnemonic_to_op_type(parsedLine->opcode);
 
