@@ -82,10 +82,12 @@ int main(int argc, const char *argv[]) {
     write_magic_number(output_file);
 
     fwrite(header.name, sizeof(char), sizeof(char) * PROG_NAME_LENGTH, output_file);
+    fwrite("\0\0\0\0", sizeof(char), 4, output_file); // Placeholder for program instructions size (4 bytes)
+
     write_program_size(input_file, output_file);
 
     fwrite(header.comment, sizeof(char), sizeof(char) * COMMENT_LENGTH, output_file);
-    fwrite("\0\0\0\0\0\0\0\0", sizeof(char), 8, output_file); // Placeholder for program instructions size (4 bytes)
+    fwrite("\0\0\0\0", sizeof(char), 4, output_file); // Placeholder for program instructions size (4 bytes)
 
     assemble(input_file, output_file);
 
