@@ -123,3 +123,11 @@ void run_champion(core_t *vm, champion_t champion) {
         inst = inst->next;
     }
 }
+
+void run_champions(core_t *vm) {
+    for (int i = 0; i < vm->champion_count; i++) {
+        printf("====================Champion P%d: %s executes=====================\n", vm->champions[i].id, vm->champions[i].header.prog_name);
+
+        run_champion(vm, vm->champions[i]);
+    }
+}
