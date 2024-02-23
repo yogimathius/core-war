@@ -56,8 +56,8 @@ int parse_header(champion_t *champion, int bytes_read, char *hex_buffer) {
           char *hex_value = (char*)malloc(3 * sizeof(char));
           snprintf(hex_value, 3, "%.2x", (unsigned int)hex_buffer[i]);
           champion->header.prog_size = strtol(hex_value, NULL, 16);
-      } else if (i >= 140 && i < 140 + COMMENT_LENGTH) {
-          champion->header.comment[i - 140] = hex_buffer[i];
+      } else if (i >= PROG_NAME_LENGTH + 12 && i < PROG_NAME_LENGTH + 12 + COMMENT_LENGTH) {
+          champion->header.comment[i - (PROG_NAME_LENGTH + 12)] = hex_buffer[i];
       }
   }
   printf("Program name: %s\n", champion->header.prog_name);
