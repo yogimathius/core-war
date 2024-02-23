@@ -35,15 +35,16 @@
 */
 
 void run_game(core_t *core_vm) {
-    int i = 0;
     printf("\n\n");
     printf("====================START GAME=====================\n");
     // Have to create a game loop just like the one in the snippet above that will loop through each champion and execute one instruction at a time
-    while (i < core_vm->champion_count) {
-        printf("====================Champion P%d: %s executes=====================\n", core_vm->champions[i].id, core_vm->champions[i].header.prog_name);
-        // need to modify run champion to only run one instruction at a time based on current game_loop_number
-        run_champion(core_vm, core_vm->champions[i]);
-        i++;
+    // Phase 4: we want each champion to call all instructions for each turn.
+    int game_loop_number = 0;
+    int max_game_loops = 10;
 
+    while (game_loop_number < max_game_loops) {
+        printf("====================Game Loop %d=====================\n", game_loop_number);
+        run_champions(core_vm);
+        game_loop_number++;
     }
 }
