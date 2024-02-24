@@ -105,7 +105,7 @@ typedef struct champion {
   enum registers registers[REG_NUMBER];
   int counter;
   int carry_flag;
-  int inst[MEM_SIZE + 1];
+  instruction_t inst[MEM_SIZE + 1];
   int instruction_size;
   instruction_t *instruction_list;
 } champion_t;
