@@ -124,26 +124,22 @@ void add_champion(core_t *core_t, champion_t *champion) {
 void run_champion(core_t *vm, champion_t champion) {
     int instruction_size = champion.instruction_size;
     int instruction_pointer = vm->instruction_pointer;
-    // printf("instruction pointer: %d\n",  vm->instruction_pointer);
-    // printf("Current instruction: %d\n", instruction_size);
 
-    int instruction_index = instruction_pointer > instruction_size ? (instruction_pointer % instruction_size) - 1 : instruction_pointer;
+    int instruction_index = instruction_pointer > instruction_size ? (instruction_pointer % instruction_size) : instruction_pointer;
 
-    printf("Current instruction: %d\n", instruction_index);
     instruction_t *found_inst = &champion.inst[instruction_index];
 
-    printf("Found current instruction: %d\n", found_inst->opcode);
-    instruction_t *inst = champion.instruction_list;
-    while (inst != NULL && inst->opcode >= 0 && inst->opcode <= 15) {
-        execute_instruction(vm, &champion, inst->opcode, inst->operands);
-        inst = inst->next;
+    if (found_inst->opcode < 0 || found_inst->opcode > 16) {
+        printf("Invalid opcode for operands: %d\n", found_inst->opcode);
+        return;
     }
+
+
+    execute_instruction(vm, &champion, found_inst->opcode, found_inst->operands);
 }
 
 void run_champions(core_t *vm) {
     for (int i = 0; i < vm->champion_count; i++) {
-        printf("====================Champion P%d: %s executes=====================\n", vm->champions[i].id, vm->champions[i].header.prog_name);
-
         run_champion(vm, vm->champions[i]);
     }
 }
