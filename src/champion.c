@@ -37,7 +37,6 @@ int get_magic_value(champion_t *champion, char *hex_buffer) {
 
   if (magic_value == COREWAR_EXEC_MAGIC) {
       champion->header.magic = magic_value;
-      printf("Magic value equals 0xea83f3!\n");
       return 0;
   } else {
       printf("Magic value does not equal 0xea.\n");
@@ -113,7 +112,6 @@ champion_t *create_champion(champion_t *champion, char *filename) {
 
 void add_champion(core_t *core_t, champion_t *champion) {
   core_t->champion_count+=1;
-  printf("Champion count: %d\n", core_t->champion_count);
   champion->id = core_t->champion_count;
   core_t->champions[core_t->champion_count - 1] = *champion;
   champion->counter = 0;
