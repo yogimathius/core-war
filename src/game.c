@@ -25,9 +25,9 @@ void run_game(core_t *core_vm) {
         core_vm->instruction_pointer++;
         if (core_vm->lives >= NBR_LIVE) {
             printf("Live count maxed out. Decreasing cycle to die by %d\n", CYCLE_DELTA);
-            core_vm->cycle -= CYCLE_DELTA;
+            core_vm->cycle_to_die -= CYCLE_DELTA;
             core_vm->lives = 0;
-            if (core_vm->cycle <= 0) {
+            if (core_vm->cycle_to_die <= 0) {
                 printf("Cycle to die is 0. Game over.\n");
                 champion_t *winner = find_champion(core_vm, core_vm->winner);
                 printf("The player %d (%s) is done.\n", winner->id, winner->header.prog_name);

@@ -21,9 +21,10 @@ core_t *init_vm() {
     }
     core->champion_count = 0;
     core->instruction_pointer = 0;
+    core->nbr_cycles = 0;
+    core->cycle_to_die = CYCLE_TO_DIE;
     core->lives = 0;
     core->winner = 0;
-    core->cycle = CYCLE_TO_DIE;
     
     return core;
 }

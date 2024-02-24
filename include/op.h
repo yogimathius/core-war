@@ -114,7 +114,8 @@ typedef struct champion {
 typedef struct core_s {
     int memory[MEM_SIZE];
     int instruction_pointer;
-    int cycle;
+    int nbr_cycles;
+    int cycle_to_die;
     int champion_count;
     champion_t champions[MAX_CHAMPIONS];
     int lives;
