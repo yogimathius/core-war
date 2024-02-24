@@ -137,10 +137,8 @@ int build_instructions(char **parsed_instructions, instruction_t **inst_ptr, cha
 
             inst->operands = parse_operands(parsed_instructions, &i, inst->opcode);
             is_opcode = 1;
+            champion->inst[instruction_size - 1] = *inst;
             inst = check_next_instruction(parsed_instructions[i], inst);
-            champion->inst[instruction_size] = *inst;
-            printf("instructionsize: %d\n", instruction_size);
-            printf("champion instruction added: %d\n", champion->inst[instruction_size].opcode);
         }
         i++;
     }
