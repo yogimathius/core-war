@@ -117,6 +117,8 @@ typedef struct core_s {
     int cycle;
     int champion_count;
     champion_t champions[MAX_CHAMPIONS];
+    int lives;
+    int winner;
 } core_t;
 
 // Structure representing an operation
