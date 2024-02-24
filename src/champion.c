@@ -95,9 +95,10 @@ champion_t *create_champion(champion_t *champion, char *filename) {
       exit(1);
     }
 
-    char **parsed_instructions = parse_instructions(hex_buffer, bytes_read, champion);
+    char **parsed_instructions = parse_instructions(hex_buffer, bytes_read);
     champion->instruction_list = NULL;
-    build_instructions(parsed_instructions, &champion->instruction_list);
+    int instruction_size = build_instructions(parsed_instructions, &champion->instruction_list);
+    champion->instruction_size = instruction_size;
     free(parsed_instructions);
 
   } else {
@@ -117,6 +118,9 @@ void add_champion(core_t *core_t, champion_t *champion) {
 }
 
 void run_champion(core_t *vm, champion_t champion) {
+    int current_instruction = champion.instruction_size;
+    printf("instruction pointer: %d\n",  vm->instruction_pointer);
+    printf("Current instruction: %d\n", current_instruction);
     instruction_t *inst = champion.instruction_list;
     while (inst != NULL && inst->opcode >= 0 && inst->opcode <= 15) {
         execute_instruction(vm, &champion, inst->opcode, inst->operands);

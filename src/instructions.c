@@ -26,7 +26,7 @@ void allocate_operands(char **operands) {
     }
 }
 
-char **parse_instructions(const char *hex_buffer, int bytes_read, champion_t *champion) {
+char **parse_instructions(const char *hex_buffer, int bytes_read) {
     char **operands = (char**)malloc((MEM_SIZE + 1) * sizeof(char*));
     allocate_operands(operands);
 
@@ -36,7 +36,6 @@ char **parse_instructions(const char *hex_buffer, int bytes_read, champion_t *ch
       j++;
     }
     operands[j] = NULL;
-    champion->instruction_size = j;
     printf("Hexadecimal operands\n");
 
     print_operands(operands);
@@ -116,11 +115,11 @@ instruction_t *allocate_instruction(instruction_t **inst_ptr) {
     return inst;
 }
 
-void build_instructions(char **parsed_instructions, instruction_t **inst_ptr) {
+int build_instructions(char **parsed_instructions, instruction_t **inst_ptr) {
     int is_opcode = 1;
     instruction_t *inst = allocate_instruction(inst_ptr);
     int i = 0;
-
+    int instruction_size = 0;
     while (parsed_instructions[i] != NULL) {
         if (is_opcode == 1 && strcmp(parsed_instructions[i], "00") != 0) {
             if (build_opcode(parsed_instructions[i], inst) == 1) {
@@ -128,6 +127,7 @@ void build_instructions(char **parsed_instructions, instruction_t **inst_ptr) {
                 break;
             } else {
                 is_opcode = 0;
+                instruction_size++;
             }
         } else {
             if (inst->opcode < 0 || inst->opcode > 16) {
@@ -141,6 +141,7 @@ void build_instructions(char **parsed_instructions, instruction_t **inst_ptr) {
         }
         i++;
     }
+    return instruction_size;
 }
 
 void execute_instruction(core_t *vm, champion_t *champ, enum op_types opcode, int *args) {
