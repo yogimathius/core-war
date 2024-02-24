@@ -6,7 +6,6 @@
 #include "../include/vm.h" 
 #include "../include/tests.h"
 
-core_t core_vm;
 
 void test_initialize_memory(void **state) {
     UNUSED(state);
@@ -20,12 +19,16 @@ void test_initialize_memory(void **state) {
 
 void test_read_memory(void **state) {
     UNUSED(state);
+    core_t core_vm;
+
     core_vm.memory[0] = 42;
     assert_true(read_vm(&core_vm, 0) == 42);
 }
 
 void test_write_memory(void **state) {
     UNUSED(state);
+    core_t core_vm;
+    
     write_vm(&core_vm, 1, 24);
     assert_true(read_vm(&core_vm, 1) == 24);
 }
