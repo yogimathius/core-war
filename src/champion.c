@@ -20,6 +20,10 @@ champion_t *init_champion() {
   for (int i = 0; i < REG_NUMBER; i++) {
     champ->registers[i] = 0;
   }
+  for (int i = 0; i < MEM_SIZE; i++) {
+    const instruction_t *inst = malloc(sizeof(instruction_t));
+    champ->inst[i] = *inst;
+  }
 	return champ;
 }
 
@@ -97,10 +101,9 @@ champion_t *create_champion(champion_t *champion, char *filename) {
 
     char **parsed_instructions = parse_instructions(hex_buffer, bytes_read);
     champion->instruction_list = NULL;
-    int instruction_size = build_instructions(parsed_instructions, &champion->instruction_list);
+    int instruction_size = build_instructions(parsed_instructions, &champion->instruction_list, champion);
     champion->instruction_size = instruction_size;
     free(parsed_instructions);
-
   } else {
       perror("Error getting file size");
   }
@@ -110,6 +113,7 @@ champion_t *create_champion(champion_t *champion, char *filename) {
 
 void add_champion(core_t *core_t, champion_t *champion) {
   core_t->champion_count+=1;
+  printf("Champion count: %d\n", core_t->champion_count);
   champion->id = core_t->champion_count;
   core_t->champions[core_t->champion_count - 1] = *champion;
   champion->counter = 0;
@@ -118,9 +122,17 @@ void add_champion(core_t *core_t, champion_t *champion) {
 }
 
 void run_champion(core_t *vm, champion_t champion) {
-    int current_instruction = champion.instruction_size;
-    printf("instruction pointer: %d\n",  vm->instruction_pointer);
-    printf("Current instruction: %d\n", current_instruction);
+    int instruction_size = champion.instruction_size;
+    int instruction_pointer = vm->instruction_pointer;
+    // printf("instruction pointer: %d\n",  vm->instruction_pointer);
+    // printf("Current instruction: %d\n", instruction_size);
+
+    int instruction_index = instruction_pointer > instruction_size ? (instruction_pointer % instruction_size) - 1 : instruction_pointer;
+
+    printf("Current instruction: %d\n", instruction_index);
+    instruction_t *found_inst = &champion.inst[instruction_index];
+
+    printf("Found current instruction: %d\n", found_inst->opcode);
     instruction_t *inst = champion.instruction_list;
     while (inst != NULL && inst->opcode >= 0 && inst->opcode <= 15) {
         execute_instruction(vm, &champion, inst->opcode, inst->operands);

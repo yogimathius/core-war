@@ -13,6 +13,12 @@ core_t *init_vm() {
         core->memory[i] = 0;
     }
 
+    // TODO: Use memset instead of for loop
+    // TODO: free extra champions that don't get added eventually
+    for (int i = 0; i < MAX_CHAMPIONS; i++) {
+        const champion_t *champion = malloc(sizeof(champion_t));
+        core->champions[i] = *champion;
+    }
     core->champion_count = 0;
     core->instruction_pointer = 0;
 

@@ -115,7 +115,7 @@ instruction_t *allocate_instruction(instruction_t **inst_ptr) {
     return inst;
 }
 
-int build_instructions(char **parsed_instructions, instruction_t **inst_ptr) {
+int build_instructions(char **parsed_instructions, instruction_t **inst_ptr, champion_t *champion) {
     int is_opcode = 1;
     instruction_t *inst = allocate_instruction(inst_ptr);
     int i = 0;
@@ -138,6 +138,9 @@ int build_instructions(char **parsed_instructions, instruction_t **inst_ptr) {
             inst->operands = parse_operands(parsed_instructions, &i, inst->opcode);
             is_opcode = 1;
             inst = check_next_instruction(parsed_instructions[i], inst);
+            champion->inst[instruction_size] = *inst;
+            printf("instructionsize: %d\n", instruction_size);
+            printf("champion instruction added: %d\n", champion->inst[instruction_size].opcode);
         }
         i++;
     }
