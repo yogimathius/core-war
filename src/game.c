@@ -43,7 +43,8 @@ void run_game(core_t *core_vm) {
     int max_game_loops = 10;
 
     while (game_loop_number < max_game_loops) {
-        printf("====================Game Loop %d=====================\n", game_loop_number);
+        printf("\n");
+        printf("====================GAME LOOP %d=====================\n\n", game_loop_number);
         run_champions(core_vm);
         game_loop_number++;
         core_vm->instruction_pointer++;
