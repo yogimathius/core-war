@@ -2,9 +2,9 @@
 #define _PARSE_INSTRUCTIONS_H
 #include "op.h"
 
-char **parse_instructions(const char *hex_buffer, int bytes_read, champion_t *champion);
+char **parse_instructions(const char *hex_buffer, int bytes_read);
 
-void build_instructions(char **instructions, instruction_t **inst_ptr);
+int build_instructions(char **instructions, instruction_t **inst_ptr);
 
 void execute_instruction(core_t *vm, champion_t *champ, enum op_types opcode, int *instruction);
 
