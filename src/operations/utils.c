@@ -6,14 +6,13 @@ void log_instruction_args(const champion_t *champion, const core_t *core, code_t
   UNUSED(champion);
   UNUSED(core);
   
-  printf("====================called %s with:=====================\n", operation->mnemonique);
+  printf("Champion P%d: %s called %s with: ", champion->id,champion->header.prog_name, operation->mnemonique);
   int i = 0;
-  printf("args in execute instructions: ");
   while (i < operation->nbr_args) {
     printf("%d ", inst[i]);
     i++;
   }
-  printf("\n");
+  printf("\n\n");
 }
 
 int load_value_from_address(core_t *core, int address) {
