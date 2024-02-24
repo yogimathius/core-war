@@ -3,6 +3,8 @@
 
 void print_operands(char **operands) {
     int j = 0;
+    printf("Hexadecimal operands\n");
+
     while (operands[j] != NULL) {
       printf("%s ", operands[j]);
       j++;
@@ -36,7 +38,6 @@ char **parse_instructions(const char *hex_buffer, int bytes_read) {
       j++;
     }
     operands[j] = NULL;
-    printf("Hexadecimal operands\n");
 
     print_operands(operands);
     return operands;
@@ -59,7 +60,6 @@ instruction_t *check_next_instruction(const char *parsed_instruction, instructio
 
 int build_opcode(const char *parsed_instruction, instruction_t *inst) {
     enum op_types opcode = (enum op_types)strtol(parsed_instruction, NULL, 16);
-    printf("opcode: %d\n", opcode);
     if ((int)opcode - 1 < 0 || (int)opcode - 1 > 16) {
         printf("Invalid opcode: %d\n", opcode);
         return 1;
@@ -78,7 +78,7 @@ void add_operand(char **parsed_instructions, int *i, op_t operation, int *operan
         (*i)++;
     }
     operands[j] = strtol(parsed_instructions[*i], NULL, 10);
-    printf("added operand: %d\n", operands[j]);
+
     if (j < operation.nbr_args - 1) {
         (*i)++;
     }
@@ -86,7 +86,6 @@ void add_operand(char **parsed_instructions, int *i, op_t operation, int *operan
 
 int *parse_operands(char **parsed_instructions, int *i, int opcode) {
     op_t operation = op_tab[opcode];
-    printf("checking operation %s for operands\n", operation.mnemonique);
     // skipping parameter description
     (*i)++;
     int *operands = (int*)malloc(operation.nbr_args * sizeof(int));
