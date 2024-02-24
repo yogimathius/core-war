@@ -125,7 +125,6 @@ void run_champion(core_t *vm, champion_t champion) {
 
     int instruction_index = instruction_pointer >= instruction_size ? (instruction_pointer % instruction_size) : instruction_pointer;
 
-    printf("instruction_index: %d\n", instruction_index);
     instruction_t *found_inst = &champion.inst[instruction_index];
 
     if (found_inst->opcode < 0 || found_inst->opcode > 16) {
