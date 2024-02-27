@@ -11,10 +11,11 @@ champion_t *find_champion(core_t *core_vm, int id) {
 }
 
 int game_over(core_t *core_vm) {
-    if (core_vm->lives >= NBR_LIVE) {
+    if (core_vm->lives >= NBR_LIVE || core_vm->nbr_cycles >= core_vm->cycle_to_die) {
         printf("Live count maxed out. Decreasing cycle to die by %d\n", CYCLE_DELTA);
         core_vm->cycle_to_die -= CYCLE_DELTA;
         core_vm->lives = 0;
+        core_vm->winner = 0;
         if (core_vm->cycle_to_die <= 0) {
             printf("Cycle to die is 0. Game over.\n");
             champion_t *winner = find_champion(core_vm, core_vm->winner);
@@ -30,7 +31,6 @@ void run_game(core_t *core_vm) {
     // Phase 5: we want each champion to call ONLY ONE instruction per turn.
     // If, after NBR_LIVE executions of the instruction live, several processes are still alive, CYCLE_TO_DIE is decreased by CYCLE_DELTA units. This starts over until there are no live processes left.
     int game_loop_number = 0;
-    // int max_game_loops = 10;
 
     while (1) {
         printf("===============GAME LOOP %d===============\n\n", game_loop_number);
