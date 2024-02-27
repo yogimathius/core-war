@@ -146,7 +146,7 @@ int build_instructions(char **parsed_instructions, instruction_t **inst_ptr, cha
 
 void execute_instruction(core_t *vm, champion_t *champ, enum op_types opcode, int *args) {
     const op_t *operation = &op_tab[opcode];
-
+    vm->nbr_cycles += operation->nbr_cycles;
     if (operation->inst != NULL) {
         operation->inst(champ, vm, opcode, args);
     } else {
