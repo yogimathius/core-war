@@ -1,5 +1,7 @@
 #include <game.h>
 #include <champion.h>
+#include <ncurses.h>
+#include <stdbool.h>
 
 champion_t *find_champion(core_t *core_vm, int id) {
     for (int i = 0; i < MAX_CHAMPIONS; i++) {
@@ -17,9 +19,6 @@ int game_over(core_t *core_vm) {
         core_vm->lives = 0;
         core_vm->winner = 0;
         if (core_vm->cycle_to_die <= 0) {
-            printf("Cycle to die is 0. Game over.\n");
-            champion_t *winner = find_champion(core_vm, core_vm->winner);
-            printf("The player %d (%s) is done.\n", winner->id, winner->header.prog_name);
             return 1;
         }
     }
@@ -38,6 +37,19 @@ void run_game(core_t *core_vm) {
         game_loop_number++;
         core_vm->instruction_pointer++;
         if (game_over(core_vm)) {
+            printf("Game over\n");
+            initscr();
+            start_color();
+            init_pair(1, COLOR_RED, COLOR_BLACK);
+            printw("Cycle to die is 0. Game over.\n");
+            champion_t *winner = find_champion(core_vm, core_vm->winner);
+            attron(COLOR_PAIR(1));
+            printw("The player %d (%s) is done.\n", winner->id, winner->header.prog_name);
+            attroff(COLOR_PAIR(1));
+            refresh();
+            getch();
+
+            endwin();
             break;
         }
     }

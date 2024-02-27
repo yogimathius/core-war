@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -Werror  -fsanitize=address -g3
-LDFLAGS =
+LDFLAGS = -lncurses
 
 # Using CURDIR to set the SRCDIR
 SRCDIR = $(CURDIR)

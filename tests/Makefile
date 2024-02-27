@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -Werror
-LDFLAGS := -lcmocka -L/usr/local/lib -lcmocka -L/opt/homebrew/lib
+LDFLAGS := -lcmocka -L/usr/local/lib -lcmocka -L/opt/homebrew/lib -lncurses
 
 SRCDIR = ../src
 TESTDIR = .
