@@ -1,6 +1,5 @@
 #include <game.h>
 #include <champion.h>
-#include <ncurses.h>
 #include <stdbool.h>
 
 champion_t *find_champion(core_t *core_vm, int id) {
