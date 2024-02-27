@@ -1,5 +1,15 @@
 #include "../include/op.h"
 #include "../include/instructions.h"
+#include <time.h>
+ 
+void delay(int number_of_seconds) {
+    int milli_seconds = 1000 * number_of_seconds;
+ 
+    clock_t start_time = clock();
+ 
+    while (clock() < start_time + milli_seconds)
+        ;
+}
 
 void print_operands(char **operands) {
     int j = 0;
@@ -147,6 +157,7 @@ int build_instructions(char **parsed_instructions, instruction_t **inst_ptr, cha
 void execute_instruction(core_t *vm, champion_t *champ, enum op_types opcode, int *args) {
     const op_t *operation = &op_tab[opcode];
     vm->nbr_cycles += operation->nbr_cycles;
+    delay(operation->nbr_cycles);
     if (operation->inst != NULL) {
         operation->inst(champ, vm, opcode, args);
     } else {
