@@ -37,19 +37,12 @@ void run_game(core_t *core_vm) {
         game_loop_number++;
         core_vm->instruction_pointer++;
         if (game_over(core_vm)) {
-            printf("Game over\n");
-            initscr();
-            start_color();
-            init_pair(1, COLOR_RED, COLOR_BLACK);
-            printw("Cycle to die is 0. Game over.\n");
+            printf("Cycle to die is 0. Game over.\n");
             champion_t *winner = find_champion(core_vm, core_vm->winner);
-            attron(COLOR_PAIR(1));
-            printw("The player %d (%s) is done.\n", winner->id, winner->header.prog_name);
-            attroff(COLOR_PAIR(1));
-            refresh();
-            getch();
 
-            endwin();
+            print_colored_text(winner->color);
+            printf("The player %d (%s) is done.\n", winner->id, winner->header.prog_name);
+            printf("\033[0m");
             break;
         }
     }
