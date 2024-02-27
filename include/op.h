@@ -108,6 +108,7 @@ typedef struct champion {
   instruction_t inst[MEM_SIZE + 1];
   int instruction_size;
   instruction_t *instruction_list;
+  int color;
 } champion_t;
 
 // Structure representing the core of the virtual machine
@@ -252,5 +253,8 @@ corresponding to the ASCII code of the content of the register (in base
 10). A 256 modulo is applied to this ASCII code
 */
 int inst_aff(champion_t *, core_t *, code_t, int *);
+
+
+void print_colored_text(int color);
 
 #endif
