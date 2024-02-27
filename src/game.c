@@ -10,6 +10,20 @@ champion_t *find_champion(core_t *core_vm, int id) {
     return &core_vm->champions[0];
 }
 
+int game_over(core_t *core_vm) {
+    if (core_vm->lives >= NBR_LIVE) {
+        printf("Live count maxed out. Decreasing cycle to die by %d\n", CYCLE_DELTA);
+        core_vm->cycle_to_die -= CYCLE_DELTA;
+        core_vm->lives = 0;
+        if (core_vm->cycle_to_die <= 0) {
+            printf("Cycle to die is 0. Game over.\n");
+            champion_t *winner = find_champion(core_vm, core_vm->winner);
+            printf("The player %d (%s) is done.\n", winner->id, winner->header.prog_name);
+            return 1;
+        }
+    }
+    return 0;
+}
 
 void run_game(core_t *core_vm) {
     printf("\n\n====================START GAME=====================\n");
@@ -23,16 +37,8 @@ void run_game(core_t *core_vm) {
         run_champions(core_vm);
         game_loop_number++;
         core_vm->instruction_pointer++;
-        if (core_vm->lives >= NBR_LIVE) {
-            printf("Live count maxed out. Decreasing cycle to die by %d\n", CYCLE_DELTA);
-            core_vm->cycle_to_die -= CYCLE_DELTA;
-            core_vm->lives = 0;
-            if (core_vm->cycle_to_die <= 0) {
-                printf("Cycle to die is 0. Game over.\n");
-                champion_t *winner = find_champion(core_vm, core_vm->winner);
-                printf("The player %d (%s) is done.\n", winner->id, winner->header.prog_name);
-                break;
-            }
+        if (game_over(core_vm)) {
+            break;
         }
     }
 }
