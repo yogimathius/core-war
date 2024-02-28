@@ -143,6 +143,12 @@ void run_champion(core_t *vm, champion_t champion) {
 
 void run_champions(core_t *vm) {
     for (int i = 0; i < vm->champion_count; i++) {
+      if (vm->champions[i].dead) {
+            print_colored_text(37);
+            printf("Champion P%d has no lives left. Cannot run.\n", vm->champions[i].id);
+            printf("\033[0m");
+      } else {
         run_champion(vm, vm->champions[i]);
+      }
     }
 }
