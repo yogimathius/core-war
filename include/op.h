@@ -109,6 +109,8 @@ typedef struct champion {
   int instruction_size;
   instruction_t *instruction_list;
   int color;
+  int lives;
+  int dead;
 } champion_t;
 
 // Structure representing the core of the virtual machine
