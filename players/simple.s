@@ -1,10 +1,25 @@
 .name "Made in house"
 .comment "Let's get started"
 
-simple:	live r1
+simple:	
 		ld %34, r3
 		; op  params      values
 		; 02 | 90 |	00 00 00 22 03
+		st r4, %34
+		; op  params      values
+		; 03 | 70 | 04 00 00 00 22
+		add r1 r1, r3
+		; op  params      values
+		; 04 | 54 |	01 01 03
+		sub r4, r5, r6
+		st r4, %34
+		; op  params      values
+		; 03 | 70 | 04 00 00 00 22
+		add r1 r1, r3
+		; op  params      values
+		; 04 | 54 |	01 01 03
+		sub r4, r5, r6
+		live r1
 		st r4, %34
 		; op  params      values
 		; 03 | 70 | 04 00 00 00 22

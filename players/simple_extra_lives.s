@@ -3,6 +3,9 @@
 
 simple:	live r1
 		ld %34, r3
+		live r1
+		live r1
+		live r1
 		; op  params      values
 		; 02 | 90 |	00 00 00 22 03
 		st r4, %34
@@ -12,6 +15,8 @@ simple:	live r1
 		; op  params      values
 		; 04 | 54 |	01 01 03
 		sub r4, r5, r6
+
+		live r1
 		live r1
 		live r1
 		; op  params      values
