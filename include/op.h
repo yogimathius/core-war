@@ -87,15 +87,23 @@ enum registers {
 
 // Header structure for the program
 typedef struct header_s {
-  int magic;                                // Magic number
-  char prog_name[PROG_NAME_LENGTH + 1];     // Program name
-  int prog_size;                            // Program size
-  char comment[COMMENT_LENGTH + 1];         // Comment
+  int magic; 
+  char prog_name[PROG_NAME_LENGTH + 1];
+  int prog_size;
+  char comment[COMMENT_LENGTH + 1];
 } header_t;
+
+typedef struct operand {
+    int type; 
+    int value;
+    char *label;
+} operand_t;
 
 typedef struct instruction {
     int opcode;
     int *operands;
+    operand_t *operand_list; 
+    int num_operands;
     struct instruction *next;
 } instruction_t;
 
