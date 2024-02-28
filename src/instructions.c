@@ -3,7 +3,7 @@
 #include <time.h>
  
 void delay(int number_of_seconds) {
-    int milli_seconds = 100 * number_of_seconds;
+    int milli_seconds = 10 * number_of_seconds;
  
     clock_t start_time = clock();
     clock_t end_time = start_time + (milli_seconds * CLOCKS_PER_SEC / 1000);
@@ -79,15 +79,47 @@ int build_opcode(const char *parsed_instruction, instruction_t *inst) {
     return 0;
 }
 
-void add_operand(char **parsed_instructions, int *i, op_t operation, int *operands, int j) {
+void add_operand(char **parsed_instructions, int *i, op_t operation, int *operands, int j, operand_t *operand_list) {
+    printf("\nAdding operand: %s\n", parsed_instructions[*i]);
     if (parsed_instructions[*i] == NULL) {
         printf("Not enough operands for operation: %s\n", operation.mnemonique);
         operands[j] = 0;
         return;
     }
-    while (strcmp(parsed_instructions[*i], "00") == 0) {
+    unsigned int hex_value;
+    if (strcmp(parsed_instructions[*i], "00") == 0) {
+        // for 2 byte operands
         (*i)++;
+        if (strcmp(parsed_instructions[*i], "00") == 0) {
+            // for 4 byte operands
+            (*i)++;
+            (*i)++;
+            printf("bumping to next operand: %s\n", parsed_instructions[*i]);
+        }
+        hex_value = strtol(parsed_instructions[*i], NULL, 16);
+        printf("Hex value: 0x%X\n", hex_value);
+        operand_t *operand = &operand_list[j];
+        operand->value = hex_value;
+
+        if (hex_value & T_IND) {
+            printf("T_IND is set, address of label: %s\n", parsed_instructions[hex_value]);
+            operand->type = T_IND;
+            operand->label = parsed_instructions[hex_value];
+        } else {
+            printf("T_DIR is set: %u\n", hex_value);
+            operand->type = T_DIR;
+        }
+    } else {
+        hex_value = strtol(parsed_instructions[*i], NULL, 16);
+
+        if (hex_value & T_REG) {
+            printf("T_REG is set: %u\n", hex_value);
+            operand_t *operand = &operand_list[j];
+            operand->type = T_REG;
+            operand->value = hex_value;
+        }
     }
+
     operands[j] = strtol(parsed_instructions[*i], NULL, 10);
 
     if (j < operation.nbr_args - 1) {
@@ -97,16 +129,17 @@ void add_operand(char **parsed_instructions, int *i, op_t operation, int *operan
 
 int *parse_operands(char **parsed_instructions, int *i, int opcode) {
     op_t operation = op_tab[opcode];
-    // skipping parameter description
     (*i)++;
+    printf("\nChecking Operation: %s\n", operation.mnemonique);
     int *operands = (int*)malloc(operation.nbr_args * sizeof(int));
+    operand_t *operand_list = (operand_t*)malloc(operation.nbr_args * sizeof(operand_t));
     if (operands == NULL) {
         perror("Memory allocation failed");
         exit(EXIT_FAILURE);
     }
     int j = 0;
     while(j < operation.nbr_args) {
-        add_operand(parsed_instructions, i, operation, operands, j);
+        add_operand(parsed_instructions, i, operation, operands, j, operand_list);
         j++;
     }
     return operands;
