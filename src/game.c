@@ -11,13 +11,57 @@ champion_t *find_champion(core_t *core_vm, int id) {
     return &core_vm->champions[0];
 }
 
+int check_champion_lives(core_t *core_vm) {
+    int champs_left = 0;
+     for (int i = 0; i < MAX_CHAMPIONS; i++) {
+        champion_t *champ = &core_vm->champions[i];
+        if (champ->lives == 0) {
+            champ->dead = 1;
+            print_colored_text(33);
+            printf("Champion P%d has no lives left. Champion is dead.\n", champ->id);
+            printf("\033[0m");
+
+        } else {
+            champ->lives = 0;
+            champs_left++;
+        }
+    }
+    return champs_left;
+}
+
+champion_t *find_winner(core_t *core) {
+    for (int i = 0; i < MAX_CHAMPIONS; i++) {
+        if (core->champions[i].dead == 0) {
+            return &core->champions[i];
+        }
+    }
+    return &core->champions[0];
+}
+
 int game_over(core_t *core_vm) {
     if (core_vm->lives >= NBR_LIVE || core_vm->nbr_cycles >= core_vm->cycle_to_die) {
         printf("Live count maxed out. Decreasing cycle to die by %d\n", CYCLE_DELTA);
         core_vm->cycle_to_die -= CYCLE_DELTA;
         core_vm->lives = 0;
         core_vm->winner = 0;
+        int champs_left = check_champion_lives(core_vm);
+        if (champs_left == 1) {
+            printf("All other champions have been defeated!!\n");
+
+            champion_t *winner = find_winner(core_vm);
+
+            print_colored_text(winner->color);
+            printf("The player %d (%s) is done.\n", winner->id, winner->header.prog_name);
+            printf("\033[0m");
+            return 1;
+        }
         if (core_vm->cycle_to_die <= 0) {
+            printf("Cycle to die is 0. Game over.\n");
+            champion_t *winner = find_champion(core_vm, core_vm->winner);
+
+            print_colored_text(winner->color);
+            printf("The player %d (%s) is done.\n", winner->id, winner->header.prog_name);
+            printf("\033[0m");
             return 1;
         }
     }
@@ -26,8 +70,6 @@ int game_over(core_t *core_vm) {
 
 void run_game(core_t *core_vm) {
     printf("\n\n====================START GAME=====================\n");
-    // Phase 5: we want each champion to call ONLY ONE instruction per turn.
-    // If, after NBR_LIVE executions of the instruction live, several processes are still alive, CYCLE_TO_DIE is decreased by CYCLE_DELTA units. This starts over until there are no live processes left.
     int game_loop_number = 0;
 
     while (1) {
@@ -36,12 +78,6 @@ void run_game(core_t *core_vm) {
         game_loop_number++;
         core_vm->instruction_pointer++;
         if (game_over(core_vm)) {
-            printf("Cycle to die is 0. Game over.\n");
-            champion_t *winner = find_champion(core_vm, core_vm->winner);
-
-            print_colored_text(winner->color);
-            printf("The player %d (%s) is done.\n", winner->id, winner->header.prog_name);
-            printf("\033[0m");
             break;
         }
     }
