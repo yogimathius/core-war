@@ -6,6 +6,7 @@ int main(void) {
         cmocka_unit_test(inst_ld_test),
         cmocka_unit_test(inst_ld_test_zero),
         cmocka_unit_test(inst_st_test),
+        cmocka_unit_test(inst_st_indirect_addressing_test),
         cmocka_unit_test(inst_add_test),
         cmocka_unit_test(inst_add_test_zero),
         cmocka_unit_test(inst_sub_test),

@@ -14,9 +14,10 @@ int inst_st(champion_t *champion, core_t *core, code_t code, int *inst) {
 
   int source_register = inst[0]; // The source register index
   int target = inst[1]; // The target register index or address offset
+  int target_type = inst[2];// The target type (register or address)
 
   // If the target is a register
-  if (code & T_REG) {
+  if (target_type & T_REG) {
       champion->registers[target] = champion->registers[source_register];
   } else { 
       // If the target is an address (indirect addressing)
