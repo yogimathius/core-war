@@ -152,3 +152,69 @@ void run_champions(core_t *vm) {
       }
     }
 }
+
+instruction_t* deep_copy_instructions(const instruction_t* original) {
+    if (original == NULL) return NULL;
+
+    instruction_t* copy = malloc(sizeof(instruction_t));
+    if (copy == NULL) {
+        perror("Failed to allocate memory for instruction");
+        exit(EXIT_FAILURE);
+    }
+    copy->opcode = original->opcode;
+
+    // Deep copy operands if they exist
+    if (original->operands) {
+        int operand_count = 0;
+        while (original->operands[operand_count]) ++operand_count;
+        copy->operands = malloc(sizeof(int) * (operand_count + 1)); 
+        if (copy->operands == NULL) {
+            free(copy);
+            perror("Failed to allocate memory for operands");
+            exit(EXIT_FAILURE);
+        }
+        for (int i = 0; i <= operand_count; i++) {
+            copy->operands[i] = original->operands[i];
+        }
+    } else {
+        copy->operands = NULL;
+    }
+
+    // Recursively copy the next instruction
+    copy->next = deep_copy_instructions(original->next);
+
+    return copy;
+}
+
+champion_t* clone_champion(const champion_t* original) {
+    champion_t* clone = (champion_t*)malloc(sizeof(champion_t));
+    if (!clone) {
+        perror("Failed to allocate memory for clone champion");
+        return NULL;
+    }
+
+    clone->id = original->id;
+    clone->header = original->header;
+    clone->counter = original->counter;
+    clone->carry_flag = original->carry_flag;
+    clone->instruction_size = original->instruction_size;
+    clone->color = original->color;
+    clone->lives = original->lives;
+    clone->dead = original->dead;
+
+    memcpy(clone->registers, original->registers, sizeof(original->registers));
+    memcpy(clone->inst, original->inst, sizeof(original->inst));
+
+    clone->instruction_list = deep_copy_instructions(original->instruction_list);
+    return clone;
+}
+
+int add_champion_to_core(core_t* core, champion_t* champion) {
+    if (core->champion_count >= MAX_CHAMPIONS) {
+        fprintf(stderr, "Maximum number of champions reached.\n");
+        free(champion); // Ensure to free the champion if not added
+        return -1;
+    }
+    core->champions[core->champion_count++] = *champion;
+    return 0;
+}

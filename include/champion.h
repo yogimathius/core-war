@@ -20,4 +20,10 @@ void load_champions(core_t *core_vm, int ac, char **av);
 
 void run_champions(core_t *vm);
 
+instruction_t* deep_copy_instructions(const instruction_t* original);
+
+champion_t* clone_champion(const champion_t* original);
+
+int add_champion_to_core(core_t* core, champion_t* champion);
+
 #endif
