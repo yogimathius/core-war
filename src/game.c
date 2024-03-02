@@ -12,11 +12,11 @@ champion_t *find_champion(core_t *core_vm, int id) {
 }
 
 int check_champion_lives(core_t *core_vm) {
-    int champs_left = 4;
-     for (int i = 0; i < MAX_CHAMPIONS; i++) {
+    int champs_left = core_vm->champion_count;
+     for (int i = 0; i < core_vm->champion_count; i++) {
         champion_t *champ = &core_vm->champions[i];
         if (champ->lives == 0) {
-            if (champs_left == 1) {
+            if (core_vm->champion_count == 1) {
                 core_vm->winner = champ->id;
                 return champs_left;
             }
@@ -24,7 +24,7 @@ int check_champion_lives(core_t *core_vm) {
             print_colored_text(33);
             printf("Champion P%d has no lives left. Champion is dead.\n", champ->id);
             printf("\033[0m");
-            champs_left--;
+            core_vm->champion_count--;
         } else {
             champ->lives = 0;
         }
