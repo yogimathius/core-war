@@ -79,7 +79,7 @@ int build_opcode(const char *parsed_instruction, instruction_t *inst) {
     return 0;
 }
 
-void check_zeroes(char **parsed_instructions, int *i) {
+void skip_zeroes(char **parsed_instructions, int *i) {
     if (strcmp(parsed_instructions[*i], "00") == 0) {
         (*i)++;
         (*i)++;
@@ -87,7 +87,36 @@ void check_zeroes(char **parsed_instructions, int *i) {
     }
 }
 
+void create_operand(const int *i, char **parsed_instructions, int *found_label_address, int j, operand_t *operand_list) {
+    unsigned int hex_value = strtol(parsed_instructions[*i], NULL, 16);
+    printf("Hex value: 0x%X\n", hex_value);
+    operand_t *operand = &operand_list[j];
+    operand->value = hex_value;
 
+    if (hex_value & T_IND) {
+        printf("T_IND is set, address of label: %s\n", parsed_instructions[hex_value]);
+        operand->type = T_IND;
+        operand->label = parsed_instructions[hex_value];
+        operand->index = j;
+        // convert hex to int
+        printf("hex_value: %d\n", (int)hex_value);
+        *found_label_address = (int)hex_value;
+        // need to keep building from indrect address
+        int k = hex_value;
+        while (parsed_instructions[k] != NULL) {
+            operand->label = parsed_instructions[k];
+            operand->index = j;
+            k++;
+            operand->label++;
+        }
+    } else if(hex_value & T_DIR) {
+        printf("T_DIR is set: %u\n", hex_value);
+        operand->type = T_DIR;
+    } else if (hex_value & T_REG) {
+        printf("T_REG is set: %u\n", hex_value);
+        operand->type = T_REG;
+    }
+}
 
 void add_operand(char **parsed_instructions, int *i, op_t operation, int *operands, int j, operand_t *operand_list, int *found_label_address) {
     printf("\nAdding operand: %s\n", parsed_instructions[*i]);
@@ -96,43 +125,14 @@ void add_operand(char **parsed_instructions, int *i, op_t operation, int *operan
         operands[j] = 0;
         return;
     }
-    unsigned int hex_value;
+
     if (strcmp(parsed_instructions[*i], "00") == 0) {
         // for 2 byte operands
         (*i)++;
-        check_zeroes(parsed_instructions, i);
-        hex_value = strtol(parsed_instructions[*i], NULL, 16);
-        printf("Hex value: 0x%X\n", hex_value);
-        operand_t *operand = &operand_list[j];
-        operand->value = hex_value;
-
-        if (hex_value & T_IND) {
-            printf("T_IND is set, address of label: %s\n", parsed_instructions[hex_value]);
-            operand->type = T_IND;
-            operand->label = parsed_instructions[hex_value];
-            // convert hex to int
-            printf("hex_value: %d\n", (int)hex_value);
-            *found_label_address = (int)hex_value;
-            // need to keep building from indrect address
-            int k = hex_value;
-            while (parsed_instructions[k] != NULL) {
-                operand->label = parsed_instructions[k];
-                k++;
-                operand->label++;
-            }
-        } else {
-            printf("T_DIR is set: %u\n", hex_value);
-            operand->type = T_DIR;
-        }
+        skip_zeroes(parsed_instructions, i);
+        create_operand(i, parsed_instructions, found_label_address, j, operand_list);
     } else {
-        hex_value = strtol(parsed_instructions[*i], NULL, 16);
-
-        if (hex_value & T_REG) {
-            printf("T_REG is set: %u\n", hex_value);
-            operand_t *operand = &operand_list[j];
-            operand->type = T_REG;
-            operand->value = hex_value;
-        }
+        create_operand(i, parsed_instructions, found_label_address, j, operand_list);
     }
 
     operands[j] = strtol(parsed_instructions[*i], NULL, 10);
