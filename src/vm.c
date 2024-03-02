@@ -62,3 +62,13 @@ void add_champion(core_t *core_t, champion_t *champion) {
     core_t->memory[i + (MEM_SIZE / core_t->champion_count) * (core_t->champion_count - 1)] = champion->inst[i].opcode;
   }
 }
+
+int add_champion_to_core(core_t* core, champion_t* champion) {
+    if (core->champion_count >= MAX_CHAMPIONS) {
+        fprintf(stderr, "Maximum number of champions reached.\n");
+        free(champion); // Ensure to free the champion if not added
+        return -1;
+    }
+    core->champions[core->champion_count++] = *champion;
+    return 0;
+}
