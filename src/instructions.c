@@ -119,7 +119,7 @@ void create_operand(const int *i, char **parsed_instructions, int *found_label_a
 }
 
 void add_operand(char **parsed_instructions, int *i, op_t operation, int *operands, int j, operand_t *operand_list, int *found_label_address) {
-    printf("\nAdding operand: %s\n", parsed_instructions[*i]);
+    printf("checking operand: %s\n", parsed_instructions[*i]);
     if (parsed_instructions[*i] == NULL) {
         printf("Not enough operands for operation: %s\n", operation.mnemonique);
         operands[j] = 0;
