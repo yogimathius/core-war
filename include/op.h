@@ -97,6 +97,7 @@ typedef struct operand {
     int type; 
     int value;
     char *label;
+    int index;
 } operand_t;
 
 typedef struct instruction {
