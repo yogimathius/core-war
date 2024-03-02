@@ -110,34 +110,6 @@ champion_t *create_champion(champion_t *champion, char *filename) {
   return champion;
 }
 
-void run_champion(core_t *vm, champion_t champion) {
-    int instruction_size = champion.instruction_size;
-    int instruction_pointer = vm->instruction_pointer;
-
-    int instruction_index = instruction_pointer >= instruction_size ? (instruction_pointer % instruction_size) : instruction_pointer;
-
-    instruction_t *found_inst = &champion.inst[instruction_index];
-
-    if (found_inst->opcode < 0 || found_inst->opcode > 16) {
-        printf("cannot run champion. Invalid opcode for operands: %d\n", found_inst->opcode);
-        return;
-    }
-
-    execute_instruction(vm, &champion, found_inst->opcode, found_inst->operands);
-}
-
-void run_champions(core_t *vm) {
-    for (int i = 0; i < vm->champion_count; i++) {
-      if (vm->champions[i].dead) {
-            print_colored_text(37);
-            printf("Champion P%d has no lives left. Cannot run.\n", vm->champions[i].id);
-            printf("\033[0m");
-      } else {
-        run_champion(vm, vm->champions[i]);
-      }
-    }
-}
-
 instruction_t* deep_copy_instructions(const instruction_t* original) {
     if (original == NULL) return NULL;
 
