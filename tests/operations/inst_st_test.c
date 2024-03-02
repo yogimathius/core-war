@@ -9,7 +9,7 @@ void inst_st_test(void **state) {
 
     // Setup: Source register (register 1) has a value to be transferred
     champ->registers[1] = 42; 
-    int args[] = {1, 3, 1}; 
+    int args[] = {1, 3}; 
 
     inst_st(champ, core, code, args);
 
