@@ -133,7 +133,7 @@ void run_champion(core_t *vm, champion_t champion) {
     instruction_t *found_inst = &champion.inst[instruction_index];
 
     if (found_inst->opcode < 0 || found_inst->opcode > 16) {
-        printf("Invalid opcode for operands: %d\n", found_inst->opcode);
+        printf("cannot run champion. Invalid opcode for operands: %d\n", found_inst->opcode);
         return;
     }
 
