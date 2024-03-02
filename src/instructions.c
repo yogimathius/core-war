@@ -79,7 +79,17 @@ int build_opcode(const char *parsed_instruction, instruction_t *inst) {
     return 0;
 }
 
-void add_operand(char **parsed_instructions, int *i, op_t operation, int *operands, int j, operand_t *operand_list) {
+void check_zeroes(char **parsed_instructions, int *i) {
+    if (strcmp(parsed_instructions[*i], "00") == 0) {
+        (*i)++;
+        (*i)++;
+        printf("bumping to next operand: %s\n", parsed_instructions[*i]);
+    }
+}
+
+
+
+void add_operand(char **parsed_instructions, int *i, op_t operation, int *operands, int j, operand_t *operand_list, int *found_label_address) {
     printf("\nAdding operand: %s\n", parsed_instructions[*i]);
     if (parsed_instructions[*i] == NULL) {
         printf("Not enough operands for operation: %s\n", operation.mnemonique);
@@ -90,12 +100,7 @@ void add_operand(char **parsed_instructions, int *i, op_t operation, int *operan
     if (strcmp(parsed_instructions[*i], "00") == 0) {
         // for 2 byte operands
         (*i)++;
-        if (strcmp(parsed_instructions[*i], "00") == 0) {
-            // for 4 byte operands
-            (*i)++;
-            (*i)++;
-            printf("bumping to next operand: %s\n", parsed_instructions[*i]);
-        }
+        check_zeroes(parsed_instructions, i);
         hex_value = strtol(parsed_instructions[*i], NULL, 16);
         printf("Hex value: 0x%X\n", hex_value);
         operand_t *operand = &operand_list[j];
@@ -105,6 +110,16 @@ void add_operand(char **parsed_instructions, int *i, op_t operation, int *operan
             printf("T_IND is set, address of label: %s\n", parsed_instructions[hex_value]);
             operand->type = T_IND;
             operand->label = parsed_instructions[hex_value];
+            // convert hex to int
+            printf("hex_value: %d\n", (int)hex_value);
+            *found_label_address = (int)hex_value;
+            // need to keep building from indrect address
+            int k = hex_value;
+            while (parsed_instructions[k] != NULL) {
+                operand->label = parsed_instructions[k];
+                k++;
+                operand->label++;
+            }
         } else {
             printf("T_DIR is set: %u\n", hex_value);
             operand->type = T_DIR;
@@ -127,7 +142,7 @@ void add_operand(char **parsed_instructions, int *i, op_t operation, int *operan
     }
 }
 
-int *parse_operands(char **parsed_instructions, int *i, int opcode) {
+int *parse_operands(char **parsed_instructions, int *i, int opcode, int *found_label_address) {
     op_t operation = op_tab[opcode];
     (*i)++;
     printf("\nChecking Operation: %s\n", operation.mnemonique);
@@ -139,7 +154,7 @@ int *parse_operands(char **parsed_instructions, int *i, int opcode) {
     }
     int j = 0;
     while(j < operation.nbr_args) {
-        add_operand(parsed_instructions, i, operation, operands, j, operand_list);
+        add_operand(parsed_instructions, i, operation, operands, j, operand_list, found_label_address);
         j++;
     }
     return operands;
@@ -163,7 +178,13 @@ int build_instructions(char **parsed_instructions, instruction_t **inst_ptr, cha
     instruction_t *inst = allocate_instruction(inst_ptr);
     int i = 0;
     int instruction_size = 0;
+    int found_label_address = 0;
+
     while (parsed_instructions[i] != NULL) {
+        if (found_label_address > 0 && found_label_address <= i) {
+            printf("breaking, found_label_address: %d\n", found_label_address);
+            break;
+        }
         if (is_opcode == 1 && strcmp(parsed_instructions[i], "00") != 0) {
             if (build_opcode(parsed_instructions[i], inst) == 1) {
                 is_opcode = 1;
@@ -178,7 +199,7 @@ int build_instructions(char **parsed_instructions, instruction_t **inst_ptr, cha
                 break;
             }
 
-            inst->operands = parse_operands(parsed_instructions, &i, inst->opcode);
+            inst->operands = parse_operands(parsed_instructions, &i, inst->opcode, &found_label_address);
             is_opcode = 1;
             champion->inst[instruction_size - 1] = *inst;
             inst = check_next_instruction(parsed_instructions[i], inst);
