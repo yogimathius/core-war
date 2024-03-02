@@ -46,3 +46,19 @@ void write_vm(core_t *core_t, int address, int value) {
         // return 1;
     }
 }
+
+void add_champion(core_t *core_t, champion_t *champion) {
+  // List of champ colors (RED, GREEN, BLUE, CYAN)
+  const int champ_color[4] = {31, 32, 35, 36};
+
+  core_t->champion_count+=1;
+  champion->id = core_t->champion_count;
+  champion->counter = 0;
+  champion->carry_flag = 0;
+  champion->registers[0] = champion->id;
+  champion->color = champ_color[champion->id - 1];
+  core_t->champions[core_t->champion_count - 1] = *champion;
+  for (int i = 0; i < champion->instruction_size; i++) {
+    core_t->memory[i + (MEM_SIZE / core_t->champion_count) * (core_t->champion_count - 1)] = champion->inst[i].opcode;
+  }
+}
