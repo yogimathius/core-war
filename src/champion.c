@@ -110,23 +110,6 @@ champion_t *create_champion(champion_t *champion, char *filename) {
   return champion;
 }
 
-
-void add_champion(core_t *core_t, champion_t *champion) {
-  // List of champ colors (RED, GREEN, BLUE, CYAN)
-  const int champ_color[4] = {31, 32, 35, 36};
-
-  core_t->champion_count+=1;
-  champion->id = core_t->champion_count;
-  champion->counter = 0;
-  champion->carry_flag = 0;
-  champion->registers[0] = champion->id;
-  champion->color = champ_color[champion->id - 1];
-  core_t->champions[core_t->champion_count - 1] = *champion;
-  for (int i = 0; i < champion->instruction_size; i++) {
-    core_t->memory[i + (MEM_SIZE / core_t->champion_count) * (core_t->champion_count - 1)] = champion->inst[i].opcode;
-  }
-}
-
 void run_champion(core_t *vm, champion_t champion) {
     int instruction_size = champion.instruction_size;
     int instruction_pointer = vm->instruction_pointer;
@@ -139,7 +122,6 @@ void run_champion(core_t *vm, champion_t champion) {
         printf("cannot run champion. Invalid opcode for operands: %d\n", found_inst->opcode);
         return;
     }
-
 
     execute_instruction(vm, &champion, found_inst->opcode, found_inst->operands);
 }
