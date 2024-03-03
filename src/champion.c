@@ -70,10 +70,6 @@ int parse_header(champion_t *champion, int bytes_read, char *hex_buffer) {
   return 0;
 }
 
-char bin_to_hex(unsigned int byte) {
-    return byte < 10 ? byte + '0' : byte - 10 + 'a';
-}
-
 champion_t *create_champion(champion_t *champion, char *filename) {
   int fd = open(filename, O_RDONLY);
 
@@ -100,7 +96,7 @@ champion_t *create_champion(champion_t *champion, char *filename) {
 
     char **parsed_instructions = parse_instructions(hex_buffer, bytes_read);
     champion->instruction_list = NULL;
-    int instruction_size = build_instructions(parsed_instructions, &champion->instruction_list, champion);
+    int instruction_size = build_instructions(parsed_instructions, champion);
     champion->instruction_size = instruction_size;
     free(parsed_instructions);
   } else {
