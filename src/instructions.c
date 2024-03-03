@@ -76,10 +76,10 @@ void skip_zeroes(char **parsed_instructions, int *i) {
     }
 }
 
-void create_operand(const int *i, char **parsed_instructions, int *found_label_address, int j, operand_t *operand_list) {
+void create_operand(const int *i, char **parsed_instructions, int *found_label_address, int j, instruction_t *inst) {
     unsigned int hex_value = strtol(parsed_instructions[*i], NULL, 16);
     printf("Hex value: 0x%X\n", hex_value);
-    operand_t *operand = &operand_list[j];
+    operand_t *operand = &inst->operand_list[j];
     operand->value = hex_value;
 
     if (hex_value & T_IND) {
@@ -87,23 +87,28 @@ void create_operand(const int *i, char **parsed_instructions, int *found_label_a
         operand->type = T_IND;
 
         *found_label_address = (int)hex_value;
-        int k = hex_value;
-        while (parsed_instructions[k] != NULL) {
-            operand->label = parsed_instructions[k];
-            operand->index = j;
-            k++;
-            operand->label++;
-        }
+        operand->label = parsed_instructions[hex_value];
+        // int k = hex_value;
+        // while (parsed_instructions[k] != NULL) {
+        //     operand->label = parsed_instructions[k];
+        //     operand->index = j;
+        //     k++;
+        //     operand->label++;
+        // }
     } else if(hex_value & T_DIR) {
         printf("T_DIR is set: %u\n", hex_value);
         operand->type = T_DIR;
+        operand->label = NULL;
+
     } else if (hex_value & T_REG) {
         printf("T_REG is set: %u\n", hex_value);
         operand->type = T_REG;
+        operand->label = NULL;
     }
+     inst->operand_list[j] = *operand;
 }
 
-void add_operand(char **parsed_instructions, int *i, op_t operation, int *operands, int j, operand_t *operand_list, int *found_label_address) {
+void add_operand(char **parsed_instructions, int *i, op_t operation, int *operands, int j, instruction_t *inst, int *found_label_address) {
     printf("checking operand: %s\n", parsed_instructions[*i]);
     if (parsed_instructions[*i] == NULL) {
         printf("Not enough operands for operation: %s\n", operation.mnemonique);
@@ -112,7 +117,7 @@ void add_operand(char **parsed_instructions, int *i, op_t operation, int *operan
     }
 
     skip_zeroes(parsed_instructions, i);
-    create_operand(i, parsed_instructions, found_label_address, j, operand_list);
+    create_operand(i, parsed_instructions, found_label_address, j, inst);
 
     operands[j] = strtol(parsed_instructions[*i], NULL, 10);
 
@@ -121,20 +126,22 @@ void add_operand(char **parsed_instructions, int *i, op_t operation, int *operan
     }
 }
 
-int *build_operands(char **parsed_instructions, int *i, int opcode, int *found_label_address) {
-    op_t operation = op_tab[opcode];
+int *build_operands(char **parsed_instructions, int *i, instruction_t *inst, int *found_label_address) {
+    op_t operation = op_tab[inst->opcode];
     (*i)++;
     printf("\nChecking Operation: %s\n", operation.mnemonique);
+    inst->num_operands = 0;
     int *operands = (int*)malloc(operation.nbr_args * sizeof(int));
-    operand_t *operand_list = (operand_t*)malloc(operation.nbr_args * sizeof(operand_t));
+    inst->operand_list = (operand_t*)malloc(operation.nbr_args * sizeof(operand_t));
     if (operands == NULL) {
         perror("Memory allocation failed");
         exit(EXIT_FAILURE);
     }
     int j = 0;
     while(j < operation.nbr_args) {
-        add_operand(parsed_instructions, i, operation, operands, j, operand_list, found_label_address);
+        add_operand(parsed_instructions, i, operation, operands, j, inst, found_label_address);
         j++;
+        inst->num_operands++;
     }
     return operands;
 }
@@ -174,7 +181,7 @@ int build_instructions(char **parsed_instructions, champion_t *champion) {
                 break;
             }
 
-            inst->operands = build_operands(parsed_instructions, &i, inst->opcode, &found_label_address);
+            inst->operands = build_operands(parsed_instructions, &i, inst, &found_label_address);
             is_opcode = 1;
             champion->inst[instruction_size - 1] = *inst;
         }

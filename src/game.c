@@ -71,6 +71,16 @@ int game_over(core_t *core_vm) {
     return 0;
 }
 
+int get_label_address(champion_t champion, char *label) {
+    for (int i = 0; i < champion.instruction_size; i++) {
+        instruction_t inst = champion.inst[i];
+        if (inst.opcode == atoi(label)) {
+            return i;
+        }
+    }
+    return -1;
+}
+
 void run_champion(core_t *vm, champion_t champion) {
     int instruction_size = champion.instruction_size;
     int instruction_pointer = vm->instruction_pointer;
@@ -82,6 +92,31 @@ void run_champion(core_t *vm, champion_t champion) {
     if (found_inst->opcode < 0 || found_inst->opcode > 16) {
         printf("cannot run champion. Invalid opcode for operands: %d\n", found_inst->opcode);
         return;
+    }
+
+    // check if operands contains a label
+
+    int i = 0;
+    printf("\nnum operands: %d\n", found_inst->num_operands);
+    while (i < found_inst->num_operands) {
+        printf("iterating through operands\n");
+        operand_t operand = found_inst->operand_list[i];
+        // printf("operand type: %d\n", operand->type);
+        printf("operand value: %d\n", operand.value);
+        if (operand.type == T_IND) {
+            printf("operand is ind\n");
+            if (operand.label != NULL) {
+                int label_address = get_label_address(champion, operand.label);
+                if (label_address == -1) {
+                    printf("Label %s not found\n", operand.label);
+                    return;
+                } else {
+                    printf("Label %s found at address %d\n", operand.label, label_address);
+                }
+                operand.value = label_address;
+            }
+        }
+        i++;
     }
 
     execute_instruction(vm, &champion, found_inst->opcode, found_inst->operands);
