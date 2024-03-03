@@ -121,7 +121,7 @@ void add_operand(char **parsed_instructions, int *i, op_t operation, int *operan
     }
 }
 
-int *parse_operands(char **parsed_instructions, int *i, int opcode, int *found_label_address) {
+int *build_operands(char **parsed_instructions, int *i, int opcode, int *found_label_address) {
     op_t operation = op_tab[opcode];
     (*i)++;
     printf("\nChecking Operation: %s\n", operation.mnemonique);
@@ -174,7 +174,7 @@ int build_instructions(char **parsed_instructions, champion_t *champion) {
                 break;
             }
 
-            inst->operands = parse_operands(parsed_instructions, &i, inst->opcode, &found_label_address);
+            inst->operands = build_operands(parsed_instructions, &i, inst->opcode, &found_label_address);
             is_opcode = 1;
             champion->inst[instruction_size - 1] = *inst;
         }
