@@ -54,21 +54,6 @@ char **parse_instructions(const char *hex_buffer, int bytes_read) {
     return operands;
 }
 
-instruction_t *check_next_instruction(const char *parsed_instruction, instruction_t *inst) {
-    if (parsed_instruction != NULL) {
-        instruction_t *next_inst = (instruction_t*)malloc(sizeof(instruction_t));            
-        if (next_inst == NULL) {
-            perror("Memory allocation failed");
-            exit(EXIT_FAILURE);
-        }
-        inst->next = next_inst;
-        inst = next_inst;
-    } else {
-        inst->next = NULL;
-    }
-    return inst;
-}
-
 int build_opcode(const char *parsed_instruction, instruction_t *inst) {
     enum op_types opcode = (enum op_types)strtol(parsed_instruction, NULL, 16);
     if ((int)opcode - 1 < 0 || (int)opcode - 1 > 16) {
@@ -160,22 +145,18 @@ int *parse_operands(char **parsed_instructions, int *i, int opcode, int *found_l
     return operands;
 }
 
-instruction_t *allocate_instruction(instruction_t **inst_ptr) {
-    instruction_t *inst = *inst_ptr;
+instruction_t *allocate_instruction() {
+    instruction_t *inst = (instruction_t*)malloc(sizeof(instruction_t));
     if (inst == NULL) {
-        inst = (instruction_t*)malloc(sizeof(instruction_t));
-        if (inst == NULL) {
-            perror("Memory allocation failed");
-            exit(EXIT_FAILURE);
-        }
-        *inst_ptr = inst;
+        perror("Memory allocation failed");
+        exit(EXIT_FAILURE);
     }
     return inst;
 }
 
-int build_instructions(char **parsed_instructions, instruction_t **inst_ptr, champion_t *champion) {
+int build_instructions(char **parsed_instructions, champion_t *champion) {
     int is_opcode = 1;
-    instruction_t *inst = allocate_instruction(inst_ptr);
+    instruction_t *inst = allocate_instruction();
     int i = 0;
     int instruction_size = 0;
     int found_label_address = 0;
@@ -202,7 +183,6 @@ int build_instructions(char **parsed_instructions, instruction_t **inst_ptr, cha
             inst->operands = parse_operands(parsed_instructions, &i, inst->opcode, &found_label_address);
             is_opcode = 1;
             champion->inst[instruction_size - 1] = *inst;
-            inst = check_next_instruction(parsed_instructions[i], inst);
         }
         i++;
     }
