@@ -66,9 +66,13 @@ int build_opcode(const char *parsed_instruction, instruction_t *inst) {
 
 void skip_zeroes(char **parsed_instructions, int *i) {
     if (strcmp(parsed_instructions[*i], "00") == 0) {
+        // for 2 byte operands
         (*i)++;
-        (*i)++;
-        printf("bumping to next operand: %s\n", parsed_instructions[*i]);
+        if (strcmp(parsed_instructions[*i], "00") == 0) {
+            (*i)++;
+            (*i)++;
+            printf("bumping to next operand: %s\n", parsed_instructions[*i]);
+        }
     }
 }
 
@@ -111,14 +115,8 @@ void add_operand(char **parsed_instructions, int *i, op_t operation, int *operan
         return;
     }
 
-    if (strcmp(parsed_instructions[*i], "00") == 0) {
-        // for 2 byte operands
-        (*i)++;
-        skip_zeroes(parsed_instructions, i);
-        create_operand(i, parsed_instructions, found_label_address, j, operand_list);
-    } else {
-        create_operand(i, parsed_instructions, found_label_address, j, operand_list);
-    }
+    skip_zeroes(parsed_instructions, i);
+    create_operand(i, parsed_instructions, found_label_address, j, operand_list);
 
     operands[j] = strtol(parsed_instructions[*i], NULL, 10);
 
