@@ -85,12 +85,8 @@ void create_operand(const int *i, char **parsed_instructions, int *found_label_a
     if (hex_value & T_IND) {
         printf("T_IND is set, address of label: %s\n", parsed_instructions[hex_value]);
         operand->type = T_IND;
-        operand->label = parsed_instructions[hex_value];
-        operand->index = j;
-        // convert hex to int
-        printf("hex_value: %d\n", (int)hex_value);
+
         *found_label_address = (int)hex_value;
-        // need to keep building from indrect address
         int k = hex_value;
         while (parsed_instructions[k] != NULL) {
             operand->label = parsed_instructions[k];
