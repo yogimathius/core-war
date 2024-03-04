@@ -69,8 +69,6 @@ void load_instructions(core_t *core) {
     for (int i = 0; i < core->champion_count; i++) {
         champion_t *champion = &core->champions[i];
         for (int j = 0; j < champion->instruction_size; j++) {
-            printf("\n\nAdding instruction: %d\n", champion->inst[i].opcode);
-            printf("to memory: %d\n\n", i + (MEM_SIZE / core->champion_count) * (core->champion_count - 1));
             core->memory[j + (MEM_SIZE / core->champion_count) * i] = champion->inst[j].opcode;
         }
     }
