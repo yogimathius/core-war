@@ -196,6 +196,7 @@ void execute_instruction(core_t *vm, champion_t *champ, enum op_types opcode, in
     // delay(operation->nbr_cycles);
     if (operation->inst != NULL) {
         operation->inst(champ, vm, opcode, args);
+        champ->counter++;
     } else {
         printf("Unknown or unimplemented operation\n");
     }
