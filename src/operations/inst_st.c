@@ -1,5 +1,6 @@
 #include <op.h>
 #include <instructions.h>
+#include <vm.h>
 
 /* 
 Takes 2 parameters: Stores first parameter (a register) into the second
@@ -20,10 +21,9 @@ int inst_st(champion_t *champion, core_t *core, code_t code, int *inst) {
     printf("T_REG is set: %u\n", target);
       champion->registers[target] = champion->registers[source_register];
   } else { 
-      // If the target is an address (indirect addressing)
       int address = (champion->counter + (target % IDX_MOD)) % MEM_SIZE;
-      // Assuming core->memory is an array of bytes
-      core->memory[address] = champion->registers[source_register];
+
+      write_vm(core, address, champion->registers[source_register]);
   }
 
   return 0; 
