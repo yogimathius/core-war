@@ -268,4 +268,6 @@ int inst_aff(champion_t *, core_t *, code_t, int *);
 
 void print_colored_text(int color);
 
+void display_memory(const core_t *core);
+
 #endif

@@ -23,7 +23,23 @@ void display_champion_status(const champion_t *champion) {
   print_champion_lives(champion);
 }
 
-void log_instruction_args(const champion_t *champion, const core_t *core, code_t code, int *inst) {
+void display_memory(const core_t *core) {
+  int i = 0;
+  while (i < MEM_SIZE) {
+    if (i % 64 == 0) {
+      printf("\n");
+    }
+    if (i == core->instruction_pointer) {
+      printf("\033[1;31m");
+    }
+    printf("%02x ", core->memory[i]);
+    printf("\033[0m");
+    i++;
+  }
+  printf("\n");
+}
+
+void log_instruction_args(const champion_t *champion, const core_t *core, code_t code, const int *inst) {
   const op_t *operation = &op_tab[code];
   print_colored_text(champion->color);
   printf("Champion P%d called %s with: ", champion->id, operation->mnemonique);
@@ -47,6 +63,3 @@ void log_instruction_args(const champion_t *champion, const core_t *core, code_t
 int load_value_from_address(core_t *core, int address) {
     return core->memory[address % MEM_SIZE]; 
 }
-
-
-
