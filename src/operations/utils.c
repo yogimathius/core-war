@@ -14,7 +14,7 @@ void print_champion_registers(const champion_t *champion) {
 
 void print_champion_lives(const champion_t *champion) {
   print_colored_text(champion->color);
-  printf("Champion P%d lives: %d\n", champion->id, champion->lives);
+  printf("Champion P%d lives: %d, counter: %d\n", champion->id, champion->lives, champion->counter);
   printf("\033[0m");
 }
 
