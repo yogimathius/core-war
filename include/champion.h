@@ -7,6 +7,7 @@
 
 #include "op.h"
 #include "instructions.h"
+#include "vm.h"
 
 champion_t *init_champion();
 
