@@ -136,12 +136,15 @@ void run_champions(core_t *vm) {
 
 void run_instructions_from_core(core_t *core_vm) {
     for (int i = 0; i < core_vm->champion_count; i++) {
-        printf("champion count: %d\n", core_vm->champion_count);
-        printf("Running instructions for champion: %d\n", i);
+        if (core_vm->champions[i].dead) {
+            print_colored_text(37);
+            printf("Champion P%d has no lives left. Cannot run.\n", core_vm->champions[i].id);
+            printf("\033[0m");
+            continue;
+        }
         int start_index = i * (MEM_SIZE / core_vm->champion_count);
         for (int j = 0; j < core_vm->champions[i].instruction_size; j++) {
             int champ_index = start_index + j;
-            printf("champion count: %d\n", core_vm->champion_count);
             printf("champ_index: %d\n", champ_index);
             printf("instruction_size: %d\n", core_vm->champions[i].instruction_size);
             printf("instruction opcode: %d\n", core_vm->champions[i].inst[j].opcode);
@@ -159,19 +162,18 @@ void run_instructions_from_core(core_t *core_vm) {
 
 void run_game(core_t *core_vm) {
     printf("\n\n====================START GAME=====================\n");
-    // int game_loop_number = 0;
+    int game_loop_number = 0;
 
+
+    while (1) {
+        printf("===============GAME LOOP %d===============\n\n", game_loop_number);
+        // run_champions(core_vm);
+        // core_vm->instruction_pointer++;
         run_instructions_from_core(core_vm);
+        game_loop_number++;
+        if (game_over(core_vm)) {
+            break;
+        }
 
-    // while (1) {
-    //     printf("===============GAME LOOP %d===============\n\n", game_loop_number);
-    //     // run_champions(core_vm);
-    //     // core_vm->instruction_pointer++;
-    //     // if (game_over(core_vm)) {
-    //     //     break;
-    //     // }
-    //     run_instructions_from_core(core_vm);
-    //     game_loop_number++;
-
-    // }
+    }
 }
