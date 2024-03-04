@@ -129,8 +129,24 @@ void run_champions(core_t *vm) {
             printf("Champion P%d has no lives left. Cannot run.\n", vm->champions[i].id);
             printf("\033[0m");
       } else {
-        run_champion(vm, vm->champions[i]);
+            run_champion(vm, vm->champions[i]);
       }
+    }
+}
+
+void run_instruction(int i, core_t *core_vm) {
+    int start_index = i * (MEM_SIZE / core_vm->champion_count);
+    for (int j = 0; j < core_vm->champions[i].instruction_size; j++) {
+        int champ_index = start_index + j;
+        printf("instruction_size: %d\n", core_vm->champions[i].instruction_size);
+        printf("instruction opcode: %d\n", core_vm->champions[i].inst[j].opcode);
+        int opcode = core_vm->memory[champ_index];
+        if (opcode < 0 || opcode > 16) {
+            printf("Invalid opcode for operands: %d\n", opcode);
+            continue;
+        }
+        printf("Found instruction for opcode: %d\n", opcode);
+        execute_instruction(core_vm, &core_vm->champions[i], opcode, core_vm->champions[i].inst[j].operands);
     }
 }
 
@@ -140,22 +156,8 @@ void run_instructions_from_core(core_t *core_vm) {
             print_colored_text(37);
             printf("Champion P%d has no lives left. Cannot run.\n", core_vm->champions[i].id);
             printf("\033[0m");
-            continue;
-        }
-        int start_index = i * (MEM_SIZE / core_vm->champion_count);
-        for (int j = 0; j < core_vm->champions[i].instruction_size; j++) {
-            int champ_index = start_index + j;
-            printf("champ_index: %d\n", champ_index);
-            printf("instruction_size: %d\n", core_vm->champions[i].instruction_size);
-            printf("instruction opcode: %d\n", core_vm->champions[i].inst[j].opcode);
-            int opcode = core_vm->memory[champ_index];
-            if (opcode < 0 || opcode > 16) {
-                printf("Invalid opcode for operands: %d\n", opcode);
-                continue;
-            }
-            printf("Found instruction for opcode: %d\n", opcode);
-            execute_instruction(core_vm, &core_vm->champions[i], opcode, core_vm->champions[i].inst[j].operands);
-            // }
+        } else {
+            run_instruction(i, core_vm);
         }
     }
 }
