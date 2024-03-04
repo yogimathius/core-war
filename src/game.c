@@ -59,6 +59,7 @@ void print_results(core_t *core_vm, char *message) {
 int game_over(core_t *core_vm) {
     if (core_vm->lives >= NBR_LIVE || core_vm->nbr_cycles >= core_vm->cycle_to_die) {
         printf("Live count maxed out. Decreasing cycle to die by %d\n", CYCLE_DELTA);
+        display_memory(core_vm);
         core_vm->cycle_to_die -= CYCLE_DELTA;
         core_vm->nbr_cycles = 0;
         core_vm->lives = 0;
