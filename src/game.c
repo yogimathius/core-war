@@ -136,18 +136,20 @@ void run_champions(core_t *vm) {
 
 void run_instruction(int i, core_t *core_vm) {
     int start_index = i * (MEM_SIZE / core_vm->champion_count);
-    for (int j = 0; j < core_vm->champions[i].instruction_size; j++) {
-        int champ_index = start_index + j;
-        printf("instruction_size: %d\n", core_vm->champions[i].instruction_size);
-        printf("instruction opcode: %d\n", core_vm->champions[i].inst[j].opcode);
-        int opcode = core_vm->memory[champ_index];
-        if (opcode < 0 || opcode > 16) {
-            printf("Invalid opcode for operands: %d\n", opcode);
-            continue;
-        }
-        printf("Found instruction for opcode: %d\n", opcode);
-        execute_instruction(core_vm, &core_vm->champions[i], opcode, core_vm->champions[i].inst[j].operands);
+    int instruction_size = core_vm->champions[i].instruction_size;
+    int instruction_pointer = core_vm->instruction_pointer;
+
+    int instruction_index = instruction_pointer >= instruction_size ? (instruction_pointer % instruction_size) : instruction_pointer;
+    int champ_index = start_index + instruction_index;
+    printf("instruction_size: %d\n", core_vm->champions[i].instruction_size);
+    printf("instruction opcode: %d\n", core_vm->champions[i].inst[instruction_index].opcode);
+    int opcode = core_vm->memory[champ_index];
+    if (opcode < 0 || opcode > 16) {
+        printf("Invalid opcode for operands: %d\n", opcode);
+        return;
     }
+    printf("Found instruction for opcode: %d\n", opcode);
+    execute_instruction(core_vm, &core_vm->champions[i], opcode, core_vm->champions[i].inst[instruction_index].operands);
 }
 
 void run_instructions_from_core(core_t *core_vm) {
@@ -170,9 +172,9 @@ void run_game(core_t *core_vm) {
     while (1) {
         printf("===============GAME LOOP %d===============\n\n", game_loop_number);
         // run_champions(core_vm);
-        // core_vm->instruction_pointer++;
         run_instructions_from_core(core_vm);
         game_loop_number++;
+        core_vm->instruction_pointer++;
         if (game_over(core_vm)) {
             break;
         }
