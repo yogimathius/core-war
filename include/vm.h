@@ -14,4 +14,6 @@ int read_vm(core_t *core_vm, int address);
 
 void write_vm(core_t *core_vm, int address, int value);
 
+void load_instructions(core_t *core);
+
 #endif
