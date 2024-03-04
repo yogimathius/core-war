@@ -60,6 +60,7 @@ int game_over(core_t *core_vm) {
     if (core_vm->lives >= NBR_LIVE || core_vm->nbr_cycles >= core_vm->cycle_to_die) {
         printf("Live count maxed out. Decreasing cycle to die by %d\n", CYCLE_DELTA);
         core_vm->cycle_to_die -= CYCLE_DELTA;
+        core_vm->nbr_cycles = 0;
         core_vm->lives = 0;
         core_vm->winner = 0;
         int champs_left = check_champion_lives(core_vm);
@@ -145,7 +146,7 @@ void run_instructions(core_t *core_vm) {
     for (int i = 0; i < core_vm->champion_count; i++) {
         if (core_vm->champions[i].dead) {
             print_colored_text(37);
-            printf("Champion P%d has no lives left. Cannot run.\n", core_vm->champions[i].id);
+            printf("Champion P%d has no lives left. Cannot run.\n\n", core_vm->champions[i].id);
             printf("\033[0m");
         } else {
             run_instruction(i, core_vm, core_vm->champions[i], core_vm->instruction_pointer);
