@@ -134,17 +134,44 @@ void run_champions(core_t *vm) {
     }
 }
 
-void run_game(core_t *core_vm) {
-    printf("\n\n====================START GAME=====================\n");
-    int game_loop_number = 0;
-
-    while (1) {
-        printf("===============GAME LOOP %d===============\n\n", game_loop_number);
-        run_champions(core_vm);
-        game_loop_number++;
-        core_vm->instruction_pointer++;
-        if (game_over(core_vm)) {
-            break;
+void run_instructions_from_core(core_t *core_vm) {
+    for (int i = 0; i < core_vm->champion_count; i++) {
+        printf("champion count: %d\n", core_vm->champion_count);
+        printf("Running instructions for champion: %d\n", i);
+        int start_index = i * (MEM_SIZE / core_vm->champion_count);
+        for (int j = 0; j < core_vm->champions[i].instruction_size; j++) {
+            int champ_index = start_index + j;
+            printf("champion count: %d\n", core_vm->champion_count);
+            printf("champ_index: %d\n", champ_index);
+            printf("instruction_size: %d\n", core_vm->champions[i].instruction_size);
+            printf("instruction opcode: %d\n", core_vm->champions[i].inst[j].opcode);
+            int opcode = core_vm->memory[champ_index];
+            if (opcode < 0 || opcode > 16) {
+                printf("Invalid opcode for operands: %d\n", opcode);
+                continue;
+            }
+            printf("Found instruction for opcode: %d\n", opcode);
+            execute_instruction(core_vm, &core_vm->champions[i], opcode, core_vm->champions[i].inst[j].operands);
+            // }
         }
     }
+}
+
+void run_game(core_t *core_vm) {
+    printf("\n\n====================START GAME=====================\n");
+    // int game_loop_number = 0;
+
+        run_instructions_from_core(core_vm);
+
+    // while (1) {
+    //     printf("===============GAME LOOP %d===============\n\n", game_loop_number);
+    //     // run_champions(core_vm);
+    //     // core_vm->instruction_pointer++;
+    //     // if (game_over(core_vm)) {
+    //     //     break;
+    //     // }
+    //     run_instructions_from_core(core_vm);
+    //     game_loop_number++;
+
+    // }
 }
