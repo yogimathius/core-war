@@ -9,6 +9,7 @@ void load_champions(core_t *core_vm, int ac, char **av) {
     add_champion(core_vm, champ);
     ac--;
   }
+  load_instructions(core_vm);
 }
 
 champion_t *init_champion() {
