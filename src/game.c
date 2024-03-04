@@ -14,19 +14,23 @@ champion_t *find_champion(core_t *core_vm, int id) {
 int check_champion_lives(core_t *core_vm) {
     int champs_left = core_vm->champion_count;
      for (int i = 0; i < core_vm->champion_count; i++) {
-        champion_t *champ = &core_vm->champions[i];
-        if (champ->lives == 0) {
-            if (core_vm->champion_count == 1) {
-                core_vm->winner = champ->id;
-                return champs_left;
-            }
-            champ->dead = 1;
-            print_colored_text(33);
-            printf("Champion P%d has no lives left. Champion is dead.\n", champ->id);
-            printf("\033[0m");
-            core_vm->champion_count--;
+        if (core_vm->champions[i].dead) {
+            champs_left--;
         } else {
-            champ->lives = 0;
+            champion_t *champ = &core_vm->champions[i];
+            if (champ->lives == 0) {
+                if (champs_left == 1) {
+                    core_vm->winner = champ->id;
+                    return champs_left;
+                }
+                champ->dead = 1;
+                print_colored_text(33);
+                printf("Champion P%d has no lives left. Champion is dead.\n", champ->id);
+                printf("\033[0m");
+                champs_left--;
+            } else {
+                champ->lives = 0;
+            }
         }
     }
     
@@ -122,21 +126,24 @@ void run_champion(core_t *vm, champion_t champion) {
     execute_instruction(vm, &champion, found_inst->opcode, found_inst->operands);
 }
 
-void run_instruction(int i, core_t *core_vm) {
+void run_instruction(int i, core_t *core_vm, champion_t champion, int instruction_pointer) {
     int start_index = i * (MEM_SIZE / core_vm->champion_count);
-    int instruction_size = core_vm->champions[i].instruction_size;
-    int instruction_pointer = core_vm->instruction_pointer;
+    int instruction_size = champion.instruction_size;
 
     int instruction_index = instruction_pointer >= instruction_size ? (instruction_pointer % instruction_size) : instruction_pointer;
-    int champ_index = start_index + instruction_index;
+    int memory_index = start_index + instruction_index;
 
-    int opcode = core_vm->memory[champ_index];
+    int opcode = core_vm->memory[memory_index];
     if (opcode < 0 || opcode > 16) {
         printf("Invalid opcode for operands: %d\n", opcode);
         return;
     }
     printf("Found instruction for opcode: %d\n", opcode);
-    execute_instruction(core_vm, &core_vm->champions[i], opcode, core_vm->champions[i].inst[instruction_index].operands);
+    printf("instruction index: %d\n", instruction_index);
+    printf("inst opcode: %d\n", champion.inst[instruction_index].opcode);
+    printf("instruction pointer: %d\n", core_vm->instruction_pointer);
+    printf("start index: %d\n", start_index);
+    execute_instruction(core_vm, &champion, opcode, champion.inst[instruction_index].operands);
 }
 
 void run_instructions(core_t *core_vm) {
@@ -146,7 +153,7 @@ void run_instructions(core_t *core_vm) {
             printf("Champion P%d has no lives left. Cannot run.\n", core_vm->champions[i].id);
             printf("\033[0m");
         } else {
-            run_instruction(i, core_vm);
+            run_instruction(i, core_vm, core_vm->champions[i], core_vm->instruction_pointer);
         }
     }
 }
