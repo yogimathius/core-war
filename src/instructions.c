@@ -1,5 +1,5 @@
-#include "../include/op.h"
-#include "../include/instructions.h"
+#include <op.h>
+#include <instructions.h>
 #include <time.h>
  
 void delay(int number_of_seconds) {

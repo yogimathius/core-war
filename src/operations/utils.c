@@ -1,13 +1,48 @@
-#include "../../include/op.h"
+#include <op.h>
 
 void print_colored_text(int color) { printf("\033[1;%dm", color); }
 
-void log_instruction_args(const champion_t *champion, const core_t *core, code_t code, int *inst) {
-  const op_t *operation = &op_tab[code];
-  UNUSED(champion);
-  UNUSED(core);
+void print_champion_registers(const champion_t *champion) {
   print_colored_text(champion->color);
-  printf("Champion P%d: %s called %s with: ", champion->id,champion->header.prog_name, operation->mnemonique);
+  printf("Champion P%d registers: ", champion->id);
+  for (int i = 0; i < REG_NUMBER; i++) {
+    printf("%d ", champion->registers[i]);
+  }
+  printf("\n");
+  printf("\033[0m");
+}
+
+void print_champion_lives(const champion_t *champion) {
+  print_colored_text(champion->color);
+  printf("Champion P%d lives: %d\n", champion->id, champion->lives);
+  printf("\033[0m");
+}
+
+void display_champion_status(const champion_t *champion) {
+  print_champion_registers(champion);
+  print_champion_lives(champion);
+}
+
+void display_memory(const core_t *core) {
+  int i = 0;
+  while (i < MEM_SIZE) {
+    if (i % 64 == 0) {
+      printf("\n");
+    }
+    if (i == core->instruction_pointer) {
+      printf("\033[1;31m");
+    }
+    printf("%02x ", core->memory[i]);
+    printf("\033[0m");
+    i++;
+  }
+  printf("\n");
+}
+
+void log_instruction_args(const champion_t *champion, const core_t *core, code_t code, const int *inst) {
+  const op_t *operation = &op_tab[code];
+  print_colored_text(champion->color);
+  printf("Champion P%d called %s with: ", champion->id, operation->mnemonique);
   int i = 0;
   while (i < operation->nbr_args) {
     if (inst[i]) {
@@ -17,6 +52,7 @@ void log_instruction_args(const champion_t *champion, const core_t *core, code_t
   }
   printf("\n");
 
+  display_champion_status(champion);
   print_colored_text(champion->color);
   printf("Cycle: %d ", core->nbr_cycles);
   printf("Cycle to die: %d ", core->cycle_to_die);
