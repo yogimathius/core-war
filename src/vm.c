@@ -59,8 +59,21 @@ void add_champion(core_t *core_t, champion_t *champion) {
   champion->color = champ_color[champion->id - 1];
   core_t->champions[core_t->champion_count - 1] = *champion;
   for (int i = 0; i < champion->instruction_size; i++) {
+    printf("\n\nAdding instruction: %d\n", champion->inst[i].opcode);
+    printf("to memory: %d\n\n", i + (MEM_SIZE / core_t->champion_count) * (core_t->champion_count - 1));
     core_t->memory[i + (MEM_SIZE / core_t->champion_count) * (core_t->champion_count - 1)] = champion->inst[i].opcode;
   }
+}
+
+void load_instructions(core_t *core) {
+    for (int i = 0; i < core->champion_count; i++) {
+        champion_t *champion = &core->champions[i];
+        for (int j = 0; j < champion->instruction_size; j++) {
+            printf("\n\nAdding instruction: %d\n", champion->inst[i].opcode);
+            printf("to memory: %d\n\n", i + (MEM_SIZE / core->champion_count) * (core->champion_count - 1));
+            core->memory[j + (MEM_SIZE / core->champion_count) * i] = champion->inst[j].opcode;
+        }
+    }
 }
 
 int add_champion_to_core(core_t* core, champion_t* champion) {
