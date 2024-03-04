@@ -138,11 +138,6 @@ void run_instruction(int i, core_t *core_vm, champion_t champion, int instructio
         printf("Invalid opcode for operands: %d\n", opcode);
         return;
     }
-    printf("Found instruction for opcode: %d\n", opcode);
-    printf("instruction index: %d\n", instruction_index);
-    printf("inst opcode: %d\n", champion.inst[instruction_index].opcode);
-    printf("instruction pointer: %d\n", core_vm->instruction_pointer);
-    printf("start index: %d\n", start_index);
     execute_instruction(core_vm, &champion, opcode, champion.inst[instruction_index].operands);
 }
 
