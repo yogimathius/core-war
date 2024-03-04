@@ -1,8 +1,7 @@
-#include "stdio.h"
-#include "stdlib.h"
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
-
-#include "../include/vm.h"
+#include <vm.h>
 
 core_t *init_vm() {
     core_t *core = malloc(sizeof(core_t));
