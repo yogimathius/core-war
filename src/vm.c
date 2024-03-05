@@ -7,10 +7,8 @@ core_t *init_vm() {
     core_t *core = malloc(sizeof(core_t));
     // memset(core->memory, 0, MEM_SIZE);
     // memset(core->registers, 0, REG_NUMBER);
-    // TODO: Use memset instead of for loop
-    for (int i = 0; i < MEM_SIZE; i++) {
-        core->memory[i] = 0;
-    }
+    memset(core->memory, 0, MEM_SIZE * sizeof(uint8_t));
+
 
     // TODO: Use memset instead of for loop
     // TODO: free extra champions that don't get added eventually
@@ -63,9 +61,12 @@ void load_instructions(core_t *core) {
     for (int i = 0; i < core->champion_count; i++) {
         champion_t *champion = &core->champions[i];
         for (int j = 0; j < champion->instruction_size; j++) {
+            printf("adding instruction %d\n", champion->inst[j].opcode);
+            printf("to memory at %d\n", j + (MEM_SIZE / core->champion_count) * i);
             core->memory[j + (MEM_SIZE / core->champion_count) * i] = champion->inst[j].opcode;
         }
     }
+    // display_memory(core);
 }
 
 void load_instructionsv2(core_t *core) {
