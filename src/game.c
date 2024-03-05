@@ -56,14 +56,21 @@ void print_results(core_t *core_vm, char *message) {
     printf("\033[0m");
 }
 
+void reset_champ_counters(core_t *core_vm) {
+    for (int i = 0; i < core_vm->champion_count; i++) {
+        core_vm->champions[i].counter = 0;
+    }
+}
+
 int game_over(core_t *core_vm) {
     if (core_vm->lives >= NBR_LIVE || core_vm->nbr_cycles >= core_vm->cycle_to_die) {
         printf("Live count maxed out. Decreasing cycle to die by %d\n", CYCLE_DELTA);
-        display_memory(core_vm);
+        // display_memory(core_vm);
         core_vm->cycle_to_die -= CYCLE_DELTA;
         core_vm->nbr_cycles = 0;
         core_vm->lives = 0;
         core_vm->winner = 0;
+        reset_champ_counters(core_vm);
         int champs_left = check_champion_lives(core_vm);
         if (champs_left == 1) {
             print_results(core_vm, "All other champions have been defeated!!\n");
