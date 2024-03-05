@@ -8,8 +8,6 @@
 #define _OP_H_
 #define UNUSED(x) (void)(x)
 
-// Memory size in bytes
-
 // Modulo of the index
 #define IDX_MOD 512
 
