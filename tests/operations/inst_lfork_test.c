@@ -4,7 +4,7 @@
 void inst_lfork_test(void **state) { 
 	UNUSED(state);
     champion_t *champion = init_champion();
-    create_champion(champion, "players/simple.cor");  
+    create_champion(champion, "players/simple.cor");
     
     core_t *core = init_vm();
     add_champion(core, champion);
