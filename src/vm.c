@@ -68,6 +68,15 @@ void load_instructions(core_t *core) {
     }
 }
 
+void load_instructionsv2(core_t *core) {
+    for (int i = 0; i < core->champion_count; i++) {
+        champion_t *champion = &core->champions[i];
+        for (int j = 0; j < champion->parsed_instructions_size; j++) {
+            core->hex_memory[j + (MEM_SIZE / core->champion_count) * i] = champion->parsed_instructions[j];
+        }
+    }
+}
+
 int add_champion_to_core(core_t* core, champion_t* champion) {
     if (core->champion_count >= MAX_CHAMPIONS) {
         fprintf(stderr, "Maximum number of champions reached.\n");
