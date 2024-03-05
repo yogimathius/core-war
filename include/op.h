@@ -117,6 +117,8 @@ typedef struct champion {
   instruction_t inst[MEM_SIZE + 1];
   int instruction_size;
   instruction_t *instruction_list;
+  char **parsed_instructions;
+  int parsed_instructions_size;
   int color;
   int lives;
   int dead;
@@ -125,6 +127,7 @@ typedef struct champion {
 // Structure representing the core of the virtual machine
 typedef struct core_s {
     int memory[MEM_SIZE];
+    char *hex_memory[MEM_SIZE];
     int instruction_pointer;
     int nbr_cycles;
     int cycle_to_die;
