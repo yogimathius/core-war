@@ -159,7 +159,5 @@ champion_t* clone_champion(const champion_t* original) {
 
     memcpy(clone->registers, original->registers, sizeof(original->registers));
     memcpy(clone->inst, original->inst, sizeof(original->inst));
-
-    clone->instruction_list = deep_copy_instructions(original->instruction_list);
     return clone;
 }
