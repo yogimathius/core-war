@@ -1,4 +1,3 @@
-#include <op.h>
 #include <instructions.h>
 #include <time.h>
  
@@ -39,7 +38,7 @@ void allocate_operands(char **operands) {
     }
 }
 
-char **parse_instructions(const char *hex_buffer, int bytes_read) {
+char **parse_instructions(const char *hex_buffer, int bytes_read, champion_t *champion) {
     char **operands = (char**)malloc((MEM_SIZE + 1) * sizeof(char*));
     allocate_operands(operands);
 
@@ -49,7 +48,7 @@ char **parse_instructions(const char *hex_buffer, int bytes_read) {
       j++;
     }
     operands[j] = NULL;
-
+    champion->parsed_instructions_size = j;
     print_operands(operands);
     return operands;
 }
@@ -82,11 +81,24 @@ void create_operand(const int *i, char **parsed_instructions, int *found_label_a
     operand_t *operand = &inst->operand_list[j];
     operand->value = hex_value;
 
-    if (hex_value & T_IND) {
-        printf("T_IND is set, address of label: %s\n", parsed_instructions[hex_value]);
-        operand->type = T_IND;
+    if (hex_value & T_REG) {
+        printf("T_REG is set: %u\n", hex_value);
+        operand->type = T_REG;
+        operand->label = NULL;
+    } else if (hex_value & T_IND) {
+        printf("T_IND is set, address of label: %s\n", 
+        parsed_instructions[hex_value]);
+        printf("int hex_value: %u\n", hex_value);
 
-        *found_label_address = (int)hex_value;
+        operand->type = T_IND;
+        operand->label = NULL;
+    } else if(hex_value & T_DIR) {
+        printf("T_DIR is set: %u\n", hex_value);
+        operand->type = T_DIR;
+        printf("int hex_value: %u\n", hex_value);
+        if (hex_value > 0 && hex_value < 16) {
+            *found_label_address = (int)hex_value;
+        }
         operand->label = parsed_instructions[hex_value];
         // int k = hex_value;
         // while (parsed_instructions[k] != NULL) {
@@ -95,17 +107,9 @@ void create_operand(const int *i, char **parsed_instructions, int *found_label_a
         //     k++;
         //     operand->label++;
         // }
-    } else if(hex_value & T_DIR) {
-        printf("T_DIR is set: %u\n", hex_value);
-        operand->type = T_DIR;
-        operand->label = NULL;
-
-    } else if (hex_value & T_REG) {
-        printf("T_REG is set: %u\n", hex_value);
-        operand->type = T_REG;
-        operand->label = NULL;
     }
-     inst->operand_list[j] = *operand;
+
+    inst->operand_list[j] = *operand;
 }
 
 void add_operand(char **parsed_instructions, int *i, op_t operation, int *operands, int j, instruction_t *inst, int *found_label_address) {
