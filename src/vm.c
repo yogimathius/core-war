@@ -75,12 +75,21 @@ void load_instructionsv2(core_t *core) {
     }
 }
 
+void add_instructions_to_core(core_t *core, champion_t *champion) {
+    int i = champion->counter;
+    for (int j = 0; j < champion->instruction_size; j++) {
+        core->memory[i] = champion->inst[j].opcode;
+        i++;
+    }
+}
+
 int add_champion_to_core(core_t* core, champion_t* champion) {
     if (core->champion_count >= MAX_CHAMPIONS) {
         fprintf(stderr, "Maximum number of champions reached.\n");
-        free(champion); // Ensure to free the champion if not added
+        free(champion); 
         return -1;
     }
     core->champions[core->champion_count++] = *champion;
+    add_instructions_to_core(core, champion);
     return 0;
 }
