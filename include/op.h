@@ -114,7 +114,6 @@ typedef struct champion {
   int carry_flag;
   instruction_t inst[MEM_SIZE + 1];
   int instruction_size;
-  instruction_t *instruction_list;
   char **parsed_instructions;
   int parsed_instructions_size;
   int color;
