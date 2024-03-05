@@ -12,7 +12,7 @@ simple:
 		; op  params      values
 		; 04 | 54 |	01 01 03
 		sub r4, r5, r6
-		st r4, %34
+		st %34, r4
 		; op  params      values
 		; 03 | 70 | 04 00 00 00 22
 		add r1 r1, r3
