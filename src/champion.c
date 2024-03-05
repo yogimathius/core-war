@@ -108,39 +108,6 @@ champion_t *create_champion(champion_t *champion, char *filename) {
   return champion;
 }
 
-instruction_t* deep_copy_instructions(const instruction_t* original) {
-    if (original == NULL) return NULL;
-
-    instruction_t* copy = malloc(sizeof(instruction_t));
-    if (copy == NULL) {
-        perror("Failed to allocate memory for instruction");
-        exit(EXIT_FAILURE);
-    }
-    copy->opcode = original->opcode;
-
-    // Deep copy operands if they exist
-    if (original->operands) {
-        int operand_count = 0;
-        while (original->operands[operand_count]) ++operand_count;
-        copy->operands = malloc(sizeof(int) * (operand_count + 1)); 
-        if (copy->operands == NULL) {
-            free(copy);
-            perror("Failed to allocate memory for operands");
-            exit(EXIT_FAILURE);
-        }
-        for (int i = 0; i <= operand_count; i++) {
-            copy->operands[i] = original->operands[i];
-        }
-    } else {
-        copy->operands = NULL;
-    }
-
-    // Recursively copy the next instruction
-    copy->next = deep_copy_instructions(original->next);
-
-    return copy;
-}
-
 champion_t* clone_champion(const champion_t* original) {
     champion_t* clone = (champion_t*)malloc(sizeof(champion_t));
     if (!clone) {
