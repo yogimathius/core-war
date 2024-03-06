@@ -135,12 +135,11 @@ void run_champion(core_t *vm, champion_t champion) {
     execute_instruction(vm, &champion, found_inst->opcode, found_inst->operands);
 }
 
-void run_instruction(int start_index, core_t *core_vm, champion_t *champion, int instruction_pointer) {
+void run_instruction(int start_index, core_t *core_vm, champion_t *champion) {
     int instruction_size = champion->instruction_size;
-
+    int instruction_pointer = core_vm->instruction_pointer;
     int instruction_index = instruction_pointer >= instruction_size ? (instruction_pointer % instruction_size) : instruction_pointer;
     int memory_index = start_index + instruction_index;
-
     int opcode = core_vm->memory[memory_index];
     if (opcode < 0 || opcode > 16) {
         printf("Invalid opcode for operands: %d\n", opcode);
@@ -157,7 +156,7 @@ void run_instructions(core_t *core_vm) {
     int i = 0;
     do {
         i++;
-        run_instruction(current->index, core_vm, &core_vm->champions[current->player - 1], current->counter);
+        run_instruction(current->index, core_vm, &core_vm->champions[current->player - 1]);
         current = current->next;
     } while (i < core_vm->champion_count);
 }
