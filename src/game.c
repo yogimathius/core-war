@@ -172,8 +172,5 @@ void run_game(core_t *core_vm) {
         run_instructions(core_vm);
         game_loop_number++;
         core_vm->instruction_pointer++;
-        // if (game_over(core_vm)) {
-        //     break;
-        // }
     }
 }
