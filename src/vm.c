@@ -56,8 +56,8 @@ void add_champion(core_t *core_t, champion_t *champion) {
   core_t->champions[core_t->champion_count - 1] = *champion;
 }
 
-t_process *init_process(const champion_t *champion, int index) {
-    t_process* process = malloc(sizeof(t_process));
+process_t *init_process(const champion_t *champion, int index) {
+    process_t *process = malloc(sizeof(process_t));
     process->carry = 0;
     process->life = 0;
     process->dead = 0;
@@ -69,22 +69,32 @@ t_process *init_process(const champion_t *champion, int index) {
         process->reg[i] = 0;
     }
     process->next = NULL;
+
     return process;
 }
 
+
+
+void build_processes(core_t *core) {
+    process_t *head = init_process(&core->champions[0], 0);
+    process_t *prevptr, *new_process;
+
+    prevptr = head;
+
+    for (int i = 1; i < core->champion_count; i++) {
+        const champion_t *champion = &core->champions[i];
+        new_process = init_process(champion, (MEM_SIZE / core->champion_count) * i);
+        new_process->next = NULL;
+        prevptr->next = new_process;
+        prevptr = new_process;
+    }
+    prevptr->next = head;
+    core->process = head;
+}
+
 void load_instructions(core_t *core) {
-    t_process *head = core->process;
     for (int i = 0; i < core->champion_count; i++) {
-        int counter = (MEM_SIZE / core->champion_count) * i;
-        core->process = init_process(&core->champions[i], counter);
-        if (i == 0) {
-            head = core->process;
-        }
-        if (i == core->champion_count - 1) {
-            core->process->next = head;
-        } else {
-            core->process = core->process->next;
-        }
+        
         champion_t *champion = &core->champions[i];
         for (int j = 0; j < champion->instruction_size; j++) {
             core->memory[j + (MEM_SIZE / core->champion_count) * i] = champion->inst[j].opcode;

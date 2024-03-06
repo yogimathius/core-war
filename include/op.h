@@ -132,7 +132,7 @@ typedef struct s_process{
 	int				index;
 	int				color;
 	int				reg[REG_NUMBER];
-}	t_process;
+}	process_t;
 
 // Structure representing the core of the virtual machine
 typedef struct core_s {
@@ -145,7 +145,7 @@ typedef struct core_s {
     champion_t champions[MAX_CHAMPIONS];
     int lives;
     int winner;
-    t_process *process;
+    process_t *process;
 } core_t;
 
 // Structure representing an operation
