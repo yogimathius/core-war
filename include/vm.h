@@ -16,6 +16,8 @@ void write_vm(core_t *core_vm, int address, int value);
 
 void load_instructions(core_t *core);
 
+void load_instructionsv2(core_t *core);
+
 void build_processes(core_t *core);
 
 #endif
