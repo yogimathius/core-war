@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <vm.h>
+#include <op.h>
 
 core_t *init_vm() {
     core_t *core = malloc(sizeof(core_t));
@@ -19,7 +20,8 @@ core_t *init_vm() {
     core->cycle_to_die = CYCLE_TO_DIE;
     core->lives = 0;
     core->winner = 0;
-    
+    core->process = NULL;
+
     return core;
 }
 
@@ -54,14 +56,30 @@ void add_champion(core_t *core_t, champion_t *champion) {
   core_t->champions[core_t->champion_count - 1] = *champion;
 }
 
+t_process *init_process(const champion_t *champion, int index) {
+    t_process* process = malloc(sizeof(t_process));
+    process->carry = 0;
+    process->life = 0;
+    process->dead = 0;
+    process->counter = 0;
+    process->player = champion->id;
+    process->index = index;
+    process->color = 0;
+    for (int i = 0; i < REG_NUMBER; i++) {
+        process->reg[i] = 0;
+    }
+    return process;
+}
+
 void load_instructions(core_t *core) {
     for (int i = 0; i < core->champion_count; i++) {
+        int counter = (MEM_SIZE / core->champion_count) * i;
+        core->process = init_process(&core->champions[i], counter);
         champion_t *champion = &core->champions[i];
         for (int j = 0; j < champion->instruction_size; j++) {
             core->memory[j + (MEM_SIZE / core->champion_count) * i] = champion->inst[j].opcode;
         }
     }
-    // display_memory(core);
 }
 
 void load_instructionsv2(core_t *core) {
