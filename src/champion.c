@@ -11,6 +11,7 @@ void load_champions(core_t *core_vm, int ac, char **av) {
     i++;
   }
   load_instructions(core_vm);
+  load_instructionsv2(core_vm);
   build_processes(core_vm);
 }
 
@@ -101,7 +102,6 @@ champion_t *create_champion(champion_t *champion, char *filename) {
     champion->parsed_instructions = parsed_instructions;
     int instruction_size = build_instructions(parsed_instructions, champion);
     champion->instruction_size = instruction_size;
-    free(parsed_instructions);
   } else {
       perror("Error getting file size");
   }
