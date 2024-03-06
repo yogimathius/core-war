@@ -62,7 +62,7 @@ void reset_champ_counters(core_t *core_vm) {
     }
 }
 
-int game_over(core_t *core_vm) {
+int game_on(core_t *core_vm) {
     if (core_vm->lives >= NBR_LIVE || core_vm->nbr_cycles >= core_vm->cycle_to_die) {
         printf("Live count maxed out. Decreasing cycle to die by %d\n", CYCLE_DELTA);
         // display_memory(core_vm);
@@ -166,7 +166,7 @@ void run_game(core_t *core_vm) {
     printf("\n\n====================START GAME=====================\n");
     int game_loop_number = 0;
 
-    while (game_over(core_vm) == 0) {
+    while (game_on(core_vm) == 0) {
         printf("===============GAME LOOP %d===============\n\n", game_loop_number);
         run_instructions(core_vm);
         game_loop_number++;
