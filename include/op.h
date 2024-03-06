@@ -121,9 +121,9 @@ typedef struct champion {
   int dead;
 } champion_t;
 
-typedef struct s_cursor{
-	struct s_cursor	*next;
-	struct s_cursor	*prev;
+typedef struct s_process{
+	struct s_process	*next;
+	struct s_process	*prev;
 	int				carry;
 	int				life;
 	int				dead;
@@ -132,7 +132,7 @@ typedef struct s_cursor{
 	int				index;
 	int				color;
 	int				reg[REG_NUMBER];
-}	t_cursor;
+}	t_process;
 
 // Structure representing the core of the virtual machine
 typedef struct core_s {
@@ -145,7 +145,7 @@ typedef struct core_s {
     champion_t champions[MAX_CHAMPIONS];
     int lives;
     int winner;
-    t_cursor *cursor;
+    t_process *process;
 } core_t;
 
 // Structure representing an operation
