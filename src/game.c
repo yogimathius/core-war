@@ -167,13 +167,13 @@ void run_game(core_t *core_vm) {
     int game_loop_number = 0;
 
 
-    while (1) {
+    while (game_over(core_vm) == 0) {
         printf("===============GAME LOOP %d===============\n\n", game_loop_number);
         run_instructions(core_vm);
         game_loop_number++;
         core_vm->instruction_pointer++;
-        if (game_over(core_vm)) {
-            break;
-        }
+        // if (game_over(core_vm)) {
+        //     break;
+        // }
     }
 }
