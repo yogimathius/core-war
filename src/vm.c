@@ -10,6 +10,10 @@ core_t *init_vm() {
         core->memory[i] = 0;
     }
 
+    for (int i = 0; i < MEM_SIZE; i++) {
+        core->hex_memory[i] = 0;
+    }
+
     for (int i = 0; i < MAX_CHAMPIONS; i++) {
         const champion_t *champion = malloc(sizeof(champion_t));
         core->champions[i] = *champion;
