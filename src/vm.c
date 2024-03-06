@@ -73,10 +73,18 @@ t_process *init_process(const champion_t *champion, int index) {
 }
 
 void load_instructions(core_t *core) {
+    t_process *head = core->process;
     for (int i = 0; i < core->champion_count; i++) {
         int counter = (MEM_SIZE / core->champion_count) * i;
         core->process = init_process(&core->champions[i], counter);
-        core->process = core->process->next;
+        if (i == 0) {
+            head = core->process;
+        }
+        if (i == core->champion_count - 1) {
+            core->process->next = head;
+        } else {
+            core->process = core->process->next;
+        }
         champion_t *champion = &core->champions[i];
         for (int j = 0; j < champion->instruction_size; j++) {
             core->memory[j + (MEM_SIZE / core->champion_count) * i] = champion->inst[j].opcode;
