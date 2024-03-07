@@ -47,20 +47,15 @@ void encode_indirect(FILE *output, const char *arg, int current_address) {
 
 unsigned char encode_parameter_description(char arguments[][MAX_ARGUMENT_LENGTH], int argumentCount) {
     unsigned char description = 0;
-    // The bits are set from left to right for each parameter.
     for (int i = 0; i < argumentCount; i++) {
         unsigned char paramCode = 0;
         if (arguments[i][0] == 'r') {
-            printf("pd register: %s\n", arguments[i]);
             paramCode = REG_CODE; // 01 in binary for register
         } else if (isdigit(arguments[i][0]) || (arguments[i][0] == '-' && isdigit(arguments[i][1]))) {
-            printf("pd indirect: %s\n", arguments[i]);
-            paramCode = IND_CODE; // 10 in binary for direct
+            paramCode = IND_CODE; // 11 in binary for indirect
         } else {
-            printf("pd direct: %s\n", arguments[i]);
-            paramCode = DIR_CODE; // 11 in binary for indirect
+            paramCode = DIR_CODE; // 10 in binary for direct
         }
-        printf("paramCode: %d\n", paramCode);
         description |= paramCode << (6 - 2 * i);
     }
     return description;
@@ -90,7 +85,7 @@ void encode_instruction(FILE *output, parsed_line_t *parsedLine) {
     // Write the opcode to the output file.
     fwrite(&opcode, sizeof(opcode), 1, output);
 
-    printf("\n===================ENCODING PD==================\n");
+    // printf("\n===================ENCODING PD==================\n");
     // Then write the parameter description byte
     unsigned char param_description = encode_parameter_description(parsedLine->arguments, parsedLine->argumentCount);
     printf("param_description: %d\n", param_description);
