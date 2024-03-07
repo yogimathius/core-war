@@ -137,5 +137,7 @@ void assemble(FILE *input, FILE *output);
 FileHeader parse_header(FILE *input);
 void write_little_endian(FILE *output, int value);
 void parse_contents(FILE *input, FileHeader *header);
+void write_header(FILE *output, FileHeader *header);
+void write_magic_number(FILE *output);
 
 #endif
