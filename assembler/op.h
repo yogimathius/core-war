@@ -30,6 +30,9 @@
 #define COMMENT_CMD_STRING ".comment"
 
 #define MAX_ARGS_NUMBER 3
+# define REG_CODE			1
+# define DIR_CODE			2
+# define IND_CODE			3
 
 enum parameter_types { T_REG = 1, T_DIR = 2, T_IND = 4, T_LAB = 8 };
 
