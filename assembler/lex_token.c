@@ -46,13 +46,14 @@ Token lex_token(const char **input) {
             token.string[length] = '\0';
         }
     } else if (isalpha((unsigned char)**input) && *input[0] != 'r') { // Label or Instruction
-        printf("input in alpha: %s\n", *input);
+        // printf("input in aslpha: %s\n", *input);
 
         start = *input;
         while (isalnum((unsigned char)**input) || **input == '_') {
             (*input)++;
         }
-        if (**input == ':') { // It's a label
+        if (**input == LABEL_CHAR) { // It's a label
+        // printf("input in label: %s\n", *input);
             token.type = TOKEN_LABEL;
             (*input)++;
         } else { // It's an instruction
@@ -75,7 +76,7 @@ Token lex_token(const char **input) {
         token.string[length] = '\0';
     } else if (*input[0] == 'r' && isdigit((unsigned char)*(*input + 1))) { // Register
         token.type = TOKEN_REGISTER;
-        printf("input from r: %s\n", *input);
+        // printf("input from r: %s\n", *input);
         start = *input; // Start at the digit
         (*input)++; // Skip 'r'
         while (isdigit((unsigned char)**input)) {
@@ -84,7 +85,8 @@ Token lex_token(const char **input) {
         size_t length = *input - start;
         strncpy(token.string, start, length);
         token.string[length] = '\0';
-    } else if (**input == '%' && *(*input + 1) == ':') { // Direct label
+    } else if (**input == DIRECT_CHAR && *(*input + 1) == LABEL_CHAR) { // Direct label
+        // printf("input from direct label: %s\n", *input);
         token.type = TOKEN_DIRECTIVE;
         (*input) += 2; // Skip '%:'
         start = *input; // Start after '%:'
