@@ -30,9 +30,13 @@
 #define COMMENT_CMD_STRING ".comment"
 
 #define MAX_ARGS_NUMBER 3
-# define REG_CODE			1
-# define DIR_CODE			2
-# define IND_CODE			3
+#define REG_CODE 1
+#define DIR_CODE 2
+#define IND_CODE 3
+
+#define REG_SIZE 1
+#define DIR_SIZE 2
+#define IND_SIZE 4
 
 enum parameter_types { T_REG = 1, T_DIR = 2, T_IND = 4, T_LAB = 8 };
 
@@ -85,7 +89,7 @@ typedef enum {
     TOKEN_REGISTER,
     TOKEN_NUMBER,
     TOKEN_OPERATOR,
-    TOKEN_ENDLINE
+    TOKEN_BLANKLINE
 } TokenType;
 
 
@@ -120,6 +124,7 @@ typedef struct Symbol {
 typedef struct {
     char name[PROG_NAME_LENGTH];
     char comment[COMMENT_LENGTH];
+    int size;
 } FileHeader;
 
 // Function prototypes
