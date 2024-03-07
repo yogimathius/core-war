@@ -122,3 +122,28 @@ void encode_instruction(FILE *output, parsed_line_t *parsedLine) {
         }
     }
 }
+
+void write_magic_number(FILE *output) {
+    int corewar_exec_magic = COREWAR_EXEC_MAGIC;
+    unsigned char magic_number[4];
+
+    // Hacky way to write the magic number to the output file in big-endian format
+
+    magic_number[0] = (corewar_exec_magic >> 24) & 0xFF;
+    magic_number[1] = (corewar_exec_magic >> 16) & 0xFF;
+    magic_number[2] = (corewar_exec_magic >> 8) & 0xFF;
+    magic_number[3] = corewar_exec_magic & 0xFF;
+
+    fwrite(magic_number, sizeof(int), 1, output);
+}
+
+void write_header(FILE *output, FileHeader *header) {
+    fwrite(header->name, sizeof(char), sizeof(char) * PROG_NAME_LENGTH, output);
+    fwrite("\0\0\0\0", sizeof(char), 4, output); // Placeholder for program instructions size (4 bytes)
+
+    unsigned int size = htonl(header->size);
+    fwrite(&size, sizeof(int), 1, output);
+
+    fwrite(header->comment, sizeof(char), sizeof(char) * COMMENT_LENGTH, output);
+    fwrite("\0\0\0\0", sizeof(char), 4, output); // Placeholder for program instructions size (4 bytes)
+}
