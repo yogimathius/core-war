@@ -10,7 +10,7 @@ Token lex_token(const char **input) {
     }
 
     if (**input == '\0') {
-        token.type = TOKEN_ENDLINE;
+        token.type = TOKEN_BLANKLINE;
     } else if (**input == ';') { // Assuming ';' starts a comment
         token.type = TOKEN_COMMENT;
         while (**input && **input != '\n') {
@@ -88,8 +88,8 @@ Token lex_token(const char **input) {
     } else if (**input == DIRECT_CHAR && *(*input + 1) == LABEL_CHAR) { // Direct label
         // printf("input from direct label: %s\n", *input);
         token.type = TOKEN_DIRECTIVE;
-        (*input) += 2; // Skip '%:'
         start = *input; // Start after '%:'
+        (*input) += 2; // Skip '%:'
         while (isalnum((unsigned char)**input) || **input == '_') {
             (*input)++;
         }
