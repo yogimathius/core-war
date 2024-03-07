@@ -99,6 +99,7 @@ typedef enum {
 #define MAX_ARGUMENT_LENGTH 50
 #define PROG_NAME_LENGTH 128
 #define COMMENT_LENGTH 2048
+#define MAX_PROG_LENGTH (6 * 1024) / 4
 
 // Structure to hold a token
 typedef struct {
@@ -113,6 +114,7 @@ typedef struct {
     char opcode[MAX_LABEL_LENGTH];
     char arguments[MAX_ARGS_NUMBER][MAX_ARGUMENT_LENGTH];
     int argumentCount;
+    parsed_line_t *next;
 } parsed_line_t;
 
 typedef struct Symbol {
@@ -125,6 +127,7 @@ typedef struct {
     char name[PROG_NAME_LENGTH];
     char comment[COMMENT_LENGTH];
     int size;
+    parsed_line_t parsed_lines[MAX_PROG_LENGTH];
 } FileHeader;
 
 // Function prototypes
