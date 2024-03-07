@@ -1,6 +1,6 @@
 #include "./op.h"
 
-void assemble(FILE *input, FILE *output) {
+void parse_contents(FILE *input, FileHeader *header) {
     char line[MAX_LINE_LENGTH];
     int current_address = 0; 
 
@@ -9,15 +9,40 @@ void assemble(FILE *input, FILE *output) {
         if (parsedLine.lineType == TOKEN_LABEL) {
             add_symbol(parsedLine.label, current_address);
         } else if (parsedLine.lineType == TOKEN_INSTRUCTION) {
-            current_address += 4;
+            current_address += 1 + parsedLine.argumentCount;
+            header->size += 4;
         }
     }
 
     // Prepare for second pass
+    rewind(input);
+}
+
+void assemble(FILE *input, FILE *output) {
+    char line[MAX_LINE_LENGTH];
+    int current_address = 0; 
+    printf(" %d\n", current_address);
     fseek(input, 0, SEEK_SET); // Reset file pointer to beginning of input file
 
+    printf("round one\n");
+    while (fgets(line, sizeof(line), input)) {
+        parsed_line_t parsedLine = parse_line(line);
+        printf("parsedLine.lineType: %d\n", parsedLine.lineType);
+
+        if (parsedLine.lineType == TOKEN_LABEL) {
+            printf("adding symbol: %s, %d\n", parsedLine.label, current_address);
+            add_symbol(parsedLine.label, current_address);
+        } else if (parsedLine.lineType == TOKEN_INSTRUCTION) {
+            current_address += 1 + parsedLine.argumentCount;
+        }
+    }
+
+    // Prepare for second pass
+    rewind(input);
+    printf("round two\n");
     // Second pass: Encode instructions
     while (fgets(line, sizeof(line), input)) {
+        // printf("line: %s\n", line);s
         parsed_line_t parsedLine = parse_line(line);
         if (parsedLine.lineType == TOKEN_INSTRUCTION) {
             encode_instruction(output, &parsedLine);
@@ -39,22 +64,15 @@ void write_magic_number(FILE *output) {
     fwrite(magic_number, sizeof(int), 1, output);
 }
 
-void write_program_size(FILE *input, FILE *output_file) {
-    char line[MAX_LINE_LENGTH];
-    int program_size = 0;
+void write_header(FILE *output, FileHeader *header) {
+    fwrite(header->name, sizeof(char), sizeof(char) * PROG_NAME_LENGTH, output);
+    fwrite("\0\0\0\0", sizeof(char), 4, output); // Placeholder for program instructions size (4 bytes)
 
-    while (fgets(line, sizeof(line), input)) {
-        parsed_line_t parsedLine = parse_line(line);
-        if (parsedLine.lineType == TOKEN_INSTRUCTION) {
-            program_size += 4;
-        }
-    }
+    unsigned int size = htonl(header->size);
+    fwrite(&size, sizeof(int), 1, output);
 
-    unsigned int big_endian_value = htonl(program_size);
-
-
-    fwrite(&big_endian_value, sizeof(int), 1, output_file);
-
+    fwrite(header->comment, sizeof(char), sizeof(char) * COMMENT_LENGTH, output);
+    fwrite("\0\0\0\0", sizeof(char), 4, output); // Placeholder for program instructions size (4 bytes)
 }
 
 int main(int argc, const char *argv[]) {
@@ -70,7 +88,6 @@ int main(int argc, const char *argv[]) {
     }
 
     FileHeader header = parse_header(input_file);
-
     // Open output file and write header
     FILE *output_file = fopen(argv[2], "wb");
     if (!output_file) {
@@ -78,16 +95,11 @@ int main(int argc, const char *argv[]) {
         fclose(input_file);
         return EXIT_FAILURE;
     }
+    parse_contents(input_file, &header);
 
     write_magic_number(output_file);
 
-    fwrite(header.name, sizeof(char), sizeof(char) * PROG_NAME_LENGTH, output_file);
-    fwrite("\0\0\0\0", sizeof(char), 4, output_file); // Placeholder for program instructions size (4 bytes)
-
-    write_program_size(input_file, output_file);
-
-    fwrite(header.comment, sizeof(char), sizeof(char) * COMMENT_LENGTH, output_file);
-    fwrite("\0\0\0\0", sizeof(char), 4, output_file); // Placeholder for program instructions size (4 bytes)
+    write_header(output_file, &header);
 
     assemble(input_file, output_file);
 
