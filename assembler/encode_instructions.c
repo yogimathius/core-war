@@ -2,7 +2,6 @@
 
 // Ensure that registers are encoded as a single byte
 void encode_register(FILE *output, const char *arg) {
-    printf("Encoding register: %s\n", arg);
     unsigned char reg_num = (unsigned char)atoi(arg + 1); // Skip 'r' and convert to int
     fwrite(&reg_num, T_REG, 1, output); // Write a single byte
 }
@@ -52,12 +51,16 @@ unsigned char encode_parameter_description(char arguments[][MAX_ARGUMENT_LENGTH]
     for (int i = 0; i < argumentCount; i++) {
         unsigned char paramCode = 0;
         if (arguments[i][0] == 'r') {
-            paramCode = 1; // 01 in binary for register
+            printf("pd register: %s\n", arguments[i]);
+            paramCode = REG_CODE; // 01 in binary for register
         } else if (isdigit(arguments[i][0]) || (arguments[i][0] == '-' && isdigit(arguments[i][1]))) {
-            paramCode = 2; // 10 in binary for direct
+            printf("pd indirect: %s\n", arguments[i]);
+            paramCode = IND_CODE; // 10 in binary for direct
         } else {
-            paramCode = 3; // 11 in binary for indirect
+            printf("pd direct: %s\n", arguments[i]);
+            paramCode = DIR_CODE; // 11 in binary for indirect
         }
+        printf("paramCode: %d\n", paramCode);
         description |= paramCode << (6 - 2 * i);
     }
     return description;
@@ -73,22 +76,28 @@ enum op_types mnemonic_to_op_type(const char *mnemonic) {
 }
 // Now update the encode_instruction function to use these
 void encode_instruction(FILE *output, parsed_line_t *parsedLine) {
-    printf("Encoding instruction: %s\n", parsedLine->opcode);
+    printf("Encoding instruction: %s with ", parsedLine->opcode);
+    printf("Arguments: %d ", parsedLine->argumentCount);
+    for (int i = 0; i < parsedLine->argumentCount; i++) {
+        printf("%s ", parsedLine->arguments[i]);
+    }
+    printf("\n");
     enum op_types op_type = mnemonic_to_op_type(parsedLine->opcode);
 
     op_t operation = op_tab[op_type];
 
     unsigned char opcode = operation.code;
     // Write the opcode to the output file.
-    printf("opcode: %d\n", opcode);
     fwrite(&opcode, sizeof(opcode), 1, output);
 
+    printf("\n===================ENCODING PD==================\n");
     // Then write the parameter description byte
     unsigned char param_description = encode_parameter_description(parsedLine->arguments, parsedLine->argumentCount);
     printf("param_description: %d\n", param_description);
     fwrite(&param_description, sizeof(param_description), 1, output);
 
     // Then write the arguments
+    printf("\n===================ENCODING ARGS==================\n");
     for (int i = 0; i < parsedLine->argumentCount; i++) {
         char* arg = parsedLine->arguments[i];
 
