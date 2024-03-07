@@ -20,6 +20,10 @@ typedef char args_type_t;
 // Byte code type
 typedef unsigned char code_t;
 
+# define REG_CODE			1
+# define DIR_CODE			2
+# define IND_CODE			3
+
 // Enumeration of parameter types
 enum parameter_types { T_REG = 1, T_DIR = 2, T_IND = 4, T_LAB = 8 };
 
@@ -50,14 +54,9 @@ enum op_types {
   OP_NB // 0X12
 };
 
-// Size of indirect addressing mode in bytes
-#define IND_SIZE 2
-
-// Size of direct addressing mode in bytes
-#define DIR_SIZE 4
-
-// Size of registers in bytes
-#define REG_SIZE DIR_SIZE
+#define REG_SIZE 1
+#define DIR_SIZE 2
+#define IND_SIZE 4
 
 // Header structure for the program
 #define PROG_NAME_LENGTH 128
