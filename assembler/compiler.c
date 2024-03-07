@@ -1,46 +1,10 @@
 #include "./op.h"
 
-void parse_contents(FILE *input, FileHeader *header) {
-    char line[MAX_LINE_LENGTH];
-    int current_address = 0; 
-
-    while (fgets(line, sizeof(line), input)) {
-        parsed_line_t parsedLine = parse_line(line);
-        if (parsedLine.lineType == TOKEN_LABEL) {
-            add_symbol(parsedLine.label, current_address);
-        } else if (parsedLine.lineType == TOKEN_INSTRUCTION) {
-            current_address += 1 + parsedLine.argumentCount;
-            header->size += 4;
-        }
-    }
-
-    // Prepare for second pass
-    rewind(input);
-}
-
 void assemble(FILE *input, FILE *output) {
     char line[MAX_LINE_LENGTH];
-    int current_address = 0; 
-    printf(" %d\n", current_address);
-    fseek(input, 0, SEEK_SET); // Reset file pointer to beginning of input file
 
-    printf("round one\n");
-    while (fgets(line, sizeof(line), input)) {
-        parsed_line_t parsedLine = parse_line(line);
-        printf("parsedLine.lineType: %d\n", parsedLine.lineType);
-
-        if (parsedLine.lineType == TOKEN_LABEL) {
-            printf("adding symbol: %s, %d\n", parsedLine.label, current_address);
-            add_symbol(parsedLine.label, current_address);
-        } else if (parsedLine.lineType == TOKEN_INSTRUCTION) {
-            current_address += 1 + parsedLine.argumentCount;
-        }
-    }
-
-    // Prepare for second pass
     rewind(input);
     printf("round two\n");
-    // Second pass: Encode instructions
     while (fgets(line, sizeof(line), input)) {
         // printf("line: %s\n", line);s
         parsed_line_t parsedLine = parse_line(line);

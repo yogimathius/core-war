@@ -136,5 +136,6 @@ void encode_instruction(FILE *output, parsed_line_t *parsedLine);
 void assemble(FILE *input, FILE *output);
 FileHeader parse_header(FILE *input);
 void write_little_endian(FILE *output, int value);
+void parse_contents(FILE *input, FileHeader *header);
 
 #endif

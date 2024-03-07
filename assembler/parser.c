@@ -1,5 +1,23 @@
 #include "./op.h"
 
+void parse_contents(FILE *input, FileHeader *header) {
+    char line[MAX_LINE_LENGTH];
+    int current_address = 0; 
+
+    while (fgets(line, sizeof(line), input)) {
+        parsed_line_t parsedLine = parse_line(line);
+        if (parsedLine.lineType == TOKEN_LABEL) {
+            add_symbol(parsedLine.label, current_address);
+        } else if (parsedLine.lineType == TOKEN_INSTRUCTION) {
+            current_address += 1 + parsedLine.argumentCount;
+            header->size += 4;
+        }
+    }
+
+    // Prepare for second pass
+    rewind(input);
+}
+
 FileHeader parse_header(FILE *input) {
     FileHeader header = {"", "", 0};
     char line[MAX_LINE_LENGTH];
