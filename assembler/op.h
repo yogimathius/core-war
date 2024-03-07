@@ -114,7 +114,6 @@ typedef struct {
     char opcode[MAX_LABEL_LENGTH];
     char arguments[MAX_ARGS_NUMBER][MAX_ARGUMENT_LENGTH];
     int argumentCount;
-    parsed_line_t *next;
 } parsed_line_t;
 
 typedef struct Symbol {
@@ -137,10 +136,10 @@ void add_symbol(const char *label, int address);
 int lookup_symbol(const char *label);
 void encode_instruction(FILE *output, parsed_line_t *parsedLine);
 void assemble(FILE *input, FILE *output);
-FileHeader parse_header(FILE *input);
 void write_little_endian(FILE *output, int value);
 void parse_contents(FILE *input, FileHeader *header);
 void write_header(FILE *output, FileHeader *header);
 void write_magic_number(FILE *output);
+FileHeader *init_header();
 
 #endif

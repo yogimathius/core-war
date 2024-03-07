@@ -3,36 +3,34 @@
 void parse_contents(FILE *input, FileHeader *header) {
     char line[MAX_LINE_LENGTH];
     int current_address = 0; 
-
+    int instruction_count = 0;
     while (fgets(line, sizeof(line), input)) {
         parsed_line_t parsedLine = parse_line(line);
+        if (strncmp(line, ".name", 5) == 0) {
+            sscanf(line, ".name \"%[^\"]\"", header->name);
+        } else if (strncmp(line, ".comment", 8) == 0) {
+            sscanf(line, ".comment \"%[^\"]\"", header->comment);
+        }
         if (parsedLine.lineType == TOKEN_LABEL) {
             add_symbol(parsedLine.label, current_address);
-        } else if (parsedLine.lineType == TOKEN_INSTRUCTION) {
+        } else if (parsedLine.lineType == TOKEN_INSTRUCTION) {  
             current_address += 1 + parsedLine.argumentCount;
             header->size += 4;
+            header->parsed_lines[instruction_count] = parsedLine;
+            instruction_count++;
         }
     }
-
-    // Prepare for second pass
-    rewind(input);
 }
 
-FileHeader parse_header(FILE *input) {
-    FileHeader header = {"", "", 0};
-    char line[MAX_LINE_LENGTH];
-    int name_found = 0;
-    int comment_found = 0;
-    while (fgets(line, sizeof(line), input) && (!name_found || !comment_found)) {
-        if (strncmp(line, ".name", 5) == 0) {
-            sscanf(line, ".name \"%[^\"]\"", header.name);
-            name_found = 1;
-        } else if (strncmp(line, ".comment", 8) == 0) {
-            sscanf(line, ".comment \"%[^\"]\"", header.comment);
-            comment_found = 1;
-        }
+FileHeader *init_header() {
+    FileHeader *header = malloc(sizeof(FileHeader));
+    header->size = 0;
+    for (int i = 0; i < MAX_PROG_LENGTH; i++) {
+        header->parsed_lines[i].lineType = TOKEN_UNKNOWN;
     }
-    rewind(input);
+
+    header->comment[0] = '\0';
+    header->name[0] = '\0';
 
     return header;
 }
