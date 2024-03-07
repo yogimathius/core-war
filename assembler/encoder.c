@@ -6,7 +6,6 @@ void encode_register(FILE *output, const char *arg) {
     fwrite(&reg_num, REG_SIZE, 1, output); // Write a single byte
 }
 
-
 void encode_indirect(FILE *output, const char *arg) {
     int direct_value = atoi(arg);
     printf("direct_value: %d\n", direct_value);
@@ -138,6 +137,8 @@ void write_magic_number(FILE *output) {
 }
 
 void write_header(FILE *output, FileHeader *header) {
+    write_magic_number(output);
+
     fwrite(header->name, sizeof(char), sizeof(char) * PROG_NAME_LENGTH, output);
     fwrite("\0\0\0\0", sizeof(char), 4, output); // Placeholder for program instructions size (4 bytes)
 
