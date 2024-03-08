@@ -29,9 +29,6 @@ FileHeader *init_header() {
         header->parsed_lines[i].lineType = TOKEN_UNKNOWN;
     }
 
-    header->comment[0] = '\0';
-    header->name[0] = '\0';
-
     return header;
 }
 

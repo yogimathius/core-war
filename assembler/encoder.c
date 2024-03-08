@@ -139,12 +139,12 @@ void write_magic_number(FILE *output) {
 void write_header(FILE *output, FileHeader *header) {
     write_magic_number(output);
 
-    fwrite(header->name, sizeof(char), sizeof(char) * PROG_NAME_LENGTH, output);
+    fwrite(&header->name, sizeof(char), sizeof(char) * PROG_NAME_LENGTH, output);
     fwrite("\0\0\0\0", sizeof(char), 4, output); // Placeholder for program instructions size (4 bytes)
 
     unsigned int size = htonl(header->size);
     fwrite(&size, sizeof(int), 1, output);
 
-    fwrite(header->comment, sizeof(char), sizeof(char) * COMMENT_LENGTH, output);
+    fwrite(&header->comment, sizeof(char), sizeof(char) * COMMENT_LENGTH, output);
     fwrite("\0\0\0\0", sizeof(char), 4, output); // Placeholder for program instructions size (4 bytes)
 }
