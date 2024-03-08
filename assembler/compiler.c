@@ -1,10 +1,11 @@
 #include "./op.h"
 
 void assemble(FILE *output, FileHeader *header) {
+    int current_address = 0;
     for (int i = 0; i < header->parsed_lines_size; i++) {
         parsed_line_t parsedLine = header->parsed_lines[i];
         if (parsedLine.lineType == TOKEN_INSTRUCTION) {
-            encode_instruction(output, &parsedLine);
+            encode_instruction(output, &parsedLine, &current_address);
         }
     }
 }
