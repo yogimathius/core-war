@@ -1,6 +1,23 @@
 #include "./op.h"
 
-// Ensure that registers are encoded as a single byte
+void write_big_endian(FILE *output, int value) {
+    uint8_t bytes[sizeof(int)];
+    for (int i = sizeof(int) - 1; i >= 0; i--) {
+        bytes[i] = (uint8_t)(value & 0xFF);
+        value >>= 8;
+    }
+
+    fwrite(bytes, sizeof(int), 1, output);
+}
+
+void write_last_two_bytes(FILE *output, int value) {
+    uint8_t byte3 = (value >> 8) & 0xFF; 
+    uint8_t byte4 = value & 0xFF;
+
+    fwrite(&byte3, sizeof(uint8_t), 1, output);
+    fwrite(&byte4, sizeof(uint8_t), 1, output);
+}
+
 void encode_register(FILE *output, const char *arg, int *current_address) {
     unsigned char reg_num = (unsigned char)atoi(arg + 1); // Skip 'r' and convert to int
     fwrite(&reg_num, REG_SIZE, 1, output); // Write a single byte
@@ -9,11 +26,8 @@ void encode_register(FILE *output, const char *arg, int *current_address) {
 
 void encode_indirect(FILE *output, const char *arg, int *current_address) {
     int direct_value = atoi(arg);
-    printf("direct_value: %d\n", direct_value);
-    unsigned int big_endian_value = htonl(direct_value);
-    printf("big_endian_value: %u\n", big_endian_value);
-    fwrite(&big_endian_value, IND_SIZE, 1, output);
-    (*current_address) += 2;
+    write_big_endian(output, direct_value);
+    (*current_address) += 4;
 }
 
 int containsDigits(const char *str) {
@@ -27,32 +41,31 @@ int containsDigits(const char *str) {
 }
 
 void encode_direct(FILE *output, const char *arg, int *current_address) {
+    printf("arg in encode direct: %s\n", arg);
+
     int indirect_value;
     if (arg[0] == '%' && containsDigits(arg + 1) == 0) {
-        printf("label: %s\n", arg + 2);
-        // Handle as label
         int label_address = lookup_symbol(arg + 2); // Skip '%' and lookup label
         indirect_value = label_address - *current_address;
-        printf("indirect_value: %d\n", indirect_value);
+        write_last_two_bytes(output, indirect_value);
     } else if (arg[0] == '%' && containsDigits(arg + 1) == 1) {
         indirect_value = atoi(arg + 1);
         if (indirect_value == 0) {
             return encode_indirect(output, arg, current_address);
         }
-    } else {
-        printf("arg in direct: %s\n", arg);
-        // Handle as numeric offset
-        indirect_value = atoi(arg);
-    }
-    
-    unsigned int big_endian_value = htonl(indirect_value);
 
-    fwrite(&big_endian_value, DIR_SIZE, 1, output);
-    *current_address += 4;
+        write_last_two_bytes(output, indirect_value);
+    } else {
+        indirect_value = atoi(arg);
+        fwrite(&indirect_value, DIR_SIZE, 1, output);
+
+    }
+
+    *current_address += 2;
 }
 
 
-unsigned char encode_parameter_description(const char arguments[][MAX_ARGUMENT_LENGTH], int argumentCount) {
+unsigned char calc_parameter_description(const char arguments[][MAX_ARGUMENT_LENGTH], int argumentCount) {
     unsigned char description = 0;
     for (int i = 0; i < argumentCount; i++) {
         unsigned char paramCode = 0;
@@ -89,16 +102,10 @@ void encode_arguments(FILE *output, const parsed_line_t *parsedLine, int *curren
     }
 }
 
-int is_one_byte_instruction(const char *opcode) {
-    return (
-        strcmp(opcode, "live") == 0 || strcmp(opcode, "zjmp") == 0 || strcmp(opcode, "fork") == 0 || strcmp(opcode, "lfork") == 0
-    );
-}
-
 void log_instruction(const parsed_line_t *parsedLine) {
     printf("\n===================ENCODING INSTRUCTION==================\n\n");
     printf("Encoding instruction: %s with ", parsedLine->opcode);
-    printf("Arguments: %d ", parsedLine->argumentCount);
+    printf("Arguments: ");
     for (int i = 0; i < parsedLine->argumentCount; i++) {
         printf("%s ", parsedLine->arguments[i]);
     }
@@ -107,25 +114,24 @@ void log_instruction(const parsed_line_t *parsedLine) {
 
 void encode_instruction(FILE *output, parsed_line_t *parsedLine, int *current_address) {
     log_instruction(parsedLine);
+
     enum op_types op_type = mnemonic_to_op_type(parsedLine->opcode);
-
     op_t operation = op_tab[op_type];
-
     unsigned char opcode = operation.code;
-    // Write the opcode to the output file.
     fwrite(&opcode, sizeof(opcode), 1, output);
-    (*current_address) += 1;
+    if (*current_address != 0) {
+        (*current_address) += 1;
+    }
 
-    // Then write the parameter description byte
-    unsigned char param_description = encode_parameter_description(parsedLine->arguments, parsedLine->argumentCount);
-    (*current_address) += 1;
-    fwrite(&param_description, sizeof(param_description), 1, output);
+    if (parsedLine->argumentCount > 1) {
+        unsigned char param_description = calc_parameter_description(parsedLine->arguments, parsedLine->argumentCount);
+        fwrite(&param_description, sizeof(param_description), 1, output);
+        (*current_address) += 1;
+    }
 
-    // Then write the arguments
     if (
-        is_one_byte_instruction(parsedLine->opcode)
+        parsedLine->argumentCount == 1
     ) {
-        printf("1 arg 4 bytes: %s\n", parsedLine->arguments[0]);
         if (parsedLine->arguments[0][1] == ':') {
             encode_direct(output, parsedLine->arguments[0], current_address);
         } else {
