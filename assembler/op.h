@@ -123,8 +123,8 @@ typedef struct Symbol {
 } Symbol;
 
 typedef struct {
-    char name[PROG_NAME_LENGTH];
-    char comment[COMMENT_LENGTH];
+    char name[PROG_NAME_LENGTH + 2];
+    char comment[COMMENT_LENGTH + 1];
     int size;
     parsed_line_t parsed_lines[MAX_PROG_LENGTH];
 } FileHeader;

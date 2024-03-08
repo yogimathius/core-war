@@ -5,12 +5,13 @@ void parse_contents(FILE *input, FileHeader *header) {
     int current_address = 0; 
     int instruction_count = 0;
     while (fgets(line, sizeof(line), input)) {
-        parsed_line_t parsedLine = parse_line(line);
         if (strncmp(line, ".name", 5) == 0) {
             sscanf(line, ".name \"%[^\"]\"", header->name);
         } else if (strncmp(line, ".comment", 8) == 0) {
             sscanf(line, ".comment \"%[^\"]\"", header->comment);
         }
+        parsed_line_t parsedLine = parse_line(line);
+
         if (parsedLine.lineType == TOKEN_LABEL) {
             add_symbol(parsedLine.label, current_address);
         } else if (parsedLine.lineType == TOKEN_INSTRUCTION) {  
@@ -28,7 +29,8 @@ FileHeader *init_header() {
     for (int i = 0; i < MAX_PROG_LENGTH; i++) {
         header->parsed_lines[i].lineType = TOKEN_UNKNOWN;
     }
-
+    memset(header->name, 0, PROG_NAME_LENGTH + 2);
+    memset(header->comment, 0, COMMENT_LENGTH + 1);
     return header;
 }
 
