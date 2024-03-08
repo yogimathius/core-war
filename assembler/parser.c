@@ -1,31 +1,9 @@
 #include "./op.h"
 
-void parse_contents(FILE *input, FileHeader *header) {
-    char line[MAX_LINE_LENGTH];
-    int current_address = 0; 
-    int instruction_count = 0;
-    while (fgets(line, sizeof(line), input)) {
-        if (strncmp(line, ".name", 5) == 0) {
-            sscanf(line, ".name \"%[^\"]\"", header->name);
-        } else if (strncmp(line, ".comment", 8) == 0) {
-            sscanf(line, ".comment \"%[^\"]\"", header->comment);
-        }
-        parsed_line_t parsedLine = parse_line(line);
-
-        if (parsedLine.lineType == TOKEN_LABEL) {
-            add_symbol(parsedLine.label, current_address);
-        } else if (parsedLine.lineType == TOKEN_INSTRUCTION) {  
-            current_address += 1 + parsedLine.argumentCount;
-            header->size += 4;
-            header->parsed_lines[instruction_count] = parsedLine;
-            instruction_count++;
-        }
-    }
-}
-
 FileHeader *init_header() {
     FileHeader *header = malloc(sizeof(FileHeader));
     header->size = 0;
+    header->parsed_lines_size = 0;
     for (int i = 0; i < MAX_PROG_LENGTH; i++) {
         header->parsed_lines[i].lineType = TOKEN_UNKNOWN;
     }
@@ -34,10 +12,42 @@ FileHeader *init_header() {
     return header;
 }
 
-parsed_line_t parse_line(const char *line) {
+void print_parsed_lines(FileHeader *header) {
+    for (int i = 0; i < MAX_PROG_LENGTH; i++) {
+        parsed_line_t parsedLine = header->parsed_lines[i];
+        if (parsedLine.lineType == TOKEN_UNKNOWN) {
+            break;
+        }
+        printf("lineType: %d\n", parsedLine.lineType);
+        printf("label: %s\n", parsedLine.label);
+        printf("opcode: %s\n", parsedLine.opcode);
+        for (int j = 0; j < parsedLine.argumentCount; j++) {
+            printf("arg: %s\n", parsedLine.arguments[j]);
+        }
+    }
+}
+
+
+void add_bytes_to_header(FileHeader *header, int arg_type) {
+    switch (arg_type) {
+        case TOKEN_REGISTER:
+            header->size += 1;
+            break;
+        case TOKEN_DIRECT:
+            header->size += 2;
+            break;
+        case TOKEN_INDIRECT:
+            header->size += 4;
+            break;
+        default:
+            break;
+    }
+}
+
+parsed_line_t parse_line(const char *line, FileHeader *header, int current_address) {
     parsed_line_t parsedLine = {TOKEN_UNKNOWN, "", "", {""}, 0};
     const char *inputPtr = line;
-    printf("inputPtr: %s\n", inputPtr);
+    // printf("inputPtr: %s\n", inputPtr);
     Token token;
 
     // Check for empty line or comment
@@ -49,16 +59,20 @@ parsed_line_t parse_line(const char *line) {
 
     // Process the first token which could be a label or an instruction
     if (token.type == TOKEN_LABEL) {
+        printf("found label: %s\n", token.string);
         parsedLine.lineType = TOKEN_LABEL;
         strcpy(parsedLine.label, token.string);
+        add_symbol(parsedLine.label, current_address);
         token = lex_token(&inputPtr); // Get next token after label
     }
 
     if (token.type == TOKEN_INSTRUCTION) {
         parsedLine.lineType = TOKEN_INSTRUCTION;
         strcpy(parsedLine.opcode, token.string);
-    } else if (token.type == TOKEN_DIRECTIVE) {
-        parsedLine.lineType = TOKEN_DIRECTIVE;
+        header->size += 2; // Adding two to include the opcode and the parameter description byte
+    } else if (token.type == TOKEN_DIRECT) {
+        printf("found directive: %s\n", token.string);
+        parsedLine.lineType = TOKEN_DIRECT;
         strcpy(parsedLine.opcode, token.string);
     }
 
@@ -66,7 +80,9 @@ parsed_line_t parse_line(const char *line) {
     // printf("\n=======parsing arguments======\n");
     while ((token = lex_token(&inputPtr)).type != TOKEN_BLANKLINE && token.type != TOKEN_COMMENT) {
         if (parsedLine.argumentCount < MAX_ARGS_NUMBER && token.string[0] != '\0') {
+            printf("arg token type: %d\n", token.type);
             // printf("found arg: %s\n", token.string);
+            add_bytes_to_header(header, token.type);
             strcpy(parsedLine.arguments[parsedLine.argumentCount], token.string);
             parsedLine.argumentCount++;
         } else {
@@ -76,4 +92,30 @@ parsed_line_t parse_line(const char *line) {
     fflush(stdout);
 
     return parsedLine;
+}
+
+void parse_contents(FILE *input, FileHeader *header) {
+    char line[MAX_LINE_LENGTH];
+    int current_address = 0; 
+    int instruction_count = 0;
+    while (fgets(line, sizeof(line), input)) {
+        if (strncmp(line, ".name", 5) == 0) {
+            sscanf(line, ".name \"%[^\"]\"", header->name);
+        } else if (strncmp(line, ".comment", 8) == 0) {
+            sscanf(line, ".comment \"%[^\"]\"", header->comment);
+        }
+        parsed_line_t parsedLine = parse_line(line, header, current_address);
+
+        if (parsedLine.lineType == TOKEN_LABEL) {
+            add_symbol(parsedLine.label, current_address);
+        } else if (parsedLine.lineType == TOKEN_INSTRUCTION) {  
+            current_address = header->size;
+            // header->size += 4;
+            header->parsed_lines[instruction_count] = parsedLine;
+            header->parsed_lines_size++;
+            instruction_count++;
+        }
+    }
+
+    print_parsed_lines(header);
 }

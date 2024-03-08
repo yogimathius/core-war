@@ -17,7 +17,7 @@ Token lex_token(const char **input) {
             (*input)++;
         }
     } else if (**input == '.') { // Directive
-        token.type = TOKEN_DIRECTIVE;
+        token.type = TOKEN_DIRECT;
         (*input)++;
         start = *input; // Start after the '.'
         while (!isspace((unsigned char)**input) && **input != '\0') {
@@ -64,7 +64,7 @@ Token lex_token(const char **input) {
         token.string[length] = '\0';
     } else if (isdigit((unsigned char)**input) || **input == '-') { // Number
         printf("input from digit: %s\n", *input);
-        token.type = TOKEN_NUMBER;
+        token.type = TOKEN_INDIRECT;
         if (**input == '-') {
             (*input)++;
         }
@@ -87,7 +87,7 @@ Token lex_token(const char **input) {
         token.string[length] = '\0';
     } else if (**input == DIRECT_CHAR && *(*input + 1) == LABEL_CHAR) { // Direct label
         // printf("input from direct label: %s\n", *input);
-        token.type = TOKEN_DIRECTIVE;
+        token.type = TOKEN_DIRECT;
         start = *input; // Start after '%:'
         (*input) += 2; // Skip '%:'
         while (isalnum((unsigned char)**input) || **input == '_') {
@@ -98,7 +98,7 @@ Token lex_token(const char **input) {
         token.string[length] = '\0';
     }
     else if (**input == '%' && isdigit((unsigned char)*(*input + 1))) { // Direct value
-        token.type = TOKEN_NUMBER; // or a new type, e.g., TOKEN_DIRECT_VALUE
+        token.type = TOKEN_INDIRECT; // or a new type, e.g., TOKEN_DIRECT_VALUE
         start = *input; // Start at the digit
         (*input)++; // Skip '%'
         while (isdigit((unsigned char)**input)) {

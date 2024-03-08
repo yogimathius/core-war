@@ -84,10 +84,10 @@ typedef enum {
     TOKEN_INSTRUCTION,
     TOKEN_SEPARATOR,
     TOKEN_LABEL,
-    TOKEN_DIRECTIVE,
+    TOKEN_DIRECT,
     TOKEN_COMMENT,
     TOKEN_REGISTER,
-    TOKEN_NUMBER,
+    TOKEN_INDIRECT,
     TOKEN_OPERATOR,
     TOKEN_BLANKLINE
 } TokenType;
@@ -126,16 +126,16 @@ typedef struct {
     char name[PROG_NAME_LENGTH + 2];
     char comment[COMMENT_LENGTH + 1];
     int size;
+    int parsed_lines_size;
     parsed_line_t parsed_lines[MAX_PROG_LENGTH];
 } FileHeader;
 
 // Function prototypes
 Token lex_token(const char **input);
-parsed_line_t parse_line(const char *line);
 void add_symbol(const char *label, int address);
 int lookup_symbol(const char *label);
 void encode_instruction(FILE *output, parsed_line_t *parsedLine);
-void assemble(FILE *input, FILE *output);
+void assemble(FILE *output, FileHeader *header);
 void write_little_endian(FILE *output, int value);
 void parse_contents(FILE *input, FileHeader *header);
 void write_header(FILE *output, FileHeader *header);
