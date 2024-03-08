@@ -126,8 +126,6 @@ void write_magic_number(FILE *output) {
     int corewar_exec_magic = COREWAR_EXEC_MAGIC;
     unsigned char magic_number[4];
 
-    // Hacky way to write the magic number to the output file in big-endian format
-
     magic_number[0] = (corewar_exec_magic >> 24) & 0xFF;
     magic_number[1] = (corewar_exec_magic >> 16) & 0xFF;
     magic_number[2] = (corewar_exec_magic >> 8) & 0xFF;
