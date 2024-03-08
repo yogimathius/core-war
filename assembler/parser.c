@@ -12,22 +12,6 @@ FileHeader *init_header() {
     return header;
 }
 
-void print_parsed_lines(FileHeader *header) {
-    for (int i = 0; i < MAX_PROG_LENGTH; i++) {
-        parsed_line_t parsedLine = header->parsed_lines[i];
-        if (parsedLine.lineType == TOKEN_UNKNOWN) {
-            break;
-        }
-        printf("lineType: %d\n", parsedLine.lineType);
-        printf("label: %s\n", parsedLine.label);
-        printf("opcode: %s\n", parsedLine.opcode);
-        for (int j = 0; j < parsedLine.argumentCount; j++) {
-            printf("arg: %s\n", parsedLine.arguments[j]);
-        }
-    }
-}
-
-
 void add_bytes_to_header(FileHeader *header, int arg_type) {
     switch (arg_type) {
         case TOKEN_REGISTER:
@@ -116,6 +100,4 @@ void parse_contents(FILE *input, FileHeader *header) {
             instruction_count++;
         }
     }
-
-    print_parsed_lines(header);
 }
