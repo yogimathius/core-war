@@ -27,13 +27,16 @@ int containsDigits(const char *str) {
 void encode_direct(FILE *output, const char *arg, int current_address) {
     int indirect_value;
     if (arg[0] == '%' && containsDigits(arg + 1) == 0) {
-        printf("label: %s\n", arg);
+        printf("label: %s\n", arg + 2);
         // Handle as label
         int label_address = lookup_symbol(arg + 2); // Skip '%' and lookup label
-        printf("label_address: %d\n", label_address);
         indirect_value = label_address - current_address;
+        printf("indirect_value: %d\n", indirect_value);
     } else if (arg[0] == '%' && containsDigits(arg + 1) == 1) {
-        indirect_value = atoi(arg + 1); // Skip '%' and convert to int
+        indirect_value = atoi(arg + 1);
+        if (indirect_value == 0) {
+            return encode_indirect(output, arg);
+        }
     } else {
         printf("arg in direct: %s\n", arg);
         // Handle as numeric offset
