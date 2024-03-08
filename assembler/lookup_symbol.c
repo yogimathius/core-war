@@ -15,7 +15,9 @@ void add_symbol(const char *label, int address) {
 int lookup_symbol(const char *label) {
     Symbol *current = symbol_table;
     while (current != NULL) {
-        if (strcmp(current->label, label) == 0) {
+        printf("current->label: %s\n", current->label);
+        printf("address: %d\n", current->address);
+        if (strncmp(current->label, label, strlen(label)) == 0) {
             return current->address;
         }
         current = current->next;
