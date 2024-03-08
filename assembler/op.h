@@ -134,7 +134,7 @@ typedef struct {
 Token lex_token(const char **input);
 void add_symbol(const char *label, int address);
 int lookup_symbol(const char *label);
-void encode_instruction(FILE *output, parsed_line_t *parsedLine);
+void encode_instruction(FILE *output, parsed_line_t *parsedLine, int *current_address);
 void assemble(FILE *output, FileHeader *header);
 void write_little_endian(FILE *output, int value);
 void parse_contents(FILE *input, FileHeader *header);
