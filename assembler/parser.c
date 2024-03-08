@@ -15,13 +15,13 @@ FileHeader *init_header() {
 void add_bytes_to_header(FileHeader *header, int arg_type) {
     switch (arg_type) {
         case TOKEN_REGISTER:
-            header->size += 1;
+            header->size += REG_SIZE;
             break;
         case TOKEN_DIRECT:
-            header->size += 2;
+            header->size += DIR_SIZE;
             break;
         case TOKEN_INDIRECT:
-            header->size += 4;
+            header->size += IND_SIZE;
             break;
         default:
             break;
