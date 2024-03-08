@@ -43,7 +43,6 @@ parsed_line_t parse_line(const char *line, FileHeader *header, int current_addre
 
     // Process the first token which could be a label or an instruction
     if (token.type == TOKEN_LABEL) {
-        printf("found label: %s\n", token.string);
         parsedLine.lineType = TOKEN_LABEL;
         strcpy(parsedLine.label, token.string);
         add_symbol(parsedLine.label, current_address);
@@ -55,7 +54,6 @@ parsed_line_t parse_line(const char *line, FileHeader *header, int current_addre
         strcpy(parsedLine.opcode, token.string);
         header->size += 2; // Adding two to include the opcode and the parameter description byte
     } else if (token.type == TOKEN_DIRECT) {
-        printf("found directive: %s\n", token.string);
         parsedLine.lineType = TOKEN_DIRECT;
         strcpy(parsedLine.opcode, token.string);
     }
@@ -64,7 +62,6 @@ parsed_line_t parse_line(const char *line, FileHeader *header, int current_addre
     // printf("\n=======parsing arguments======\n");
     while ((token = lex_token(&inputPtr)).type != TOKEN_BLANKLINE && token.type != TOKEN_COMMENT) {
         if (parsedLine.argumentCount < MAX_ARGS_NUMBER && token.string[0] != '\0') {
-            printf("arg token type: %d\n", token.type);
             // printf("found arg: %s\n", token.string);
             add_bytes_to_header(header, token.type);
             strcpy(parsedLine.arguments[parsedLine.argumentCount], token.string);
