@@ -32,7 +32,7 @@ int main(int argc, const char *argv[]) {
     }
     parse_contents(input_file, header);
 
-    write_header(output_file, header);
+    encode_header(output_file, header);
 
     assemble(output_file, header);
 

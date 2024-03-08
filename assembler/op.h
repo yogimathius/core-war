@@ -138,8 +138,8 @@ void encode_instruction(FILE *output, parsed_line_t *parsedLine, int *current_ad
 void assemble(FILE *output, FileHeader *header);
 void write_little_endian(FILE *output, int value);
 void parse_contents(FILE *input, FileHeader *header);
-void write_header(FILE *output, FileHeader *header);
-void write_magic_number(FILE *output);
+void encode_header(FILE *output, FileHeader *header);
+void encode_magic_number(FILE *output);
 FileHeader *init_header();
 
 #endif

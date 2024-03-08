@@ -65,7 +65,7 @@ void encode_direct(FILE *output, const char *arg, int *current_address) {
 }
 
 
-unsigned char calc_parameter_description(const char arguments[][MAX_ARGUMENT_LENGTH], int argumentCount) {
+void encode_parameter_description(const char arguments[][MAX_ARGUMENT_LENGTH], int argumentCount, FILE *output, int *current_address) {
     unsigned char description = 0;
     for (int i = 0; i < argumentCount; i++) {
         unsigned char paramCode = 0;
@@ -78,7 +78,8 @@ unsigned char calc_parameter_description(const char arguments[][MAX_ARGUMENT_LEN
         }
         description |= paramCode << (6 - 2 * i);
     }
-    return description;
+    fwrite(&description, sizeof(description), 1, output);
+    (*current_address) += 1;
 }
 
 enum op_types mnemonic_to_op_type(const char *mnemonic) {
@@ -124,9 +125,7 @@ void encode_instruction(FILE *output, parsed_line_t *parsedLine, int *current_ad
     }
 
     if (parsedLine->argumentCount > 1) {
-        unsigned char param_description = calc_parameter_description(parsedLine->arguments, parsedLine->argumentCount);
-        fwrite(&param_description, sizeof(param_description), 1, output);
-        (*current_address) += 1;
+        encode_parameter_description(parsedLine->arguments, parsedLine->argumentCount, output, current_address);
     }
 
     if (
@@ -143,7 +142,7 @@ void encode_instruction(FILE *output, parsed_line_t *parsedLine, int *current_ad
     }
 }
 
-void write_magic_number(FILE *output) {
+void encode_magic_number(FILE *output) {
     int corewar_exec_magic = COREWAR_EXEC_MAGIC;
     unsigned char magic_number[4];
 
@@ -155,8 +154,8 @@ void write_magic_number(FILE *output) {
     fwrite(magic_number, sizeof(int), 1, output);
 }
 
-void write_header(FILE *output, FileHeader *header) {
-    write_magic_number(output);
+void encode_header(FILE *output, FileHeader *header) {
+    encode_magic_number(output);
 
     fwrite(&header->name, sizeof(char), sizeof(char) * PROG_NAME_LENGTH, output);
     fwrite("\0\0\0\0", sizeof(char), 4, output); // Placeholder for program instructions size (4 bytes)
