@@ -25,8 +25,9 @@ void encode_register(FILE *output, const char *arg, int *current_address) {
 }
 
 void encode_indirect(FILE *output, const char *arg, int *current_address) {
-    int direct_value = atoi(arg);
-    write_big_endian(output, direct_value);
+    int indirect_value = atoi(arg + 1);
+    printf("indirect_value: %d\n", indirect_value);
+    write_big_endian(output, indirect_value);
     (*current_address) += 4;
 }
 
