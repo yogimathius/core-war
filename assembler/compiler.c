@@ -1,12 +1,8 @@
 #include "./op.h"
 
-void assemble(FILE *input, FILE *output) {
-    char line[MAX_LINE_LENGTH];
-
-    rewind(input);
-    while (fgets(line, sizeof(line), input)) {
-        // printf("line: %s\n", line);s
-        parsed_line_t parsedLine = parse_line(line);
+void assemble(FILE *output, FileHeader *header) {
+    for (int i = 0; i < header->parsed_lines_size; i++) {
+        parsed_line_t parsedLine = header->parsed_lines[i];
         if (parsedLine.lineType == TOKEN_INSTRUCTION) {
             encode_instruction(output, &parsedLine);
         }
@@ -37,7 +33,7 @@ int main(int argc, const char *argv[]) {
 
     write_header(output_file, header);
 
-    assemble(input_file, output_file);
+    assemble(output_file, header);
 
     fclose(input_file);
     fclose(output_file);
