@@ -29,7 +29,7 @@ void reset_champ_counters(core_t *core_vm) {
 }
 
 int game_on(core_t *core_vm) {
-    if (core_vm->dump > 0 && core_vm->nbr_cycles >= core_vm->dump) {
+    if (core_vm->dump > 0 && core_vm->nbr_cycles == core_vm->dump) {
         printf("Dumping memory at cycle %d\n", core_vm->nbr_cycles);
         display_memory(core_vm);
     }
@@ -59,7 +59,7 @@ void run_game(core_t *core_vm) {
     int game_loop_number = 0;
 
     while (game_on(core_vm) == 0) {
-        printf("===============GAME LOOP %d===============\n\n", game_loop_number);
+        printf("\n===============GAME LOOP %d===============\n\n", game_loop_number);
         run_instructions(core_vm);
         game_loop_number++;
         core_vm->instruction_pointer++;
