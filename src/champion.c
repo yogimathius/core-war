@@ -11,7 +11,6 @@ void load_champions(core_t *core_vm, int ac, char **av) {
     i++;
   }
   load_instructions(core_vm);
-  load_instructionsv2(core_vm);
   build_processes(core_vm);
 }
 

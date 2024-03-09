@@ -45,6 +45,6 @@ void parse_args(core_t *core_vm, int ac, char **av) {
             add_champion(core_vm, champ);
         }
     }
-    load_instructionsv2(core_vm);
+    load_instructions(core_vm);
     build_processes(core_vm);
 }
