@@ -18,7 +18,6 @@ int inst_st(champion_t *champion, core_t *core, code_t code, int *inst) {
 
   // If the target is a register
   if (target & T_REG) {
-    printf("T_REG is set: %u\n", target);
       champion->registers[target] = champion->registers[source_register];
   } else { 
       int address = (champion->counter + (target % IDX_MOD)) % MEM_SIZE;
