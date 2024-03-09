@@ -28,6 +28,7 @@ champion_t *init_champion() {
     const instruction_t *inst = malloc(sizeof(instruction_t));
     champ->inst[i] = *inst;
   }
+  champ->id = 0;
 	return champ;
 }
 
