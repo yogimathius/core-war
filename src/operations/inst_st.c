@@ -13,6 +13,9 @@ r8.
 int inst_st(champion_t *champion, core_t *core, code_t code, int *inst) {
   UNUSED(core);
   UNUSED(code);
+  if (inst[0] < 0 || inst[0] >= REG_NUMBER || inst[1] < 0 || inst[1] >= REG_NUMBER) {
+    return 1;
+  }
   int source_register = inst[0]; // The source register index
   int target = inst[1]; // The target register index or address offset
 
