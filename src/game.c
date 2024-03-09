@@ -89,34 +89,6 @@ int game_on(core_t *core_vm) {
     return 0;
 }
 
-void run_instruction(int start_index, core_t *core_vm, champion_t *champion) {
-    int instruction_size = champion->instruction_size;
-    int instruction_pointer = core_vm->instruction_pointer;
-
-    int instruction_index = instruction_pointer >= instruction_size ? (instruction_pointer % instruction_size) : instruction_pointer;
-    int memory_index = start_index + instruction_index;
-
-    int opcode = core_vm->memory[memory_index];
-    if (opcode < 0 || opcode > 16) {
-        printf("Invalid opcode for operands: %d\n", opcode);
-        return;
-    }
-    execute_instruction(core_vm, champion, opcode, champion->inst[instruction_index].operands);
-}
-
-
-void run_instructions(core_t *core_vm) {
-    const process_t *head = core_vm->process;
-    printf("Iterating through processes\n");
-    const process_t *current = head;
-    int i = 0;
-    do {
-        i++;
-        run_instruction(current->index, core_vm, &core_vm->champions[current->player - 1]);
-        current = current->next;
-    } while (i < core_vm->champion_count);
-}
-
 int *hex_to_binary(int *bits, unsigned int hex) {
     for (int i=7;i>=0;i--) {
         bits[i]=hex&1;
