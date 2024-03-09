@@ -2,7 +2,7 @@
 #include <time.h>
  
 void delay(int number_of_seconds) {
-    int milli_seconds = 20 * number_of_seconds;
+    int milli_seconds = 10 * number_of_seconds;
  
     clock_t start_time = clock();
     clock_t end_time = start_time + (milli_seconds * CLOCKS_PER_SEC / 1000);
@@ -198,7 +198,7 @@ void run_instruction(int *current_address, core_t *core_vm, process_t *process) 
     UNUSED(process);
     if (process->cycles_running > 0) {
         print_colored_text(process->color);;
-        printf("\n=======PROCESS P%D IS STILL RUNNING!!! SKIPPING INSTRUCTION.=======\n", process->player);
+        printf("\n=======PROCESS P%d IS STILL RUNNING!!! SKIPPING INSTRUCTION.=======\n", process->player);
         printf("\033[0m");
         return;
     }
@@ -217,7 +217,7 @@ void run_instruction(int *current_address, core_t *core_vm, process_t *process) 
         printf("P%d Opcode is 0. Skipping instruction.\n", process->player);
         printf("=======DID YOU GET NUKED?!?!?!?! 🧨.=======\n");
         printf("\033[0m");
-        delay(10);
+        delay(3);
         core_vm->nbr_cycles+=10;
         return;
     }
