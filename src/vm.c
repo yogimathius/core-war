@@ -25,6 +25,7 @@ core_t *init_vm() {
     core->lives = 0;
     core->winner = 0;
     core->process = NULL;
+    core->dump = 0;
 
     return core;
 }
@@ -52,7 +53,7 @@ void add_champion(core_t *core_t, champion_t *champion) {
   const int champ_color[4] = {31, 32, 35, 36};
 
   core_t->champion_count+=1;
-  champion->id = core_t->champion_count;
+  champion->id = champion->id != 0 ? champion->id : core_t->champion_count;
   champion->counter = 0;
   champion->carry_flag = 0;
   champion->registers[0] = champion->id;
