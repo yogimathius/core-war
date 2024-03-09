@@ -10,8 +10,7 @@ int main(int ac, char **av) {
         exit(1);
     }
     core_t *core_vm = init_vm();
-    
-    load_champions(core_vm, ac, av);
+    parse_args(core_vm, ac, av);
 
     run_game(core_vm);
 
