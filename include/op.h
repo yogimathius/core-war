@@ -130,7 +130,6 @@ typedef struct s_process{
 	int				player;
 	int				index;
 	int				color;
-	int				reg[REG_NUMBER];
 }	process_t;
 
 // Structure representing the core of the virtual machine
