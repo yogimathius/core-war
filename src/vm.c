@@ -57,7 +57,7 @@ void add_champion(core_t *core_t, champion_t *champion) {
   champion->counter = 0;
   champion->carry_flag = 0;
   champion->registers[0] = champion->id;
-  champion->color = champ_color[champion->id - 1];
+  champion->color = champ_color[core_t->champion_count - 1];
   core_t->champions[core_t->champion_count - 1] = *champion;
 }
 
