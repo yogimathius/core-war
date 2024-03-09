@@ -278,10 +278,4 @@ corresponding to the ASCII code of the content of the register (in base
 */
 int inst_aff(champion_t *, core_t *, code_t, int *);
 
-void print_colored_text(int color);
-
-void display_memory(const core_t *core);
-
-void parse_args(core_t *core_vm, int ac, char **av);
-
 #endif
