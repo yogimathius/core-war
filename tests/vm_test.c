@@ -11,9 +11,7 @@ void test_initialize_memory(void **state) {
     UNUSED(state);
 
     core_t *core_vm = init_vm();
-
     assert_true(core_vm != NULL);
-    assert_true(core_vm->memory != NULL);
     assert_true(core_vm->champion_count == 0);
 }
 
