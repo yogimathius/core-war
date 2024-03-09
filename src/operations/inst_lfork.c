@@ -1,6 +1,7 @@
 #include <op.h>
 #include <instructions.h>
 #include <champion.h>
+#include <process.h>
 
 /* 
 Same as fork without the %IDX_MOD.
@@ -11,19 +12,17 @@ int inst_lfork(champion_t *champion, core_t *core, code_t code, int *inst) {
     // Calculate the new execution address without % IDX_MOD
     int new_address = champion->counter + inst[0];
 
-    // Clone the champion to inherit the state
-    champion_t *new_champ = clone_champion(champion);
-    if (!new_champ) {
+    process_t *original = find_process(core, champion->id);
+    process_t *new_process = clone_process(core->process, new_address);
+
+    if (!new_process) {
         return -1;
     }
 
-    // Update the counter for the new champion to the calculated address
-    new_champ->counter = new_address;
 
-    // Add the new champion to the core
-    if (add_champion_to_core(core, new_champ) != 0) {
-        return -1;
-    }
+    new_process->counter = new_address;
+
+    fork_process(original, new_process);
 
     return 0; // Success
 };
