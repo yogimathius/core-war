@@ -2,7 +2,7 @@
 #include <time.h>
  
 void delay(int number_of_seconds) {
-    int milli_seconds = 10 * number_of_seconds;
+    int milli_seconds = 20 * number_of_seconds;
  
     clock_t start_time = clock();
     clock_t end_time = start_time + (milli_seconds * CLOCKS_PER_SEC / 1000);
@@ -178,7 +178,15 @@ void parse_instructions(const char *hex_buffer, int bytes_read, champion_t *cham
 void execute_instruction(core_t *vm, champion_t *champ, enum op_types opcode, int *args) {
     const op_t *operation = &op_tab[opcode];
     vm->nbr_cycles += operation->nbr_cycles;
-    // delay(operation->nbr_cycles);
+    if (operation->nbr_cycles > 20) {
+        print_colored_text(champ->color);
+        printf("Operation %s is taking a long time to execute, running in the background\n", operation->mnemonique);
+        delay(operation->nbr_cycles / 100);
+
+        printf("\033[0m");
+    } else {
+        delay(operation->nbr_cycles);
+    }
     if (operation->inst != NULL) {
         operation->inst(champ, vm, opcode, args);
     } else {
@@ -188,17 +196,28 @@ void execute_instruction(core_t *vm, champion_t *champ, enum op_types opcode, in
 
 void run_instruction(int *current_address, core_t *core_vm, process_t *process) {
     UNUSED(process);
+    if (process->cycles_running > 0) {
+        print_colored_text(process->color);;
+        printf("\n=======PROCESS P%D IS STILL RUNNING!!! SKIPPING INSTRUCTION.=======\n", process->player);
+        printf("\033[0m");
+        return;
+    }
     int temp_address = *current_address;
     enum op_types opcode = get_opcode(&temp_address, core_vm);
 
     if (opcode < 0 || opcode > 16) {
-        printf("Invalid opcode for operands: %d\n", opcode);
+        print_colored_text(process->color);
+        printf("\nP%d: Invalid opcode for operands: %d BAD FORK LOOKUP??\n", process->player, opcode);
+        printf("\033[0m");
         return;
     }
     temp_address++;
-    printf("Opcode: %d\n", opcode);
     if (opcode == 0) {
-        printf("Opcode is 0. Skipping instruction\n");
+        print_colored_text(process->color);
+        printf("P%d Opcode is 0. Skipping instruction.\n", process->player);
+        printf("=======DID YOU GET NUKED?!?!?!?! 🧨.=======\n");
+        printf("\033[0m");
+        delay(10);
         core_vm->nbr_cycles+=10;
         return;
     }
@@ -206,7 +225,7 @@ void run_instruction(int *current_address, core_t *core_vm, process_t *process) 
     int *operands = build_operands(operation, core_vm->hex_memory, &temp_address);
     execute_instruction(core_vm, find_champion(core_vm, process->player), opcode - 1, operands);
     log_instruction_args(find_champion(core_vm, process->player), core_vm, opcode - 1, operands);
-
+    process->cycles_running = operation.nbr_cycles;
     *current_address = temp_address;
 }
 
@@ -214,16 +233,18 @@ void run_instructions(core_t *core_vm) {
     process_t *head = core_vm->process;
     process_t *current = head;
     int i = 0;
+    core_vm->nbr_cycles++;
+
     do {
         i++;
-        printf("\nP%d is currently executing ", current->player);
         champion_t *champion = find_champion(core_vm, current->player);
         int instruction_index = current->counter >= champion->parsed_instructions_size ? current->counter % champion->parsed_instructions_size : current->counter;
 
 
         int current_address = current->index + instruction_index;
-        printf("at address: %d\n", current_address);
+
         run_instruction(&current_address, core_vm, current);
+        current->cycles_running--;
         current->counter = current_address - current->index;
         current = current->next;
     } while (i < core_vm->champion_count);
