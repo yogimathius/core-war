@@ -1,4 +1,3 @@
-#include <op.h>
 #include <process.h>
 
 process_t *init_process(const champion_t *champion, int index) {
@@ -9,9 +8,9 @@ process_t *init_process(const champion_t *champion, int index) {
     process->counter = 0;
     process->player = champion->id;
     process->index = index;
-    process->color = 0;
+    process->color = champion->color;
     process->next = NULL;
-
+    process->cycles_running = 0;
     return process;
 }
 
@@ -56,6 +55,7 @@ process_t *clone_process(const process_t *original, int new_address) {
     clone->index = new_address;
     clone->color = original->color;
     clone->next = original->next;
+    clone->cycles_running = 0;
     printf("Cloned process at address: %d\n", new_address);
     return clone;
 }
