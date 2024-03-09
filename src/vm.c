@@ -6,12 +6,13 @@
 
 core_t *init_vm() {
     core_t *core = malloc(sizeof(core_t));
-    for (int i = 0; i < MEM_SIZE; i++) {
-        core->memory[i] = 0;
-    }
 
     for (int i = 0; i < MEM_SIZE; i++) {
-        core->hex_memory[i] = 0;
+        core->hex_memory[i] = malloc(3 * sizeof(char));
+        if (core->hex_memory[i] == NULL) {
+            fprintf(stderr, "Memory allocation failed\n");
+            exit(EXIT_FAILURE);
+        }
     }
 
     for (int i = 0; i < MAX_CHAMPIONS; i++) {
@@ -70,15 +71,10 @@ process_t *init_process(const champion_t *champion, int index) {
     process->player = champion->id;
     process->index = index;
     process->color = 0;
-    for (int i = 0; i < REG_NUMBER; i++) {
-        process->reg[i] = 0;
-    }
     process->next = NULL;
 
     return process;
 }
-
-
 
 void build_processes(core_t *core) {
     process_t *head = init_process(&core->champions[0], 0);
