@@ -6,8 +6,8 @@ Takes 3 parameters: 3 registers. Add the first to the second, and store
 the result to the third. Modifies the carry.
 */
 int inst_add(champion_t *champion, core_t *core, code_t code, int *inst) {
-    log_instruction_args(champion, core, code, inst);
-
+    UNUSED(core);
+    UNUSED(code);
     int operand1 = champion->registers[inst[0]];
     int operand2 = champion->registers[inst[1]];
     int destination_register_index = inst[2];

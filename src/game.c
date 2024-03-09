@@ -253,6 +253,8 @@ void run_hex_instruction(int *current_address, core_t *core_vm, process_t *proce
     op_t operation = op_tab[opcode-1];
     int *operands = build_operands(operation, core_vm->hex_memory, &temp_address);
     execute_instruction(core_vm, find_champion(core_vm, process->player), opcode - 1, operands);
+    log_instruction_args(find_champion(core_vm, process->player), core_vm, opcode - 1, operands);
+
     *current_address = temp_address;
 }
 

@@ -11,8 +11,8 @@ st r3, r8 copies r3 into
 r8.
 */
 int inst_st(champion_t *champion, core_t *core, code_t code, int *inst) {
-  log_instruction_args(champion, core, code, inst);
-
+  UNUSED(core);
+  UNUSED(code);
   int source_register = inst[0]; // The source register index
   int target = inst[1]; // The target register index or address offset
 

@@ -5,8 +5,8 @@
 Same as ld without the %IDX_MOD. Modifies the carry
 */
 int inst_lld(champion_t *champion, core_t *core, code_t code, int *inst) {
-  log_instruction_args(champion, core, code, inst);
-
+  UNUSED(core);
+  UNUSED(code);
   int value = inst[0];
   int register_index = inst[1];
 
