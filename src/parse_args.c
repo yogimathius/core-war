@@ -16,7 +16,9 @@ void parse_args(core_t *core_vm, int ac, char **av) {
         if (strstr(av[i], "-") != NULL){
             if (strcmp(av[i], "-dump") == 0) {
                 if (i + 1 < ac) {
+                    printf("Setting dump to %s\n", av[i + 1]);
                     core_vm->dump = atoi(av[i + 1]);
+                    printf("Dump set to: %d\n", core_vm->dump);
                     i++;
                 } else {
                     printf("Invalid dump value\n");
