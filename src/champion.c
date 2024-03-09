@@ -112,3 +112,38 @@ champion_t* clone_champion(const champion_t* original) {
     memcpy(clone->inst, original->inst, sizeof(original->inst));
     return clone;
 }
+
+champion_t *find_champion(core_t *core_vm, int id) {
+    for (int i = 0; i < MAX_CHAMPIONS; i++) {
+        if (core_vm->champions[i].id == id) {
+            return &core_vm->champions[i];
+        }
+    }
+    return &core_vm->champions[0];
+}
+
+int check_champion_lives(core_t *core_vm) {
+    int champs_left = core_vm->champion_count;
+     for (int i = 0; i < core_vm->champion_count; i++) {
+        if (core_vm->champions[i].dead) {
+            champs_left--;
+        } else {
+            champion_t *champ = &core_vm->champions[i];
+            if (champ->lives == 0) {
+                if (champs_left == 1) {
+                    core_vm->winner = champ->id;
+                    return champs_left;
+                }
+                champ->dead = 1;
+                print_colored_text(33);
+                printf("Champion P%d has no lives left. Champion is dead.\n", champ->id);
+                printf("\033[0m");
+                champs_left--;
+            } else {
+                champ->lives = 0;
+            }
+        }
+    }
+    
+    return champs_left;
+}
