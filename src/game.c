@@ -1,6 +1,7 @@
 #include <game.h>
 #include <champion.h>
 #include <stdbool.h>
+#include <op.h>
 
 champion_t *find_champion(core_t *core_vm, int id) {
     for (int i = 0; i < MAX_CHAMPIONS; i++) {
@@ -46,7 +47,7 @@ champion_t *find_winner(core_t *core) {
     return &core->champions[0];
 }
 
-void print_results(core_t *core_vm, char *message) {
+void print_results(core_t *core_vm, const char *message) {
     printf("%s\n", message);
 
     champion_t *winner = find_winner(core_vm);
@@ -84,62 +85,13 @@ int game_on(core_t *core_vm) {
     return 0;
 }
 
-int get_label_address(champion_t champion, char *label) {
-    for (int i = 0; i < champion.instruction_size; i++) {
-        instruction_t inst = champion.inst[i];
-        if (inst.opcode == atoi(label)) {
-            return i;
-        }
-    }
-    return -1;
-}
-
-void run_champion(core_t *vm, champion_t champion) {
-    int instruction_size = champion.instruction_size;
-    int instruction_pointer = vm->instruction_pointer;
-
-    int instruction_index = instruction_pointer >= instruction_size ? (instruction_pointer % instruction_size) : instruction_pointer;
-
-    instruction_t *found_inst = &champion.inst[instruction_index];
-
-    if (found_inst->opcode < 0 || found_inst->opcode > 16) {
-        printf("cannot run champion. Invalid opcode for operands: %d\n", found_inst->opcode);
-        return;
-    }
-
-    // check if operands contains a label
-
-    int i = 0;
-    printf("\nnum operands: %d\n", found_inst->num_operands);
-    while (i < found_inst->num_operands) {
-        printf("iterating through operands\n");
-        operand_t operand = found_inst->operand_list[i];
-        // printf("operand type: %d\n", operand->type);
-        printf("operand value: %d\n", operand.value);
-        if (operand.type == T_IND) {
-            printf("operand is ind\n");
-            if (operand.label != NULL) {
-                int label_address = get_label_address(champion, operand.label);
-                if (label_address == -1) {
-                    printf("Label %s not found\n", operand.label);
-                    return;
-                } else {
-                    printf("Label %s found at address %d\n", operand.label, label_address);
-                }
-                operand.value = label_address;
-            }
-        }
-        i++;
-    }
-
-    execute_instruction(vm, &champion, found_inst->opcode, found_inst->operands);
-}
-
 void run_instruction(int start_index, core_t *core_vm, champion_t *champion) {
     int instruction_size = champion->instruction_size;
     int instruction_pointer = core_vm->instruction_pointer;
+
     int instruction_index = instruction_pointer >= instruction_size ? (instruction_pointer % instruction_size) : instruction_pointer;
     int memory_index = start_index + instruction_index;
+
     int opcode = core_vm->memory[memory_index];
     if (opcode < 0 || opcode > 16) {
         printf("Invalid opcode for operands: %d\n", opcode);
@@ -161,14 +113,154 @@ void run_instructions(core_t *core_vm) {
     } while (i < core_vm->champion_count);
 }
 
+int *hex_to_binary(int *bits, unsigned int hex) {
+    for (int i=7;i>=0;i--) {
+        bits[i]=hex&1;
+        hex>>=1;
+    }
+    return bits;
+}
+
+char **split_binary(const int *bits, int size) {
+    char **split = malloc(size * sizeof(char *));
+    for (int i = 0; i < size; i++) {
+        split[i] = malloc(2 * sizeof(char));
+        snprintf(split[i], 2, "%d", bits[i]);
+    }
+    return split;
+}
+
+enum op_types get_opcode(const int *temp_address, const core_t *core_vm) {
+    enum op_types opcode = (enum op_types)strtol(core_vm->hex_memory[(*temp_address)], NULL, 16);
+
+    return opcode;
+}
+
+
+void run_hex_instruction(int *current_address, const core_t *core_vm, process_t *process) {
+    UNUSED(process);
+    int temp_address = *current_address;
+    enum op_types opcode = get_opcode(&temp_address, core_vm);
+
+    if (opcode < 0 || opcode > 16) {
+        printf("Invalid opcode for operands: %d\n", opcode);
+        return;
+    }
+    temp_address++;
+    op_t operation = op_tab[opcode-1];
+    printf("======> Operation: %s\n", operation.mnemonique);
+
+    if (operation.nbr_args > 1) {
+
+        int *bits = malloc(16 * sizeof(int));
+        hex_to_binary(bits, strtol(core_vm->hex_memory[temp_address], NULL, 16));
+
+        char **split = split_binary(bits, 8);
+        int *arg_types = malloc(operation.nbr_args * sizeof(int));
+        for (int i = 0; i < operation.nbr_args; i++) {
+            arg_types[i] = 0;
+        }
+        int j = 0;
+        for (int i = 0; i < 8; i+=2) {
+            char *binary_value = malloc(3 * sizeof(char)); // Allocate memory for 2 binary digits + '\0'
+            snprintf(binary_value, 3, "%s%s", split[i], split[i+1]);
+            if (operation.nbr_args == 0) {
+                break;
+            }
+            if (j >= operation.nbr_args) {
+                break;
+            }
+            switch (atoi(binary_value)) {
+                case 01:
+                    arg_types[j] = T_REG;
+                    break;
+                case 10:
+                    arg_types[j] = T_DIR;
+                    break;
+                case 11:
+                    arg_types[j] = T_IND;
+                    break;  
+                default:
+                    break;
+            }
+            j++;
+        }
+        temp_address++;
+
+        for (int i = 0; i < operation.nbr_args; i++) {
+            if (arg_types[i] == T_REG) {
+                printf("Register 1 byte operand: ");
+                printf("%s\n", core_vm->hex_memory[(temp_address)]);
+                temp_address++;
+            } else if (arg_types[i] == T_DIR) {
+                printf("Direct 2 byte operand: ");
+                printf("%s ", core_vm->hex_memory[(temp_address)]);
+                printf("%s\n", core_vm->hex_memory[(temp_address) + 1]);
+                if (strcmp(core_vm->hex_memory[(temp_address)], "00") == 0 && strcmp(core_vm->hex_memory[(temp_address) + 1], "00") == 0){
+                    printf("Direct 4 byte operand: ");
+                    printf("%s ", core_vm->hex_memory[(temp_address) + 2]);
+                    printf("%s\n", core_vm->hex_memory[(temp_address) + 3]);
+                    temp_address+=2;
+                }
+                temp_address+=2;
+            } else if (arg_types[i] == T_IND) {
+                printf("Indirect 4 byte operand: ");
+                printf("%s ", core_vm->hex_memory[(temp_address)]);
+                printf("%s ", core_vm->hex_memory[(temp_address) + 1]);
+                printf("%s ", core_vm->hex_memory[(temp_address) + 2]);
+                printf("%s\n", core_vm->hex_memory[(temp_address) + 3]);
+                temp_address+=4;
+            }
+        }
+        free(bits);
+    } else {
+        printf("One arg 4 byte operand: ");
+        printf("%s ", core_vm->hex_memory[(temp_address)]);
+        printf("%s ", core_vm->hex_memory[(temp_address) + 1]);
+        printf("%s ", core_vm->hex_memory[(temp_address) + 2]);
+        printf("%s\n", core_vm->hex_memory[(temp_address) + 3]);
+        temp_address+=4;
+    }
+
+    *current_address = temp_address;
+}
+
+void run_hex_instructions(core_t *core_vm) {
+    process_t *head = core_vm->process;
+    process_t *current = head;
+    int i = 0;
+    do {
+        i++;
+        printf("\nP%d is currently executing ", current->player);
+        champion_t *champion = find_champion(core_vm, current->player);
+        int instruction_index = current->counter >= champion->parsed_instructions_size ? current->counter % champion->parsed_instructions_size : current->counter;
+
+
+        int current_address = current->index + instruction_index;
+        printf("at address: %d\n", current_address);
+        run_hex_instruction(&current_address, core_vm, current);
+        current->counter = current_address - current->index;
+        current = current->next;
+    } while (i < core_vm->champion_count);
+}
+
 void run_game(core_t *core_vm) {
     printf("\n\n====================START GAME=====================\n");
     int game_loop_number = 0;
 
-    while (game_on(core_vm) == 0) {
-        printf("===============GAME LOOP %d===============\n\n", game_loop_number);
-        run_instructions(core_vm);
+    while (game_loop_number < 12) {
+        printf("\n===============GAME LOOP %d===============\n\n", game_loop_number);
+        run_hex_instructions(core_vm);
+
         game_loop_number++;
         core_vm->instruction_pointer++;
     }
+
+    // while (game_on(core_vm) == 0) {
+    //     printf("===============GAME LOOP %d===============\n\n", game_loop_number);
+    //     run_instructions(core_vm);
+    //     run_hex_instructions(core_vm);
+    //     game_loop_number++;
+    //     core_vm->instruction_pointer++;
+    // }
 }
