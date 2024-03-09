@@ -171,8 +171,19 @@ void parse_instructions(const char *hex_buffer, int bytes_read, champion_t *cham
     }
     operands[j] = NULL;
     champion->parsed_instructions_size = j;
-    print_operands(operands);
+    // print_operands(operands);
     champion->parsed_instructions = operands;
+}
+
+void execute_instruction(core_t *vm, champion_t *champ, enum op_types opcode, int *args) {
+    const op_t *operation = &op_tab[opcode];
+    vm->nbr_cycles += operation->nbr_cycles;
+    // delay(operation->nbr_cycles);
+    if (operation->inst != NULL) {
+        operation->inst(champ, vm, opcode, args);
+    } else {
+        printf("Unknown or unimplemented operation\n");
+    }
 }
 
 void run_instruction(int *current_address, core_t *core_vm, process_t *process) {
@@ -216,15 +227,4 @@ void run_instructions(core_t *core_vm) {
         current->counter = current_address - current->index;
         current = current->next;
     } while (i < core_vm->champion_count);
-}
-
-void execute_instruction(core_t *vm, champion_t *champ, enum op_types opcode, int *args) {
-    const op_t *operation = &op_tab[opcode];
-    vm->nbr_cycles += operation->nbr_cycles;
-    // delay(operation->nbr_cycles);
-    if (operation->inst != NULL) {
-        operation->inst(champ, vm, opcode, args);
-    } else {
-        printf("Unknown or unimplemented operation\n");
-    }
 }
