@@ -16,7 +16,6 @@ void inst_lldi_test(void **state) {
     inst_lldi(champ, core, code, args);
 
     // Assertions
-    printf("result: %d\n", champ->registers[3]);
     assert_true(champ->registers[3] == 42); // Verifying the value was loaded into the register
     assert_true(champ->carry_flag == 0); // Verifying the carry flag is correctly updated
 }

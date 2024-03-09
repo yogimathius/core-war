@@ -34,6 +34,5 @@ void inst_st_indirect_addressing_test(void **state) {
 
     // Calculate expected address using champion's counter
     int expected_address = (champ->counter + offset) % IDX_MOD;
-    printf("Expected address: %d %d\n", expected_address, core->memory[expected_address]);
     assert_int_equal(core->memory[expected_address], 42); // Verify memory at expected address holds the source value
 }

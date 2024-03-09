@@ -53,9 +53,9 @@ int parse_header(champion_t *champion, int bytes_read, char *hex_buffer) {
           champion->header.comment[i - (PROG_NAME_LENGTH + 12)] = hex_buffer[i];
       }
   }
-  printf("Program name: %s\n", champion->header.prog_name);
-  printf("Program size: %d\n", champion->header.prog_size);
-  printf("Comment: %s\n", champion->header.comment);
+  // printf("Program name: %s\n", champion->header.prog_name);
+  // printf("Program size: %d\n", champion->header.prog_size);
+  // printf("Comment: %s\n", champion->header.comment);
 
   return 0;
 }

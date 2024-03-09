@@ -28,7 +28,6 @@ void inst_lld_test_zero(void **state) {
 	code_t code = OP_LLD;
 	int args[] = {0, 2};
 
-	printf("champ->registers[2]: %d\n", champ->registers[2]);
 	assert_true(champ->registers[2] == 0);
 	assert_true(inst_lld(champ, core, code, args) == 0);
 	assert_true(champ->registers[2] == 0);

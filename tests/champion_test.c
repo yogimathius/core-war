@@ -20,7 +20,6 @@ void test_create_champion(void **state) {
 
     champion_t *champ = init_champion();
     create_champion(champ, "players/simple_2.cor");
-    printf("size of prog: %d\n", champ->header.prog_size);
     assert_true(champ->header.magic == 0xea83f3);
     assert_true(strcmp(champ->header.prog_name, "Simple") == 0);
     assert_true(strcmp(champ->header.comment, "Let's get started") == 0);
