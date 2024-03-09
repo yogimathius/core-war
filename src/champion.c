@@ -1,19 +1,5 @@
 #include <champion.h>
 
-void load_champions(core_t *core_vm, int ac, char **av) {
-  printf("====================LOADING CHAMPIONS=====================\n");
-  int i = 2;
-  while (i <= ac) {
-    printf("Loading champion: %s\n", av[i - 1]);
-    champion_t *champ = init_champion();
-    create_champion(champ, av[i - 1]);
-    add_champion(core_vm, champ);
-    i++;
-  }
-  load_instructions(core_vm);
-  build_processes(core_vm);
-}
-
 champion_t *init_champion() {
   champion_t *champ;
 
