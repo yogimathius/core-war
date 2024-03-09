@@ -24,14 +24,13 @@ void display_champion_status(const champion_t *champion) {
 }
 
 void display_memory(const core_t *core) {
-  for (int i = 0; i < core->champion_count; i++) {
-    print_colored_text(core->champions[i].color);
-    for (int j = 0; j < MEM_SIZE; j++) {
-      printf("%02X", core->memory[j]);
+  for (int i = 0; i < MEM_SIZE; i++) {
+    if (i % 32 == 0) {
+      printf("\n");
     }
-    printf("\n");
-    printf("\033[0m");
+    printf("%02x ", atoi(core->hex_memory[i]));
   }
+  printf("\n");
 }
 
 void log_instruction_args(const champion_t *champion, const core_t *core, code_t code, const int *inst) {
