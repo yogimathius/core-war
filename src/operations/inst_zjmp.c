@@ -8,8 +8,8 @@ Zjmp %23 -> if carry == 1, Counter + 23 % IDX_MOD to Counter
 */
 
 int inst_zjmp(champion_t *champion, core_t *core, code_t code, int *inst) {
-  log_instruction_args(champion, core, code, inst);
   UNUSED(core);
+  UNUSED(code);
 
   if (champion->carry_flag == 1) {
       // The parameter is an index (offset) from the current counter

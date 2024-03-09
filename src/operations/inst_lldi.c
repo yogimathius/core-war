@@ -10,8 +10,8 @@ int calculate_address_for_lldi(int arg1, int arg2) {
 }
 
 int inst_lldi(champion_t *champion, core_t *core, code_t code, int *inst) {
-    log_instruction_args(champion, core, code, inst);
-
+    UNUSED(core);
+    UNUSED(code);
     int arg1 = champion->registers[inst[0]];
     int arg2 = champion->registers[inst[1]];
     int address = calculate_address_for_lldi(arg1, arg2);

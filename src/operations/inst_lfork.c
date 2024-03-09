@@ -6,8 +6,8 @@
 Same as fork without the %IDX_MOD.
 */
 int inst_lfork(champion_t *champion, core_t *core, code_t code, int *inst) {
-    log_instruction_args(champion, core, code, inst);
-
+    UNUSED(core);
+    UNUSED(code);
     // Calculate the new execution address without % IDX_MOD
     int new_address = champion->counter + inst[0];
 
