@@ -22,7 +22,6 @@ int inst_lfork(champion_t *champion, core_t *core, code_t code, int *inst) {
 
     // Add the new champion to the core
     if (add_champion_to_core(core, new_champ) != 0) {
-        free(new_champ);
         return -1;
     }
 
