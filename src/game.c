@@ -240,9 +240,14 @@ void run_hex_instruction(int *current_address, core_t *core_vm, process_t *proce
         return;
     }
     temp_address++;
+    printf("Opcode: %d\n", opcode);
+    if (opcode == 0) {
+        printf("Opcode is 0. Skipping instruction\n");
+        core_vm->nbr_cycles+=10;
+        return;
+    }
     op_t operation = op_tab[opcode-1];
     int *operands = build_operands(operation, core_vm->hex_memory, &temp_address);
-    // print_args_found(operation, operands);
     execute_instruction(core_vm, find_champion(core_vm, process->player), opcode - 1, operands);
     *current_address = temp_address;
 }
