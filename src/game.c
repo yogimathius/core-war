@@ -169,8 +169,68 @@ int *build_arg_types(const op_t operation, char **split) {
     return arg_types;
 }
 
+int get_value(char **memory, int size, int start_index) {
+    int value = 0;
+    for (int i = 0; i < size; i++) {
+        value += strtol(memory[start_index + i], NULL, 16);
+    }
+    return value;
+}
 
-void run_hex_instruction(int *current_address, const core_t *core_vm, process_t *process) {
+int *build_operands(const op_t operation, char **hex_memory, int *temp_address) {
+    int *operands = malloc(operation.nbr_args * sizeof(int));
+    if (operation.nbr_args > 1) {
+        int *bits = malloc(16 * sizeof(int));
+        hex_to_binary(bits, strtol(hex_memory[(*temp_address)], NULL, 16));
+
+        char **split = split_binary(bits, 8);
+        const int *arg_types = build_arg_types(operation, split);
+        (*temp_address)++;
+        for (int i = 0; i < operation.nbr_args; i++) {
+            if (arg_types[i] == T_REG) {
+                operands[i] = strtol(hex_memory[(*temp_address)], NULL, 16);
+                (*temp_address)++;
+            } else if (arg_types[i] == T_DIR) {
+                if (strcmp(hex_memory[((*temp_address))], "00") == 0 && strcmp(hex_memory[((*temp_address)) + 1], "00") == 0){
+                    operands[i] = get_value(hex_memory, 4, (*temp_address));
+                    (*temp_address)+=4;
+                } else {
+                    operands[i] = get_value(hex_memory, 2, (*temp_address));
+                    (*temp_address)+=2;
+                }
+            } else if (arg_types[i] == T_IND) {
+                operands[i] = get_value(hex_memory, 4, (*temp_address));
+                (*temp_address)+=4;
+            }
+        }
+        free(bits);
+    } else {
+        int value = get_value(hex_memory, 2, (*temp_address));
+
+        // still have to determine why zjmp only has 2 bytes
+        if ( hex_memory[((*temp_address)) + 2] != NULL) {
+            value += strtol(hex_memory[((*temp_address)) + 2], NULL, 16);
+            (*temp_address)++;
+        }
+        if ( hex_memory[((*temp_address)) + 3] != NULL) {
+            value += strtol(hex_memory[((*temp_address)) + 3], NULL, 16);
+            (*temp_address)++;
+        }
+        operands[0] = value;
+        (*temp_address)+=2;
+    }
+    return operands;
+}
+
+void print_args_found(const op_t operation, const int *operands) {
+    printf(" %d operand(s): ", operation.nbr_args);
+    for (int i = 0; i < operation.nbr_args; i++) {
+        printf("%d ", operands[i]);
+    }
+    printf("\n");
+}
+
+void run_hex_instruction(int *current_address, core_t *core_vm, process_t *process) {
     UNUSED(process);
     int temp_address = *current_address;
     enum op_types opcode = get_opcode(&temp_address, core_vm);
@@ -181,62 +241,9 @@ void run_hex_instruction(int *current_address, const core_t *core_vm, process_t 
     }
     temp_address++;
     op_t operation = op_tab[opcode-1];
-    printf("======> Operation: %s\n", operation.mnemonique);
-
-    if (operation.nbr_args > 1) {
-
-        int *bits = malloc(16 * sizeof(int));
-        hex_to_binary(bits, strtol(core_vm->hex_memory[temp_address], NULL, 16));
-
-        char **split = split_binary(bits, 8);
-        const int *arg_types = build_arg_types(operation, split);
-        temp_address++;
-
-        for (int i = 0; i < operation.nbr_args; i++) {
-            if (arg_types[i] == T_REG) {
-                printf("Register 1 byte operand: ");
-                printf("%s\n", core_vm->hex_memory[(temp_address)]);
-                temp_address++;
-            } else if (arg_types[i] == T_DIR) {
-                if (strcmp(core_vm->hex_memory[(temp_address)], "00") == 0 && strcmp(core_vm->hex_memory[(temp_address) + 1], "00") == 0){
-                    printf("Direct 4 byte operand: ");
-                    printf("%s ", core_vm->hex_memory[(temp_address)]);
-                    printf("%s ", core_vm->hex_memory[(temp_address) + 1]);
-                    printf("%s ", core_vm->hex_memory[(temp_address) + 2]);
-                    printf("%s\n", core_vm->hex_memory[(temp_address) + 3]);
-                    temp_address+=4;
-                } else {
-                    printf("Direct 2 byte operand: ");
-                    printf("%s ", core_vm->hex_memory[(temp_address)]);
-                    printf("%s\n", core_vm->hex_memory[(temp_address) + 1]);
-                    temp_address+=2;
-                }
-            } else if (arg_types[i] == T_IND) {
-                printf("Indirect 4 byte operand: ");
-                printf("%s ", core_vm->hex_memory[(temp_address)]);
-                printf("%s ", core_vm->hex_memory[(temp_address) + 1]);
-                printf("%s ", core_vm->hex_memory[(temp_address) + 2]);
-                printf("%s\n", core_vm->hex_memory[(temp_address) + 3]);
-                temp_address+=4;
-            }
-        }
-        free(bits);
-    } else {
-        printf("One arg 4 byte operand: ");
-        printf("%s ", core_vm->hex_memory[(temp_address)]);
-        printf("%s ", core_vm->hex_memory[(temp_address) + 1]);
-        // still have to determine why zjmp only has 2 bytes
-        if ( core_vm->hex_memory[(temp_address) + 2] != NULL) {
-            printf("%s ", core_vm->hex_memory[(temp_address) + 2]);
-            temp_address++;
-        }
-        if ( core_vm->hex_memory[(temp_address) + 3] != NULL) {
-            printf("%s\n", core_vm->hex_memory[(temp_address) + 3]);
-            temp_address++;
-        }
-        temp_address+=2;
-    }
-
+    printf("======> Operation: %s called with", operation.mnemonique);
+    const int *operands = build_operands(operation, core_vm->hex_memory, &temp_address);
+    print_args_found(operation, operands);
     *current_address = temp_address;
 }
 
