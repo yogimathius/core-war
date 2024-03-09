@@ -11,8 +11,7 @@ int calculate_address_for_ldi(int arg1, int arg2) {
 }
 
 int inst_ldi(champion_t *champion, core_t *core, code_t code, int *inst) {
-    log_instruction_args(champion, core, code, inst);
-
+    UNUSED(code);
     int arg1 = champion->registers[inst[0]];
     int arg2 = champion->registers[inst[1]];
     int address = calculate_address_for_ldi(arg1, arg2);
