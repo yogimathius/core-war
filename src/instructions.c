@@ -44,7 +44,12 @@ void parse_instructions(const char *hex_buffer, int bytes_read, champion_t *cham
 
     int j = 0;
     for (int i = 140 + COMMENT_LENGTH + 4; i < bytes_read && j < MEM_SIZE; i++) {
-      snprintf(operands[j], 3, "%.2x", (unsigned int)hex_buffer[i]);
+        operands[j] = (char*)malloc(3 * sizeof(char));
+        if (operands[j] == NULL) {
+            fprintf(stderr, "Memory allocation failed\n");
+            exit(EXIT_FAILURE);
+        }
+        snprintf(operands[j], 3, "%.2hhx", hex_buffer[i]);
       j++;
     }
     operands[j] = NULL;
@@ -59,7 +64,6 @@ void execute_instruction(core_t *vm, champion_t *champ, enum op_types opcode, in
     // delay(operation->nbr_cycles);
     if (operation->inst != NULL) {
         operation->inst(champ, vm, opcode, args);
-        champ->counter++;
     } else {
         printf("Unknown or unimplemented operation\n");
     }
