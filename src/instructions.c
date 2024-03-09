@@ -38,7 +38,7 @@ void allocate_operands(char **operands) {
     }
 }
 
-char **parse_instructions(const char *hex_buffer, int bytes_read, champion_t *champion) {
+void parse_instructions(const char *hex_buffer, int bytes_read, champion_t *champion) {
     char **operands = (char**)malloc((MEM_SIZE + 1) * sizeof(char*));
     allocate_operands(operands);
 
@@ -50,7 +50,7 @@ char **parse_instructions(const char *hex_buffer, int bytes_read, champion_t *ch
     operands[j] = NULL;
     champion->parsed_instructions_size = j;
     print_operands(operands);
-    return operands;
+    champion->parsed_instructions = operands;
 }
 
 int build_opcode(const char *parsed_instruction, instruction_t *inst) {

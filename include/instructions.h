@@ -2,7 +2,7 @@
 #define _PARSE_INSTRUCTIONS_H
 #include "op.h"
 
-char **parse_instructions(const char *hex_buffer, int bytes_read, champion_t *champion);
+void parse_instructions(const char *hex_buffer, int bytes_read, champion_t *champion);
 
 int build_instructions(char **instructions, champion_t *champion);
 

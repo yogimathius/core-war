@@ -98,10 +98,7 @@ champion_t *create_champion(champion_t *champion, char *filename) {
       exit(1);
     }
 
-    char **parsed_instructions = parse_instructions(hex_buffer, bytes_read, champion);
-    champion->parsed_instructions = parsed_instructions;
-    int instruction_size = build_instructions(parsed_instructions, champion);
-    champion->instruction_size = instruction_size;
+    parse_instructions(hex_buffer, bytes_read, champion);
   } else {
       perror("Error getting file size");
   }
