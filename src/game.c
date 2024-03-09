@@ -241,9 +241,9 @@ void run_hex_instruction(int *current_address, core_t *core_vm, process_t *proce
     }
     temp_address++;
     op_t operation = op_tab[opcode-1];
-    printf("======> Operation: %s called with", operation.mnemonique);
-    const int *operands = build_operands(operation, core_vm->hex_memory, &temp_address);
-    print_args_found(operation, operands);
+    int *operands = build_operands(operation, core_vm->hex_memory, &temp_address);
+    // print_args_found(operation, operands);
+    execute_instruction(core_vm, find_champion(core_vm, process->player), opcode - 1, operands);
     *current_address = temp_address;
 }
 
@@ -270,19 +270,10 @@ void run_game(core_t *core_vm) {
     printf("\n\n====================START GAME=====================\n");
     int game_loop_number = 0;
 
-    while (game_loop_number < 12) {
-        printf("\n===============GAME LOOP %d===============\n\n", game_loop_number);
+    while (game_on(core_vm) == 0) {
+        printf("===============GAME LOOP %d===============\n\n", game_loop_number);
         run_hex_instructions(core_vm);
-
         game_loop_number++;
         core_vm->instruction_pointer++;
     }
-
-    // while (game_on(core_vm) == 0) {
-    //     printf("===============GAME LOOP %d===============\n\n", game_loop_number);
-    //     run_instructions(core_vm);
-    //     run_hex_instructions(core_vm);
-    //     game_loop_number++;
-    //     core_vm->instruction_pointer++;
-    // }
 }
